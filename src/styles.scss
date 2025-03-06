@@ -1,0 +1,47 @@
+@import "assets/scss/angular-material.scss";
+@import "assets/scss/grids.scss";
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+/* You can add global styles to this file, and also import other style files */
+@import "assets/scss/loader.scss";
+
+html,
+body {
+  height: 100%;
+  border: 0 !important;
+  margin: 0 !important;
+}
+body * {
+  margin: 0;
+  font-family: "Montserrat", sans-serif !important;
+}
+
+.material-icons {
+  font-family: "Material Icons" !important;
+}
+
+.icon-card .mat-card-header .mat-card-title {
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  width: 100% !important;
+  overflow: hidden !important;
+}
+
+.icon-card .mat-card-header-text {
+  margin: 0 16px;
+  width: calc(100% - 56px);
+  height: 52px;
+}
+
+*:focus {
+  outline: none;
+}
+
+*[hidden]{
+  display: none !important;
+}
+
+.mat-list-base .mat-list-item.mat-multi-line .mat-list-item-content,
+.mat-list-base .mat-list-option.mat-multi-line .mat-list-item-content {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}

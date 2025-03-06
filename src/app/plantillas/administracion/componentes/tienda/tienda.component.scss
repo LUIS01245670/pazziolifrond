@@ -1,0 +1,155 @@
+.add-product {
+  position: absolute;
+  top: 44px;
+  right: 9px;
+}
+
+.search-product {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+div.separator {
+  width: calc(100% - 74px);
+  position: absolute;
+  height: 1px;
+  border-bottom-width: 1px;
+  border-bottom-style: dashed;
+  right: 11px;
+  top: 38px;
+}
+
+.head-icon {
+  font-size: 52px;
+  width: 52px;
+  height: 52px;
+}
+
+.client-name {
+  margin: 0;
+  margin-bottom: 4px !important;
+  font-size: 19px;
+  height: 20px !important;
+}
+
+.client-info {
+  margin: 0% !important;
+  font-size: 15px;
+  .mat-icon {
+    width: 15px !important;
+    height: 15px !important;
+    font-size: 15px !important;
+  }
+}
+
+.icon-card {
+  padding-left: 5px;
+  bottom: 0px;
+  margin: 0 9px;
+  box-shadow: 0 0px 17px 0px rgba(129, 121, 211, 0.9) !important;
+}
+
+.overflow-content {
+  height: calc(100vh - 310px);
+  overflow: hidden;
+  margin: 0 5px !important;
+  padding: 0 !important;
+  .mat-list-base {
+    padding: 0 !important;
+    width: 100%;
+    height: 100%;
+    .vertical.selfScroll {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.row-prooducts {
+  position: absolute;
+  top: 16px;
+  right: 0;
+  width: calc(100% - 158px);
+}
+
+.mat-card.search-card {
+  padding: 17px 0px;
+  padding-bottom: 10px;
+}
+
+.prod-actions {
+  padding: 17px !important;
+  position: relative !important;
+  padding-bottom: 10px !important;
+  margin: 0 !important;
+}
+
+.total {
+  margin: 14px 0;
+  font-size: 30px;
+  font-weight: 800 !important;
+}
+
+button[pedido] {
+  width: 220px;
+  float: right;
+  right: 8px;
+}
+
+.prod_card {
+  position: absolute;
+  bottom: 104px;
+  width: calc(100% - 28px);
+  transform: scale(0);
+  transform-origin: bottom left;
+  -webkit-transition: transform 400ms cubic-bezier(0.5, 0.25, 0, 1);
+  transition: transform 400ms cubic-bezier(0.5, 0.25, 0, 1);
+  z-index: 100000;
+}
+
+.prod_card.active {
+  transform: scale(1);
+}
+
+.prod_card.active ~ .mat-list-base .mat-list-item:last-child {
+  padding-bottom: 156px;
+}
+
+.mat-list-base .mat-list-item {
+  transform: scale(1);
+  transform-origin: bottom left;
+  -webkit-transition: transform 400ms cubic-bezier(0.5, 0.25, 0, 1);
+  transition: transform 400ms cubic-bezier(0.5, 0.25, 0, 1);
+}
+
+.mat-list-base .mat-list-item.deleted {
+  transform: scale(0);
+}
+
+.cancel {
+  position: absolute;
+  right: 9px;
+  top: 23px;
+}
+
+.mat-form-field-appearance-fill[br-l0] {
+  width: 50%;
+}
+
+.mat-form-field-appearance-fill[br-r0] {
+  width: 50%;
+}
+
+#p_actual {
+  height: 85px !important;
+}
+
+.edit-remove {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  height: fit-content;
+  margin: auto;
+}

@@ -1,0 +1,18 @@
+version: '3'
+
+services:
+  pazzioli-frontend:
+    container_name: pazzioli-frontend
+    build: .
+    restart: always
+    ports:
+      - 4200:4200
+    networks: 
+      default:
+        aliases: 
+          - network-pazzioli-frontend
+
+networks: 
+  default:
+    external: 
+      name: pazzioli-network

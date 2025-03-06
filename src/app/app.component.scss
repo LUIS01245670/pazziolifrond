@@ -1,0 +1,16 @@
+.exit-button {
+  position: absolute;
+  right: 10px;
+}
+
+.content {
+  height: calc(100vh - 0px);
+  padding-top: 75px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.content.auth {
+  height: calc(100vh - 0px) !important;
+  padding-top: 0 !important;
+}

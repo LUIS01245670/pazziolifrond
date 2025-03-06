@@ -1,0 +1,23 @@
+<mat-drawer-container class="example-container" [hasBackdrop]="true">
+  <mat-drawer #drawer [mode]="'over'">
+    <div class="menu" *ngIf="showToolbar">
+    </div>
+  </mat-drawer>
+  <mat-drawer-content>
+
+    <mat-toolbar *ngIf="showToolbar">
+      <!-- <button mat-icon-button (click)="drawer.toggle()">
+        <mat-icon>menu</mat-icon>
+      </button> -->
+      <span class="px-3">Pazzioli POS</span>
+      <button mat-icon-button class="exit-button" (click)="salir()">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </mat-toolbar>
+
+    <div class="content" [class.auth]="!showToolbar">
+      <router-outlet></router-outlet>
+    </div>
+
+  </mat-drawer-content>
+</mat-drawer-container>

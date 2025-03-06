@@ -1,0 +1,125 @@
+<div style="width: calc(100vw - 48px); overflow: auto;">
+
+    <div id="facturaDiv" style="
+    background-color: white !important;
+    padding: 0 170px; 
+    padding-bottom: 150px;
+    width: 1050px;
+    margin: auto;
+    ">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png" width="100px">
+        <br>
+        <mat-card-title>Informacion del cliente</mat-card-title>
+        <br>
+
+        <table id="rsTb">
+            <tr>
+                <td>
+                    <div class="dataLabel"> {{infoEmpresa.nombreEmpresa}}</div>
+                </td>
+            </tr>
+        </table>
+
+        <table id="empresaTb">
+            <tr>
+                <th> RAZÓN SOCIAL </th>
+                <th> NIT </th>
+                <th> DIRECCIÓN </th>
+                <th> TELÉFONO </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dataLabel"> {{infoEmpresa.nombreEmpresa}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{infoEmpresa.nitEmpresa}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{infoEmpresa.direccionEmpresa}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{infoEmpresa.telefonoEmpresa}}</div>
+                </td>
+            </tr>
+        </table>
+
+        <table id="clienteTb">
+            <tr>
+                <th> FIJO </th>
+                <th> CORREO </th>
+                <th> DIRECCIÓN </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.telefonoFijo}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.email}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.direccion}}</div>
+                </td>
+            </tr>
+            <tr>
+                <th> IDENTIFICACIÓN </th>
+                <th> NOMBRE </th>
+                <th> CELULAR </th>
+            </tr>
+            <tr>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.identificacion}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.nombre}}</div>
+                </td>
+                <td>
+                    <div class="dataLabel"> {{clienteSeleccionado.celulares}}</div>
+                </td>
+            </tr>
+        </table>
+        <table style="width: 100%;" id="productosTb">
+            <tr>
+                <th> NO. </th>
+                <th> CÓDIGO </th>
+                <th> REFERENCIA </th>
+                <th> DESCRIPCIÓN </th>
+                <th> CANTIDAD </th>
+                <th> PRECIO </th>
+                <th> TOTAL </th>
+            </tr>
+
+            <tr *ngFor="let element of dataSource">
+                <td>
+                    <div class="dataLabel">{{element.numero}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.codigo}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.referencia}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.nombre}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.cantidad.toLocaleString("de-DE")}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.precio.toLocaleString("de-DE")}}</div>
+                </td>
+
+                <td>
+                    <div class="dataLabel">{{element.total.toLocaleString("de-DE")}}</div>
+                </td>
+            </tr>
+        </table>
+
+        <br>
+
+    </div>
+</div>

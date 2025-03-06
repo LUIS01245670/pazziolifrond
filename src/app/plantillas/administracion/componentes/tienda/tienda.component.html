@@ -1,0 +1,238 @@
+<mat-spinner [diameter]="50" [strokeWidth]="3" class=" loader loader-fixed" [class.shown]="loader">
+</mat-spinner>
+<label class="loader loader-text mat-text-primary" style="position: fixed !important;"
+  [class.shown]="loader">Espere...</label>
+
+<div class="row loader-content" [class.hidden]="loader">
+  <!-- CLIENTES -->
+  <div class="col-12 col-sm-10 col-md-6 col-lg-4 mx-auto">
+    <mat-card class="search-card">
+      <mat-card-header class="search">
+        <mat-card-title class="m-0">Clientes</mat-card-title>
+        <div class="row">
+          <div class="col-12">
+            <mat-form-field appearance="fill" search>
+              <mat-label>Buscar clientes</mat-label>
+              <input [(ngModel)]="buscarCliente" (keyup)="buscarClientes()" matInput placeholder="" />
+              <mat-icon matSuffix>search</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card-header>
+      <mat-card-content class="overflow-content" style="height: calc(100vh - 333px);">
+        <!-- LISTA CLIENTES -->
+        <mat-selection-list #shoes [multiple]="false">
+          <virtual-scroller #scroll_clientes [items]="clientes">
+            <mat-list-option *ngFor="let _cliente of scroll_clientes.viewPortItems" [value]="_cliente"
+              (click)="seleccionarCliente(_cliente)" style="width: calc(100% - 32px); margin: auto; border-radius: 8px">
+              <mat-icon mat-list-icon>face</mat-icon>
+              <div mat-line class="bold">{{ _cliente.razonSocial }}</div>
+              <div mat-line><b>Id: </b> {{ _cliente.identificacion }}</div>
+            </mat-list-option>
+          </virtual-scroller>
+        </mat-selection-list>
+      </mat-card-content>
+      <!-- CLIENTE SELECCIONADO -->
+      <mat-card class="b-primary icon-card" style="height: 107px;">
+        <mat-card-header style="border: none !important">
+          <div mat-card-avatar>
+            <mat-icon class="head-icon" style="margin: 11px 0;"> face </mat-icon>
+          </div>
+          <mat-card-title class="client-name">{{clienteSeleccionado.nombre}}</mat-card-title>
+          <div class="separator"></div>
+          <mat-card-subtitle class="client-info">
+
+            <div class="row">
+              <div class="col-6 p-0 elipsis">
+                <mat-icon>perm_identity</mat-icon> {{clienteSeleccionado.identificacion}}
+              </div>
+              <div class="col-6 p-0 elipsis">
+                <mat-icon>phone_android</mat-icon> {{clienteSeleccionado.celulares}}
+              </div>
+              <div class="col-6 p-0 elipsis">
+                <mat-icon>phone</mat-icon> {{clienteSeleccionado.telefonoFijo}}
+              </div>
+              <div class="col-6 p-0 elipsis">
+                <mat-icon>alternate_email</mat-icon> {{clienteSeleccionado.email}}
+              </div>
+              <div class="col-12 p-0 elipsis">
+                <mat-icon>location_city</mat-icon> {{clienteSeleccionado.direccion}}
+              </div>
+            </div>
+          </mat-card-subtitle>
+        </mat-card-header>
+      </mat-card>
+    </mat-card>
+  </div>
+
+  <!-- PRODUCTOS -->
+  <div class="col-12 col-sm-12-col-md-6 col-lg-8">
+    <mat-card class="search-card">
+      <mat-card-header class="search">
+        <mat-card-title class="m-0">Productos</mat-card-title>
+        <!-- BUSQUEDA DE PRODUCTOS -->
+        <div class="row" style="width: calc(100% - 64px)">
+          <div class="col-12 col-sm-6 col-md-5">
+            <mat-form-field appearance="fill" search>
+              <mat-label>Descripcion</mat-label>
+              <input matInput placeholder="" [formControl]="buscarDescripcion" [matAutocomplete]="auto"
+                #trigger="matAutocompleteTrigger" (keyup)="buscarProductos($event,'descripcion')"
+                (click)="$event.stopPropagation(); trigger.openPanel()" id="descripcion" #descripcion />
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+                <virtual-scroller #scroll_prods [items]="opcionesFiltradas" style="height: 246px">
+                  <mat-option *ngFor="let option of scroll_prods.viewPortItems" (keyup.enter)="elegirCantidad(option)"
+                    (click)="elegirCantidad(option)" [value]="option">
+                    {{ option.nombre }}
+                  </mat-option>
+                </virtual-scroller>
+              </mat-autocomplete>
+            </mat-form-field>
+          </div>
+
+          <div class="col-12 col-sm-6 col-md-3" style="display: flex;">
+            <mat-form-field appearance="fill" search br-r0 style="border-right: solid 1px #0000002e;">
+              <mat-label>Referencia</mat-label>
+              <input matInput placeholder="" [(ngModel)]="referencia" autocomplete="off"
+                (keyup)="eventoEnter($event, 'referencia')" />
+            </mat-form-field>
+
+            <mat-form-field appearance="fill" search br-l0>
+              <mat-label>Código</mat-label>
+              <input matInput placeholder="" #inCodigo name="inputCodigo" [(ngModel)]="codigo" autocomplete="off"
+                (keyup)="eventoEnter($event, 'codigo')" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-4 col-sm-4 col-md-2">
+            <mat-form-field appearance="fill" search>
+              <mat-label>Cantidad</mat-label>
+              <input matInput #inCantidad placeholder="" name="inputCantidad" [(ngModel)]="cantidad" id="cantidad"
+                type="number" onfocus="this.select()" (keyup)="elegirPrecio($event)" />
+            </mat-form-field>
+          </div>
+
+          <div class="col-8 col-sm-8 col-md-2">
+            <mat-form-field appearance="fill" search>
+              <mat-label>$ Precio</mat-label>
+              <input matInput placeholder="" [(ngModel)]="precio" id="precio" type="number" onfocus="this.select()"
+                (keyup)="eventoEnter($event,'precio')" />
+            </mat-form-field>
+          </div>
+        </div>
+        <!-- AGREGAR A LA LISTA -->
+        <button mat-fab color="primary" [disabled]="productoActual.id == '_vacio'"
+          (click)="eventoEnter({keyCode: 13},'precio')" class="add-product">
+          <mat-icon>add</mat-icon>
+        </button>
+      </mat-card-header>
+      <mat-card-content class="overflow-content">
+        <mat-card class="b-primary icon-card prod_card" id="p_actual">
+          <mat-card-header style="border: none !important">
+            <div mat-card-avatar>
+              <mat-icon class="head-icon"> shopping_cart </mat-icon>
+            </div>
+            <mat-card-title class="client-name">{{
+              productoActual.nombre
+              }}</mat-card-title>
+            <!-- <div class="separator"></div> -->
+            <mat-card-subtitle class="client-info" style="font-size: 15px !important;">
+              <div class="row">
+                <div class="col-6 p-0">
+                  <b>Presentacion:</b> {{productoActual.producto.presentacion? productoActual.producto.presentacion:
+                  ''}}
+                </div>
+                <div class="col-6 p-0">
+                  <b>Und de medida:</b> {{productoActual.producto.nombreUnidadMedida?
+                  productoActual.producto.nombreUnidadMedida:
+                  ''}}
+                </div>
+              </div>
+            </mat-card-subtitle>
+            <mat-card-subtitle class="client-info" style="margin: 0 !important;">
+              <div class="row">
+                <div class="col-4 p-0">
+                  <b>Cantidad: </b>{{ cantidad }}
+                </div>
+                <div class="col-4 p-0">
+                  <b>Precio: </b>${{precio.toLocaleString("de-DE")}}
+                </div>
+                <div class="col-4 p-0">
+                  <b>Total: </b>${{ (cantidad * precio).toLocaleString("de-DE") }}
+                </div>
+              </div>
+            </mat-card-subtitle>
+
+            <button mat-mini-fab color="warn" class="cancel" (click)="reiniciar()">
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-card-header>
+        </mat-card>
+
+        <mat-list>
+          <!-- LISTA PRODUCTOS -->
+          <virtual-scroller #scroll_productosMostrar [items]="productosMostrar">
+            <mat-list-item *ngFor="let _producto of scroll_productosMostrar.viewPortItems" [id]="'p_' + _producto.id">
+              <div class="row" style="width: 100%;">
+                <div mat-line class="col-12 p-0">
+                  <b># {{_producto.numero}} - {{ _producto.nombre }}</b>
+                </div>
+                <div mat-line class="col-12 p-0 row" style="display: flex;">
+                  <div class="col-12 col-md-6 p-0">
+                    <b>Código contabe: </b>{{ _producto.codigoContable }}
+                  </div>
+                  <div class="col-12 col-md-6 p-0">
+                    <b>Referencia: </b>{{ _producto.referencia }}
+                  </div>
+                </div>
+
+                <div mat-line class="col-12 p-0 row" style="display: flex;">
+                  <div class="col-12 col-md-6 p-0">
+                    <b>Precio</b> ${{_producto.precio.toLocaleString("de-DE")}}
+                  </div>
+                  <div class="col-12 col-md-6 p-0">
+                    <b>Cantidad</b> {{ _producto.cantidad.toLocaleString("de-DE") }}
+                  </div>
+                </div>
+
+                <div mat-line class="col-12 p-0 row" style="display: flex;">
+                  <div class="col-12 p-0">
+                    <b>Total</b> ${{_producto.total.toLocaleString("de-DE") }}
+                  </div>
+                </div>
+
+                <mat-divider></mat-divider>
+
+                <!-- EDITAR O BORRAR -->
+                <div class="edit-remove">
+                  <!-- <button mat-mini-fab color="accent" class="mr-2">
+                    <mat-icon>edit</mat-icon>
+                  </button> -->
+                  <button mat-mini-fab color="warn" (click)="eliminarProducto(_producto.id)">
+                    <mat-icon>delete</mat-icon>
+                  </button>
+                </div>
+              </div>
+            </mat-list-item>
+          </virtual-scroller>
+        </mat-list>
+      </mat-card-content>
+      <mat-card-actions class="prod-actions">
+        <!-- LIMPIAR FORMULARIO -->
+        <button mat-fab color="warn" class="mr-3" (click)="confirmDeleteAll()">
+          <mat-icon>delete_forever</mat-icon>
+        </button>
+        <!-- TOTAL Y PEDIDO -->
+        <div class="row row-prooducts">
+          <div class="col-md-6 col-sm-12 py-0">
+            <h1 class="total">$ {{ totalPagar.toLocaleString("de-DE") }}</h1>
+          </div>
+          <div class="col-md-6 col-sm-12 py-0">
+            <button mat-flat-button color="primary" full-button pedido (click)="crearPedido()">
+              Realizar pedido
+            </button>
+          </div>
+        </div>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

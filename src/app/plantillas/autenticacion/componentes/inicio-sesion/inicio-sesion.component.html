@@ -1,0 +1,59 @@
+<mat-spinner [diameter]="50" [strokeWidth]="3" class=" loader loader-fixed" [class.shown]="loader">
+</mat-spinner>
+<label class="loader loader-text mat-text-primary" style="position: fixed !important;"
+  [class.shown]="loader">Espere...</label>
+
+<div class="row full loginback loader-content" [class.hidden]="loader">
+  <div class="mx-auto col-12 col-sm-8 col-md-6 col-lg-4 login-form">
+    <div class="row full">
+      <div class="col-12 m-auto p-0 row">
+        <div class="col-12" style="padding: 10px 30px">
+          <h1>Pazzioli</h1>
+          <h5>Inicio de sesión</h5>
+        </div>
+        <div class="col-10 m-auto">
+          <mat-form-field appearance="fill">
+            <mat-label>Nombre de usuario</mat-label>
+            <input
+              matInput
+              placeholder="Ingrese su usuario"
+              #inUsuario
+              [formControl]="inputUsuario"
+              (keydown)="eventoEnter($event, 'usuario')"
+              autocomplete="off"
+            />
+            <mat-icon matSuffix>person</mat-icon>
+            <!-- <mat-hint>Hint</mat-hint> -->
+          </mat-form-field>
+        </div>
+
+        <div class="col-10 m-auto">
+          <mat-form-field appearance="fill">
+            <mat-label>Contraseña</mat-label>
+            <input
+              matInput
+              #inContrasena
+              type="password"
+              placeholder="Ingrese su contraseña"
+              [formControl]="inputContrasena"
+              (keydown)="eventoEnter($event, 'pass')"
+              autocomplete="off"
+            />
+            <mat-icon matSuffix>lock</mat-icon>
+            <!-- <mat-hint>Hint</mat-hint> -->
+          </mat-form-field>
+        </div>
+        <div class="col-10 m-auto" (click)="iniciarSesion()">
+          <button mat-flat-button color="primary" full-button>
+            Iniciar sesión
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto col-12 col-sm-8 col-md-6 col-lg-8">
+    <div class="row full">
+      <h1 class="m-auto login-text">Bienvenido Pazzioli</h1>
+    </div>
+  </div>
+</div>
