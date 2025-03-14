@@ -94,9 +94,18 @@
             <mat-form-field appearance="fill" search br-r0 style="border-right: solid 1px #0000002e;">
               <mat-label>Referencia</mat-label>
               <input matInput placeholder="" [(ngModel)]="referencia" autocomplete="off"
-                (keyup)="eventoEnter($event, 'referencia')" />
+                (keyup)="eventoEnter($event, 'referencia')"  [matAutocomplete]="ref" id="referencia"/>
+                <mat-autocomplete #ref="matAutocomplete" [displayWith]="displayFn">
+                  <virtual-scroller #scroll_prod [items]="opcionesFiltradas" style="height: 246px">
+                    <mat-option *ngFor="let option of scroll_prod.viewPortItems" (keyup.enter)="elegirCantidad(option)"
+                      (click)="elegirCantidad(option)" [value]="option.referencia">
+                      {{option.referencia}}
+                    </mat-option>
+                  </virtual-scroller>
+                </mat-autocomplete>
             </mat-form-field>
-
+                
+                   
             <mat-form-field appearance="fill" search br-l0>
               <mat-label>Código</mat-label>
               <input matInput placeholder="" #inCodigo name="inputCodigo" [(ngModel)]="codigo" autocomplete="off"
