@@ -15,7 +15,7 @@
         <table id="rsTb">
             <tr>
                 <td>
-                    <div class="dataLabel"> {{infoEmpresa.nombreEmpresa}}</div>
+                    <div class="dataLabel"> {{infoEmpresa}}</div>
                 </td>
             </tr>
         </table>
@@ -23,23 +23,26 @@
         <table id="empresaTb">
             <tr>
                 <th> RAZÓN SOCIAL </th>
-                <th> NIT </th>
                 <th> DIRECCIÓN </th>
                 <th> TELÉFONO </th>
             </tr>
             <tr>
                 <td>
-                    <div class="dataLabel"> {{infoEmpresa.nombreEmpresa}}</div>
+                    <div class="dataLabel"> {{infoEmpresa.nombre}}</div>
                 </td>
                 <td>
-                    <div class="dataLabel"> {{infoEmpresa.nitEmpresa}}</div>
+                    <div class="dataLabel"> {{infoEmpresa.direccion}}</div>
                 </td>
-                <td>
-                    <div class="dataLabel"> {{infoEmpresa.direccionEmpresa}}</div>
+                <td *ngIf="infoEmpresa.telefonoFijo!==''; else celularesnonulos">
+                    <div class="dataLabel"> {{infoEmpresa.telefonoFijo }}</div>
                 </td>
-                <td>
-                    <div class="dataLabel"> {{infoEmpresa.telefonoEmpresa}}</div>
-                </td>
+                <ng-template #celularesnonulos>
+                    <td>
+                        <div class="dataLabel"> {{infoEmpresa.celulares}}</div>
+                    </td>
+                </ng-template>
+
+               
             </tr>
         </table>
 

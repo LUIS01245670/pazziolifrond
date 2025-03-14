@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { io, Socket } from 'socket.io-client';;
+import {io} from 'socket.io-client';
 import { Observable, fromEvent, Subject } from 'rxjs';
 import { DatosPeticion } from 'src/app/modelos/datos-peticion';
 
@@ -14,7 +14,9 @@ export class SocketService {
   public socketConexion!: Observable<any>;
   public escucha!: Observable<any>;
   private componentMethodCallSource = new Subject<any>();
-  constructor() { }
+  constructor() { 
+    console.log("🟡 SocketService inicializado");  
+  }
 
   componentMethodCalled$ = this.componentMethodCallSource.asObservable();
 
@@ -23,22 +25,36 @@ export class SocketService {
   }
   public conectar() {
     // this.socket = io("http://52.86.140.114:3000");
-    this.socket = io("13.59.77.203:3000");
+    this.socket = io("http://localhost:3000", { transports: ['websocket'] });
     // this.socket = io("localhost:3000");
+    this.socket.on("connect", () => {
+    ///  console.log("✅ Conectado al servidor con ID:", this.socket.id);
+    });
+  
+    this.socket.on("connect_error", (err: any) => {
+      console.error("❌ Error de conexión:", err);
+    });
+  
+    this.socket.on("disconnect", () => {
+      console.warn("⚠️ Desconectado del servidor");
+    });
     if (this.socket !== undefined) {
       this.socketConexion = new Observable((observer: any) => {
         this.socket.on(this.socketEscucha, (dato: any) => {
+          console.log("Conectado al servidor con ID:", this.socket.id);
+
           observer.next(dato);
           console.log(dato);
+
         });
       });
-      console.log('Conectado al socket...');
-
+     
+      //console.log("Conectado al servidor con ID:", this.socket.id);
     }
   }
 
   public enviarInfo(data: any) {
-    console.log(data);
+    console.log("entro aqui 1")
     this.socket.emit('aws', data);
   }
 

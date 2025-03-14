@@ -56,7 +56,7 @@ export class InicioSesionComponent implements OnInit {
   }
 
   iniciarSesion() {
-    this.loader = true;
+    //this.loader = true;
     this.socketServices.enviarInfo({
       sistema: 'DASHBOARD',
       tipoConsulta: 'LOGIN',
@@ -66,8 +66,10 @@ export class InicioSesionComponent implements OnInit {
       }
     });
     this.suscripcionSocket = this.socketServices.socketConexion.subscribe((info) => {
+      console.log("entro aqui 0")
       if (info) {
         if (info.estadoPeticion === 'SUCCESS' && info.tipoConsulta === 'LOGIN') {
+
           this.app.sedes = info.mensajePeticion;
           this.loader = false;
           this.router.navigate(['admin/tienda']);

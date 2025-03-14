@@ -5,13 +5,16 @@ import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Subscription } from 'rxjs';
 import { AppComponent } from 'src/app/app.component';
 import { SocketService } from 'src/services/socket/socket.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { DatosAlerta, DialogoAlerta } from 'src/app/angular-material/alerta';
 import { DatosPedido } from 'src/app/modelos/datos-peticion copy';
+import { Socket_producto} from 'src/services/socket/socket.producto.service.ts.service';
 
-
+import {
+	MatSnackBar,
+	MatSnackBarRef,
+  } from '@angular/material/snack-bar'; 
 export interface DialogData {
-	po: any;
+	almacen:string;
 }
 
 export interface PRODUCTO {
@@ -32,10 +35,10 @@ export interface PRODUCTO {
 	styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
-
+  
 	sedeSeleccionada: any;
 	terceroConsultado: any = null;
-
+     codigoitemseled:number=0 
 	@ViewChild('inCodigo') inCodigo!: ElementRef;
 	@ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger }) inDescripcion!: MatAutocompleteTrigger;
 
@@ -45,60 +48,60 @@ export class TiendaComponent implements OnInit {
 	clientes: any[] = [];
 	clientesIniciales: any[] = [];
 
-	productos: PRODUCTO[] = [];
+	productos: PRODUCTO[] =  [
+		/*{
+			cantidad: 13,
+			codigo: "005",
+			codigoContable: "00",
+			id: "001",
+			nombre: "PROD PRUEBA",
+			numero: 0,
+			precio: 5000,
+			referencia: "REF 000",
+			total: 500000,
+			producto: {}
+		},
 
-	productosMostrar: PRODUCTO[] = [
-		// {
-		// 	cantidad: 13,
-		// 	codigo: "005",
-		// 	codigoContable: "00",
-		// 	id: "001",
-		// 	nombre: "PROD PRUEBA",
-		// 	numero: 0,
-		// 	precio: 5000,
-		// 	referencia: "REF 000",
-		// 	total: 500000,
-		// 	producto: {}
-		// },
+	 {
+			cantidad: 13,
+			codigo: "005",
+			codigoContable: "00",
+	    	id: "001",
+			nombre: "PROD PRUEBA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0",
+		   	numero: 0,
+		 	precio: 5000,
+			referencia: "REF 000",
+		 	total: 500000,
+		 	producto: {}
+		 },
+		 {
+		 	cantidad: 13,
+		 	codigo: "005",
+		 	codigoContable: "00",
+		 	id: "001",
+		 	nombre: "PROD PRUEBA",
+		 	numero: 0,
+		 	precio: 5000,
+		 	referencia: "REF 000",
+		 	total: 500000,
+		    	producto: {}
+		    },
 
-		// {
-		// 	cantidad: 13,
-		// 	codigo: "005",
-		// 	codigoContable: "00",
-		// 	id: "001",
-		// 	nombre: "PROD PRUEBA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0",
-		// 	numero: 0,
-		// 	precio: 5000,
-		// 	referencia: "REF 000",
-		// 	total: 500000,
-		// 	producto: {}
-		// },
-		// {
-		// 	cantidad: 13,
-		// 	codigo: "005",
-		// 	codigoContable: "00",
-		// 	id: "001",
-		// 	nombre: "PROD PRUEBA",
-		// 	numero: 0,
-		// 	precio: 5000,
-		// 	referencia: "REF 000",
-		// 	total: 500000,
-		// 	producto: {}
-		// },
-
-		// {
-		// 	cantidad: 13,
-		// 	codigo: "005",
-		// 	codigoContable: "00",
-		// 	id: "001",
-		// 	nombre: "PROD PRUEBA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0",
-		// 	numero: 0,
-		// 	precio: 5000,
-		// 	referencia: "REF 000",
-		// 	total: 500000,
-		// 	producto: {}
-		// },
+	      {
+	 	cantidad: 13,
+	 	codigo: "005",
+	 	codigoContable: "00",
+		id: "001",
+	 	nombre: "PROD PRUEBA AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA0",
+	 	numero: 0,
+	 	precio: 5000,
+	 	referencia: "REF 000",
+	 	total: 500000,
+	 	producto: {}
+	 },*/
 	];
+    sedelist:DialogSedes[]=[]
+	productosMostrar: PRODUCTO[] = [];
 
 	buscarDescripcion = new FormControl('');
 	buscarCliente: string = ''
@@ -112,6 +115,7 @@ export class TiendaComponent implements OnInit {
 		telefonoFijo: "",
 		codigo: 0
 	}
+	sede:string=""
 
 	productoActual: PRODUCTO = {
 		numero: 0,
@@ -138,21 +142,106 @@ export class TiendaComponent implements OnInit {
 
 	pdf: any;
 	enterPrecio: any = 0;
+	subscri:any
 	constructor(
 		private _snackBar: MatSnackBar,
 		private socketServices: SocketService,
 		private app: AppComponent,
-		public dialog: MatDialog
-	) { }
-
+		public dialog: MatDialog,
+		private socketproduct:Socket_producto
+	) {
+		
+		
+	
+	 }
+     ngOnDestroy() {
+		if (this.socketproduct) {
+		  this.subscri.unsubcribe()
+		  console.log("🛑 Se cerró la suscripción del socket.");
+		}
+	}
 	ngOnInit(): void {
 		this.loader = true;
-		this.opcionesFiltradas = this.productos;
-		this.openDialogSedes();
+		if(!localStorage.getItem('pedido') && localStorage.getItem('pedido')===null){
+			this.subscri=this.socketproduct.obtenerInfo('sedes','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"SEDES",canalserver:"sedes"}).subscribe(
+				(data) => {
+					const datos=JSON.parse(data)
+					
+					
+						this.sedelist = datos.mensajePeticion;
+						console.log(this.opcionesFiltradas)
+						this.openDialogSedes();
+						
+					  
+					
+				  },
+				  (error) => {
+					console.error("Error en socket:", error);
+				  }
+				
+			)
+		}else{
+		
+			this.productosMostrar=JSON.parse(localStorage.getItem('pedido')|| '{nombre:""}')
+
+		    this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
+			//this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+			this.socketServices.escucha.subscribe(
+				(info: any) => {
+					this.loader=false
+					this.totalPagar = 0;
+					this.productosMostrar.forEach(producto => {
+						this.totalPagar += producto.total;
+					});
+                   info=JSON.parse(info)
+					switch (info.tipoConsulta) {
+						case 'PRODUCTO':
+							
+							if (info.estadoPeticion === 'SUCCESS') {
+								console.log("entro aqui success")
+								
+								this.respuestaProductos(info, true);
+							} else {
+								console.log("entro aqui en el error")
+								this.respuestaProductos(info, false);
+							}
+							break;
+						case 'TERCERO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaTerceros(info);
+							}
+							break;
+						case 'PEDIDO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaPedidos(info);
+							}
+							break;
+						default:
+							break;
+					}
+				}
+			);
+			
+
+		}
+	
+		
+	}
+
+	seleccionaritem(_producto:PRODUCTO){
+		console.log(Number(_producto.codigo))
+		this.codigoitemseled=Number(_producto.codigo)
+		this.productoActual=_producto
+		this.precio = this.productoActual.precio;
+		this.cantidad=_producto.cantidad
+          
+		this.productoActual.id="_vacio"
+		document.getElementById('p_actual')?.classList.add('active');
 	}
 
 	buscarProductos(key: any, campo: String) {
 		if (this.productos.length > 0) {
+			console.log("productos rellenos")
 			let val = '';
 			if (this.buscarDescripcion.value) {
 				val = this.buscarDescripcion.value.toString().toLowerCase();
@@ -164,6 +253,7 @@ export class TiendaComponent implements OnInit {
 				}
 			});
 			if (key.keyCode == 13) {
+				console.log("diste enter")
 				this.elegirCantidad(this.buscarDescripcion.value)
 			}
 		} else {
@@ -194,7 +284,9 @@ export class TiendaComponent implements OnInit {
 		this.cantidad = 0;
 		this.precio = 0;
 		this.buscarDescripcion.patchValue('');
-		document.getElementById('descripcion')?.focus();
+		//document.getElementById('descripcion')?.focus();
+		document.getElementById('p_actual')?.classList.remove('active');
+	    this.codigoitemseled=0
 		this.enumerarProductos();
 	}
 
@@ -205,21 +297,27 @@ export class TiendaComponent implements OnInit {
 	}
 
 	elegirCantidad(_prod: any) {
-
+		 console.log(_prod)
 		if (typeof _prod == 'object') {
+			
 			if (this.buscarDescripcion.value) {
 				this.productoActual = { numero: null, ..._prod };
 				this.precio = this.productoActual.precio;
 				document.getElementById('p_actual')?.classList.add('active');
 				this.cantidad = 1;
+				this.codigo=this.productoActual.codigo
+				this.referencia=this.productoActual.referencia
+
+				
 				document.getElementById('cantidad')?.focus();
-			} else if (this.productos.length > 0) {
+			} else if (this.productos.length > 0 ) {
 				this.productoActual = this.productos[0];
 				this.precio = this.productoActual.precio;
 				document.getElementById('p_actual')?.classList.add('active');
 				this.cantidad = 1;
 				document.getElementById('cantidad')?.focus();
 			} else {
+				console.log("focalisado en el codigo")
 				this.inCodigo.nativeElement.focus();
 			}
 		}
@@ -262,7 +360,9 @@ export class TiendaComponent implements OnInit {
 			telefonoFijo: "",
 			codigo: 0
 		}
+		localStorage.removeItem("pedido")
 		this.reiniciar();
+
 	}
 
 	async elegirPrecio(event: any) {
@@ -271,27 +371,62 @@ export class TiendaComponent implements OnInit {
 			document.getElementById('precio')?.focus();
 		}
 	}
+	abrirpanel(){
+		
+		
+		if(this.opcionesFiltradas.length>0){
+			
+		this.codigoitemseled=0;
+		this.inDescripcion.openPanel()
+	       
+		}
+	}
 
 	async agregarProducto() {
 
 		if (Number(this.cantidad) > 0) {
 			this.productos = [];
-			this.opcionesFiltradas = [];
+			
 			await this.calcularProductoActual();
 			this.productoActual.precio = Number(this.precio);
 			this.productoActual.cantidad = Number(this.cantidad);
+
 			let index = this.productosMostrar.findIndex((item) => {
-				return item.id == this.productoActual.id;
+				return item.codigo== this.productoActual.codigo;
 			});
 			if (index != -1) {
 				let _cantidad = this.productosMostrar[index].cantidad + this.cantidad;
 				let _precio_total = Number(_cantidad) * Number(this.precio);
-
+                
 				this.productosMostrar[index].cantidad = _cantidad;
 				this.productosMostrar[index].precio = this.precio;
 				this.productosMostrar[index].total = _precio_total;
+				localStorage.setItem('pedido',JSON.stringify(this.productosMostrar))
 			} else {
-				this.productosMostrar.push(this.productoActual);
+                 
+                      let options=   this.opcionesFiltradas.findIndex((option)=>{
+						return option.codigo===this.productoActual.codigo
+						 })
+                           console.log(this.opcionesFiltradas[options])
+						 if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<=0){
+							console.log(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`])
+							this.openSnackBar("este producto esta agotado")
+						 }else{
+						if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<this.productoActual.cantidad){
+						  this.openSnackBar("cantidad no disponible")
+
+						}else{
+							let products=[...this.productosMostrar,this.productoActual]
+				          this.productosMostrar=products
+				          localStorage.setItem('pedido',JSON.stringify(products))
+						  let cantidad_negativa=this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]-this.productoActual.cantidad
+                         
+                          
+						}
+						 }
+						
+
+				
 			}
 			this.totalPagar = 0;
 			this.productosMostrar.forEach(producto => {
@@ -314,25 +449,62 @@ export class TiendaComponent implements OnInit {
 			}
 		}
 	}
+    actulizaritems(e:any,product:PRODUCTO){
+		e.stopPropagation()
 
-	eliminarProducto(id: string) {
-		document.getElementById('p_' + id)?.classList.add('deleted');
-		setTimeout(() => {
-			let filteredItems = this.productosMostrar.filter(function (item) {
-				return item.id != id;
+		if(this.codigoitemseled>0){
+			
+			if(this.codigoitemseled=== Number(product.codigo)){
+				let index=this.productosMostrar.findIndex((pro)=>Number(pro.codigo)===this.codigoitemseled)
+				let options=this.opcionesFiltradas.findIndex((pro)=>Number(pro.codigo)===this.codigoitemseled )
+				console.log(this.productoActual.cantidad)
+				if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<this.cantidad){
+					this.openSnackBar("cantidad no disponible")
+	
+				  }else{
+				this.productosMostrar[index].cantidad=this.cantidad
+				this.productosMostrar[index].total=Number(this.cantidad) * Number(this.precio)
+				document.getElementById('p_actual')?.classList.remove('active');
+				this.codigoitemseled=0
+                this.totalPagar = 0;
+			this.productosMostrar.forEach(producto => {
+				this.totalPagar += producto.total;
+
 			});
-			this.productosMostrar = filteredItems;
+		}
+
+			}
+			
+			
+
+
+		}
+	}
+	eliminarProducto(e:any,id: string) {
+		e.stopPropagation();
+		console.log(id)
+		document.getElementById('p_' + id)?.classList.add('deleted');
+		
+			let filteredItems = this.productosMostrar.filter((item)=> id!==item.id);
+			this.productosMostrar = [...filteredItems];
 			this.totalPagar = 0;
 			this.productosMostrar.forEach(producto => {
 				this.totalPagar += producto.total;
 			});
+			console.log(filteredItems)
 			this.enumerarProductos();
-		}, 400);
+
 	}
 
-	calcularProductoActual() {
-		let _precio_total = Number(this.cantidad) * Number(this.precio);
+	calcularProductoActual():Promise<number> {
+
+		return new Promise((resolve,err)=>{
+			let _precio_total = Number(this.cantidad) * Number(this.precio);
 		this.productoActual.total = _precio_total;
+		resolve(_precio_total)
+             
+		})
+		
 	}
 
 	async eventoEnter(e: any, input: String) {
@@ -401,25 +573,29 @@ export class TiendaComponent implements OnInit {
 			}, 1000);
 		}
 	}
-
+	
 	respuestaProductos(info: any, estado: Boolean) {
+		console.log("entro a respuesta productos")
 		if (estado) {
+			console.log(info)
 			this.productos = info.mensajePeticion.map((producto: any) => {
-				let totalCantidad = producto.cantidad + producto.cantidad2 + producto.cantidad3 + producto.cantidad4 + producto.cantidad5 + producto.cantidad6;
+				
 				return <PRODUCTO>{
 					id: producto.codigo,
 					nombre: producto.descripcion,
 					codigo: producto.codigo,
 					codigoContable: producto.codigoContable,
 					referencia: producto.referencia,
-					cantidad: totalCantidad,
 					precio: producto.precio1,
 					total: 0,
 					producto: producto,
 				}
 			});
-			this.inDescripcion.openPanel();
+		
+			
 			this.opcionesFiltradas = this.productos
+			//this.inDescripcion.openPanel();
+			
 		} else {
 			const data: DatosAlerta = {
 				titulo: 'ERROR',
@@ -439,7 +615,18 @@ export class TiendaComponent implements OnInit {
 			duration: 2000,
 		});
 	}
-
+	autocompletarinputclient(valor: string) {
+		console.log(valor)
+		this.socketproduct.obtenerInfo('terceros','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"nombres",consulta:"TERCEROS",canalserver:"terceros",datoCondicion:valor}).subscribe(
+			(dato)=>{
+				console.log("entroalsubcribe")
+				
+				if(JSON.parse(dato).estadoPeticion==="SUCCESS"){
+					this.clientes=JSON.parse(dato).mensajePeticion
+				}
+			}
+		)
+	  }
 	buscarClientes() {
 		this.clientes = [];
 		this.clientesIniciales.forEach(cliente => {
@@ -448,8 +635,7 @@ export class TiendaComponent implements OnInit {
 			}
 		});
 	}
-
-	crearPedido() {
+     crearPedido() {
 		console.log(this.clienteSeleccionado.codigo);
 		if (this.productosMostrar.length <= 0) {
 			const data: DatosAlerta = {
@@ -488,7 +674,17 @@ export class TiendaComponent implements OnInit {
 			this.openDialogAlerta(data);
 			return;
 		} else {
+		/*const respon: DatosAlerta = {
+				titulo: 'realizado',
+				mensaje: 'pedido creado ',
+				boton: "OK",
+				tipo: "info",
+				input: false
+			}
+			this.openDialogAlerta(respon);*/
 			this.openDialogFactura();
+		
+			
 		}
 	}
 
@@ -501,27 +697,45 @@ export class TiendaComponent implements OnInit {
 					codigoProducto: producto.codigo,
 					valor: producto.precio,
 					cantidad: producto.cantidad,
-					codigoUsuario: this.sedeSeleccionada.usuario.codigo
+					codigoUsuario: this.clienteSeleccionado.codigo
 				}
 			})
 			let pedido = new DatosPedido(
 				this.clienteSeleccionado.codigo,
 				fechaActual.diaActual,
 				fechaActual.horaActual,
-				this.sedeSeleccionada.usuario.codigo,
+				this.clienteSeleccionado.codigo,
 				this.totalPagar
 			)
-			this.socketServices.crearPedido(
-				this.sedeSeleccionada.po.canalsocket,
-				this.sedeSeleccionada.usuario.usuario,
-				{
+
+			this.socketproduct.crearpedido(
+				"pedido",
+				"pazzioli-pos-3",
+				{metodo:"CREAR",condicion:"nombres",consulta:"PEDIDO",canalserver:"pedido",datos:{
 					pedido: pedido.datos,
 					itemsPedido: itemsPedidos,
 					cliente: this.clienteSeleccionado,
 					pdf: this.pdf,
-					modificaInventario: this.sedeSeleccionada.po.empresa_email_pos[0].empresa_email_config.modificaInventario
+					modificaInventario: this.clienteSeleccionado.email
 					//aqui iria la variable de modificacion de inventario
-				}
+				},sede:localStorage.getItem("sede")},
+				
+				
+			).subscribe(
+				(inf)=>this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')}).subscribe(
+							(data)=>{
+								if(inf.estadoPeticion==="SUCCESS"){
+                                if(data.estadoPeticion==="SUCCESS"){
+								
+								  let info=JSON.parse(data)
+								
+									this.respuestaProductos(info,true)
+								
+								
+								}
+							}
+							}
+						  )
 			)
 		} catch (error) {
 			console.log(error);
@@ -563,23 +777,32 @@ export class TiendaComponent implements OnInit {
 	}
 
 	openDialogSedes() {
+		console.log("productos"+this.productos)
 		const dialogRef = this.dialog.open(DialogSedes, {
-			data: this.app.sedes,
+			data:this.sedelist,
 			disableClose: true
-		});
+		});//
 
 		dialogRef.afterClosed().subscribe(result => {
 			this.sedeSeleccionada = result;
 			console.log(this.sedeSeleccionada);
-			this.socketServices.escucha = this.socketServices.obtenerInfo(this.sedeSeleccionada.usuario.usuario);
-			this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+			localStorage.setItem('sede',this.sedeSeleccionada.almacen)
+			this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:this.sedeSeleccionada.almacen});
+			//this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
 			this.socketServices.escucha.subscribe(
 				(info: any) => {
+					this.loader=false
+					
+                   info=JSON.parse(info)
 					switch (info.tipoConsulta) {
 						case 'PRODUCTO':
+							
 							if (info.estadoPeticion === 'SUCCESS') {
+								console.log("entro aqui success")
+								
 								this.respuestaProductos(info, true);
 							} else {
+								console.log("entro aqui en el error")
 								this.respuestaProductos(info, false);
 							}
 							break;
@@ -618,7 +841,7 @@ export class TiendaComponent implements OnInit {
 				console.log(resultado);
 				if (resultado!= false && data.tipo=='info') {
 				this.clienteSeleccionado.email = resultado==true?null:resultado;
-				this.openDialogFactura();
+				//this.openDialogFactura();
 				console.log(resultado);
 			}
 			this.loader = false;
@@ -626,20 +849,23 @@ export class TiendaComponent implements OnInit {
 	}
 
 	openDialogFactura() {
-		this.loader = true;
-		let elementos = document.getElementsByClassName('cdk-overlay-container') as HTMLCollectionOf<HTMLElement>;
-		elementos[0].style.zIndex = "0";
+		this.loader = true
 		const dialogRef = this.dialog.open(DialogFactura, {
 			data: {
 				productos: this.productosMostrar,
 				cliente: this.clienteSeleccionado,
 				total: this.totalPagar,
-				infoEmpresa: this.sedeSeleccionada.po.empresa_email_pos[0].empresa_email_config
+				infoEmpresa: this.clienteSeleccionado
 			},
-			disableClose: true,
+
+			disableClose: false,
 			maxWidth: '100vw'
 		});
-
+		
+		
+		let elementos = document.getElementsByClassName('cdk-overlay-container') as HTMLCollectionOf<HTMLElement>;
+		console.log("conponent",document.getElementsByClassName('cdk-overlay-container'))
+		//elementos[0].style.zIndex = "0";
 		dialogRef.afterClosed().subscribe(resultado => {
 			// PDF CONVERTIDO A BASE64
 			this.pdf = resultado;
@@ -650,6 +876,7 @@ export class TiendaComponent implements OnInit {
 	}
 }
 
+/*-----------------------clases_componentes_dialogs------------------------------------------------------------  */
 @Component({
 	selector: 'dialog-sedes',
 	templateUrl: 'dialogs/dialog-sedes.html',
@@ -671,6 +898,10 @@ export class DialogSedes {
 
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable'
+import { promise } from 'protractor';
+import { resolve } from 'dns';
+import { MatButtonModule } from '@angular/material/button';
+import { Console } from 'console';
 
 @Component({
 	selector: 'dialog-factura',
@@ -686,13 +917,14 @@ export class DialogFactura {
 	archivoBase64: any = null
 	infoEmpresa: any = {}
 
-	constructor(public dialogRef: MatDialogRef<DialogFactura>, @Inject(MAT_DIALOG_DATA) public data: any) {
+	constructor(public dialogRef: MatDialogRef<DialogFactura>, @Inject(MAT_DIALOG_DATA) public data: any,private servisocket:Socket_producto) {
 
 		this.dataSource = data.productos;
 		this.clienteSeleccionado = data.cliente;
 		this.total = data.total;
 		this.infoEmpresa = data.infoEmpresa;
-
+        
+		console.log("constructor tienda")
 		setTimeout(() => {
 
 			let doc = new jsPDF('p', 'px', 'letter'); // A4 TAMAÑO
@@ -807,10 +1039,14 @@ export class DialogFactura {
 			//doc.save('MYPdf.pdf'); // PDF GENERADO
 			this.archivoBase64 = doc.output('datauristring');
 			this.dialogRef.close(this.archivoBase64);
-		}, 50);
+		}, 50000);
 	}
 
 	onNoClick(e: any): void {
 		this.dialogRef.close();
 	}
 }
+
+
+
+

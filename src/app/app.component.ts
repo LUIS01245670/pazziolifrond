@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { CryptService } from 'src/services/crypt/crypt.service';
 import { SocketService } from 'src/services/socket/socket.service';
 import { DatosAlerta, DialogoAlerta } from './angular-material/alerta';
+import { Socket_producto } from 'src/services/socket/socket.producto.service.ts.service';
 
 @Component({
   selector: 'app-root',
@@ -17,7 +18,7 @@ export class AppComponent {
   public sedes: any;
   public terceroSeleccionado: any;
 
-  constructor(private router: Router, private socketService: SocketService, public dialog: MatDialog, private crypt: CryptService) {
+  constructor(private router: Router, private socketService: SocketService, public dialog: MatDialog, private crypt: CryptService,private socketproduct:Socket_producto) {
     router.events.subscribe((value) => {
       // console.log('current route: ', router.url.toString());
       if (router.url.toString().includes('admin')) {
@@ -27,6 +28,7 @@ export class AppComponent {
       }
     });
     this.socketService.conectar();
+    this.socketproduct.conectar();
     this.router.navigate(['auth/login']);
   }
 
