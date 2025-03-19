@@ -141,7 +141,7 @@ button[pedido] {
 }
 
 #p_actual {
-  height: 85px !important;
+  height:100px ;
 }
 
 .edit-remove {
@@ -153,3 +153,49 @@ button[pedido] {
   height: fit-content;
   margin: auto;
 }
+
+
+@media(max-width:970px){
+  .col-4{
+    flex:0 0 60%;
+    max-width:40%;
+
+
+  }
+  .prod_card{
+    position:absolute;
+  
+  }
+
+  #p_actual {
+    height:100px;
+  }
+
+  .vertical .selfScroll{
+    overflow-x: auto;
+  }
+
+ 
+}
+
+@media(max-width:663px){
+ 
+  .row-pro{
+    flex-direction: column;
+  }
+  .prod_card{
+    position:absolute;
+    top:calc(100vw-300px);
+
+
+  }
+
+  #p_actual {
+    height:200px;
+  }
+}
+
+.col-4-pro{
+  display: flex;
+}
+

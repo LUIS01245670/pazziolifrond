@@ -19,40 +19,10 @@ export class AppComponent {
   public terceroSeleccionado: any;
 
   constructor(private router: Router, private socketService: SocketService, public dialog: MatDialog, private crypt: CryptService,private socketproduct:Socket_producto) {
-    router.events.subscribe((value) => {
-      // console.log('current route: ', router.url.toString());
-      if (router.url.toString().includes('admin')) {
-        this.showToolbar = true;
-      } else {
-        this.showToolbar = false;
-      }
-    });
-    this.socketService.conectar();
-    this.socketproduct.conectar();
-    this.router.navigate(['auth/login']);
+   
   }
 
   salir() {
-    const data: DatosAlerta = {
-      titulo: 'ATENCIÓN',
-      mensaje: '¿Desea salir?',
-      boton: "SI",
-      tipo: "question",
-      boton1: "NO",
-      input: false,
-    }
-    const dialogRef = this.dialog.open(DialogoAlerta, {
-      data: data,
-      disableClose: true
-    });
-    dialogRef.afterClosed().subscribe(resultado => {
-      console.log(resultado);
-      if (resultado == true) {
-        localStorage.clear();
-        this.router.navigate(['']);
-        this.crypt.resetPassword();
-        window.location.reload();
-      }
-    });
+    
   }
 }

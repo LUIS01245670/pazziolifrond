@@ -9,6 +9,7 @@ import { DialogSedes, DialogFactura } from './plantillas/administracion/componen
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogoAlerta } from './angular-material/alerta';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { DialogoAlerta } from './angular-material/alerta';
   ],
   exports:[
     MatAutocompleteModule,
+    HttpClientModule
   ],
   imports: [
     BrowserModule,
@@ -27,6 +29,7 @@ import { DialogoAlerta } from './angular-material/alerta';
     MaterialModule,
     MatAutocompleteModule,
     MatDialogModule,
+    HttpClientModule
   ],
   providers: [],
   entryComponents: [

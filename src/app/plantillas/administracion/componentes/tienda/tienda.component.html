@@ -6,7 +6,7 @@
 
 <div class="row loader-content" [class.hidden]="loader">
   <!-- CLIENTES -->
-  <div class="col-12 col-sm-10 col-md-6 col-lg-4 mx-auto">
+  <div class="col-12 col-sm-10 col-md-6 col-lg-4 mx-auto" >
     <mat-card class="search-card">
       <mat-card-header class="search">
         <mat-card-title class="m-0">Clientes</mat-card-title>
@@ -67,7 +67,7 @@
   </div>
 
   <!-- PRODUCTOS -->
-  <div class="col-12 col-sm-12-col-md-6 col-lg-8">
+  <div class="col-12 col-sm-12-col-md-6 col-lg-8"  >
     <mat-card class="search-card">
       <mat-card-header class="search">
         <mat-card-title class="m-0">Productos</mat-card-title>
@@ -79,10 +79,10 @@
               <input matInput placeholder="" [formControl]="buscarDescripcion" [matAutocomplete]="auto"
                 #trigger="matAutocompleteTrigger" (keyup)="buscarProductos($event,'descripcion')"
                 (click)="abrirpanel()" id="descripcion" #descripcion  />
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn" class="mi-autocomplete-panel">
                 <virtual-scroller #scroll_prods [items]="opcionesFiltradas" style="height: 246px">
                   <mat-option *ngFor="let option of scroll_prods.viewPortItems" (keyup.enter)="elegirCantidad(option)"
-                    (click)="elegirCantidad(option)" [value]="option">
+                    (click)="elegirCantidad(option)" [value]="option" class="desplegable">
                     {{ option.nombre }}
                   </mat-option>
                 </virtual-scroller>
@@ -94,11 +94,11 @@
             <mat-form-field appearance="fill" search br-r0 style="border-right: solid 1px #0000002e;">
               <mat-label>Referencia</mat-label>
               <input matInput placeholder="" [(ngModel)]="referencia" autocomplete="off"
-                (keyup)="eventoEnter($event, 'referencia')"  [matAutocomplete]="ref" id="referencia"/>
-                <mat-autocomplete #ref="matAutocomplete" [displayWith]="displayFn">
+              (keyup)="buscarProductos($event,'descripcion')" [matAutocomplete]="ref" id="referencia"/>
+                <mat-autocomplete #ref="matAutocomplete"  >
                   <virtual-scroller #scroll_prod [items]="opcionesFiltradas" style="height: 246px">
-                    <mat-option *ngFor="let option of scroll_prod.viewPortItems" (keyup.enter)="elegirCantidad(option)"
-                      (click)="elegirCantidad(option)" [value]="option.referencia">
+              <mat-option *ngFor="let option of scroll_prod.viewPortItems" (keyup.enter)="elegirreferencia(option)"
+                      (click)="elegirreferencia(option)" [value]="option.referencia">
                       {{option.referencia}}
                     </mat-option>
                   </virtual-scroller>
@@ -135,8 +135,8 @@
           <mat-icon>add</mat-icon>
         </button>
       </mat-card-header>
-      <mat-card-content class="overflow-content position-fixed">
-        <mat-card class="b-primary icon-card prod_card" id="p_actual">
+      <mat-card-content class="overflow-content" >
+        <mat-card class="b-primary icon-card prod_card " id="p_actual" >
           <mat-card-header style="border: none !important">
             <div mat-card-avatar>
               <mat-icon class="head-icon"> shopping_cart </mat-icon>
@@ -146,7 +146,7 @@
               }}</mat-card-title>
             <!-- <div class="separator"></div> -->
             <mat-card-subtitle class="client-info" style="font-size: 15px !important;">
-              <div class="row">
+              <div class="row row-pro">
                 <div class="col-6 p-0">
                   <b>Presentacion:</b> {{productoActual.producto.presentacion? productoActual.producto.presentacion:
                   ''}}
@@ -159,15 +159,19 @@
               </div>
             </mat-card-subtitle>
             <mat-card-subtitle class="client-info" style="margin: 0 !important;">
-              <div class="row">
-                <div class="col-4 p-0">
+              <div class="row row-pro">
+
+                <div class="col-4 col-4-pro p-0" >
+                  <b>Cantidaddisponible: </b>{{cantidadactual}}
+                </div>
+                <div class="col-4 col-4-pro p-0">
                   <b>Cantidad: </b>{{ cantidad }}
                 </div>
-                <div class="col-4 p-0">
+                <div class="col-4 col-4-pro p-0">
                   <b>Precio: </b>${{precio.toLocaleString("de-DE")}}
                 </div>
-                <div class="col-4 p-0">
-                  <b>Total: </b>${{ (cantidad * precio).toLocaleString("de-DE") }}
+                <div class="col-4 col-4-pro p-0">
+                  <b>Total:</b>${{ (cantidad * precio).toLocaleString("de-DE") }}
                 </div>
               </div>
             </mat-card-subtitle>
@@ -182,7 +186,7 @@
           <!-- LISTA PRODUCTOS -->
           <virtual-scroller #scroll_productosMostrar [items]="productosMostrar">
             <mat-list-item *ngFor="let _producto of scroll_productosMostrar.viewPortItems" [id]="'p_' + _producto.id" (click)="seleccionaritem(_producto)" [class.active_product]="codigoitemseled ===_producto.codigo">
-              <div class="row" style="width: 100%;"   >
+              <div class="row row-list-product" style="width: 100%;"   >
                 <div mat-line class="col-12 p-0">
                   <b># {{_producto.numero}} - {{ _producto.nombre }}</b>
                 </div>
@@ -226,7 +230,7 @@
           </virtual-scroller>
         </mat-list>
       </mat-card-content>
-      <mat-card-actions class="prod-actions">
+      <mat-card-actions class="prod-actions" >
         <!-- LIMPIAR FORMULARIO -->
         <button mat-fab color="warn" class="mr-3" (click)="confirmDeleteAll()">
           <mat-icon>delete_forever</mat-icon>

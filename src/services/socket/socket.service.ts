@@ -23,12 +23,12 @@ export class SocketService {
   callComponentMethod() {
     this.componentMethodCallSource.next({algo:'por aqui paso algo'});
   }
-  public conectar() {
+  public conectar(token:any) {
     // this.socket = io("http://52.86.140.114:3000");
-    this.socket = io("http://localhost:3000", { transports: ['websocket'] });
+    this.socket = io("http://localhost:3000", { transports: ['websocket'] , auth: { token }});
     // this.socket = io("localhost:3000");
     this.socket.on("connect", () => {
-    ///  console.log("✅ Conectado al servidor con ID:", this.socket.id);
+     console.log("✅ Conectado al servidor con ID:", this.socket.id);
     });
   
     this.socket.on("connect_error", (err: any) => {

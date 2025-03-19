@@ -28,6 +28,7 @@ export interface PRODUCTO {
 	precio: number;
 	total: number;
 	producto: any;
+	[key: string]: any;  
 }
 @Component({
 	selector: 'app-tienda',
@@ -104,6 +105,7 @@ export class TiendaComponent implements OnInit {
 	productosMostrar: PRODUCTO[] = [];
 
 	buscarDescripcion = new FormControl('');
+	
 	buscarCliente: string = ''
 	opcionesFiltradas: any[] = [];
 	clienteSeleccionado = {
@@ -129,11 +131,11 @@ export class TiendaComponent implements OnInit {
 		total: 0,
 		producto: {},
 	};
-
+    cantidadactual:number=0
 	cantidad: number = 0;
 	precio: number = 0;
 	codigo: String = "";
-	referencia: String = "";
+	referencia:String ="";
 	totalPagar: number = 0;
 
 	suscripcionSocket!: Subscription;
@@ -243,15 +245,27 @@ export class TiendaComponent implements OnInit {
 		if (this.productos.length > 0) {
 			console.log("productos rellenos")
 			let val = '';
+			console.log(this.buscarDescripcion.value)
 			if (this.buscarDescripcion.value) {
 				val = this.buscarDescripcion.value.toString().toLowerCase();
-			}
+				this.opcionesFiltradas = [];
+				this.productos.forEach((_prod) => {
+					if (_prod.nombre.toString().toLowerCase().includes(val)) {
+						this.opcionesFiltradas.push(_prod);
+					}
+				});
+			}else{
+                  
+				val = this.referencia.toString().toLowerCase();
 			this.opcionesFiltradas = [];
-			this.productos.forEach((_prod) => {
-				if (_prod.nombre.toString().toLowerCase().includes(val)) {
-					this.opcionesFiltradas.push(_prod);
-				}
-			});
+				this.productos.forEach((_prod) => {
+					if (_prod.referencia.toString().toLowerCase().includes(val)) {
+						this.opcionesFiltradas.push(_prod);
+					}
+				});
+			}
+			
+		
 			if (key.keyCode == 13) {
 				console.log("diste enter")
 				this.elegirCantidad(this.buscarDescripcion.value)
@@ -280,7 +294,7 @@ export class TiendaComponent implements OnInit {
 			producto: {},
 		};
 		this.codigo = "";
-		this.referencia = "";
+		this.referencia=''
 		this.cantidad = 0;
 		this.precio = 0;
 		this.buscarDescripcion.patchValue('');
@@ -297,20 +311,23 @@ export class TiendaComponent implements OnInit {
 	}
 
 	elegirCantidad(_prod: any) {
-		 console.log(_prod)
+		
 		if (typeof _prod == 'object') {
 			
 			if (this.buscarDescripcion.value) {
+				console.log(_prod)
 				this.productoActual = { numero: null, ..._prod };
 				this.precio = this.productoActual.precio;
 				document.getElementById('p_actual')?.classList.add('active');
 				this.cantidad = 1;
 				this.codigo=this.productoActual.codigo
 				this.referencia=this.productoActual.referencia
-
-				
+                this.cantidadactual=this.productoActual["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]
+				console.log(this.productoActual) 
+				  console.log(this.productoActual[`cantidad${localStorage.getItem("sede")?.slice(-1)}`])
 				document.getElementById('cantidad')?.focus();
 			} else if (this.productos.length > 0 ) {
+				console.log("antro en esto")
 				this.productoActual = this.productos[0];
 				this.precio = this.productoActual.precio;
 				document.getElementById('p_actual')?.classList.add('active');
@@ -321,6 +338,26 @@ export class TiendaComponent implements OnInit {
 				this.inCodigo.nativeElement.focus();
 			}
 		}
+	}
+	displayrefer(_prod: PRODUCTO){
+	
+		return _prod && _prod.referencia ? _prod.referencia : '';
+	}
+	elegirreferencia(_prod: any) {
+		this.productoActual = { numero: null, ..._prod };
+				this.precio = this.productoActual.precio;
+				document.getElementById('p_actual')?.classList.add('active');
+				this.cantidad = 1;
+				this.referencia=this.productoActual.referencia
+				this.codigo=this.productoActual.codigo
+				this.buscarDescripcion.setValue(this.productoActual);
+
+				
+				
+			
+				
+
+
 	}
 
 	confirmDeleteAll() {

@@ -4,6 +4,7 @@ import { InicioSesionComponent } from './componentes/inicio-sesion/inicio-sesion
 import { RouterModule } from '@angular/router';
 import { AuthRoutes } from './autenticacion-routing.module';
 import { MaterialModule } from 'src/app/angular-material/angular-material.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [InicioSesionComponent],
