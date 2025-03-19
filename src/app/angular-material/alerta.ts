@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /**
@@ -86,14 +86,14 @@ export class DialogoAlerta {
     type: string = 'number';
     inputIcon: string = 'credit_card';
     inputText: string = 'Total a ingresar'
-    valorInput: FormControl;
+    valorInput: UntypedFormControl;
 
 
     constructor(
         public dialogRef: MatDialogRef<DialogoAlerta>,
         @Inject(MAT_DIALOG_DATA) public data: DatosAlerta
     ) {
-        this.valorInput = new FormControl('',[
+        this.valorInput = new UntypedFormControl('',[
             Validators.pattern("^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$")
         ]);
 

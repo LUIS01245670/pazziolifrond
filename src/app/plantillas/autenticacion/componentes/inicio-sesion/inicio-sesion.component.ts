@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -18,8 +18,8 @@ import { environment } from 'src/environments/environment';
 })
 export class InicioSesionComponent implements OnInit {
   title: String = "";
-  inputUsuario: FormControl;
-  inputdocumento: FormControl;
+  inputUsuario: UntypedFormControl;
+  inputdocumento: UntypedFormControl;
   loader: boolean = false;
 
   @ViewChild('inUsuario') inUsuario!: ElementRef;
@@ -28,10 +28,10 @@ export class InicioSesionComponent implements OnInit {
   suscripcionSocket!: Subscription;
 
   constructor(private cookieService: CookieService,private socketprodu:Socket_producto,private router: Router, private socketServices: SocketService, private app: AppComponent, private dialog: MatDialog, private crypt: CryptService,private serviauth:AuthService) {
-    this.inputUsuario = new FormControl('', [
+    this.inputUsuario = new UntypedFormControl('', [
       Validators.required
     ]);
-    this.inputdocumento = new FormControl('', [
+    this.inputdocumento = new UntypedFormControl('', [
       Validators.required
     ]);
 

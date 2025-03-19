@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { FormControl, Validators } from '@angular/forms';
+import { UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Subscription } from 'rxjs';
@@ -104,7 +104,7 @@ export class TiendaComponent implements OnInit {
     sedelist:DialogSedes[]=[]
 	productosMostrar: PRODUCTO[] = [];
 
-	buscarDescripcion = new FormControl('');
+	buscarDescripcion = new UntypedFormControl('');
 	
 	buscarCliente: string = ''
 	opcionesFiltradas: any[] = [];
@@ -919,10 +919,10 @@ export class TiendaComponent implements OnInit {
 	templateUrl: 'dialogs/dialog-sedes.html',
 })
 export class DialogSedes {
-	selectSedes: FormControl;
+	selectSedes: UntypedFormControl;
 
 	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>) {
-		this.selectSedes = new FormControl('', [
+		this.selectSedes = new UntypedFormControl('', [
 			Validators.required
 		]);
 	}
