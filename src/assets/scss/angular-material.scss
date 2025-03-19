@@ -1,11 +1,11 @@
 // Import library functions for theme creation.
-@import "~@angular/material/theming";
+@use '~@angular/material' as mat;
 
 // Define your application's custom theme.
-$primary: mat-palette($mat-indigo, 600);
-$accent: mat-palette($mat-green, 400);
-$warn: mat-palette($mat-red, 400);
-$theme: mat-light-theme(
+$primary: mat.define-palette(mat.$indigo-palette, 600);
+$accent: mat.define-palette(mat.$green-palette, 400);
+$warn: mat.define-palette(mat.$red-palette, 400);
+$theme: mat.define-light-theme(
   (
     color: (
       primary: $primary,
@@ -16,17 +16,17 @@ $theme: mat-light-theme(
 );
 
 // Include theme styles for Angular Material components.
-@include angular-material-theme($theme);
+@include mat.all-component-themes($theme);
 
 .b-primary {
-  background-color: mat-color($primary);
+  background-color: mat.get-color-from-palette($primary);
   * {
     color: white !important;
   }
 }
 
 .c-primary {
-  color: mat-color($primary);
+  color: mat.get-color-from-palette($primary);
 }
 
 .bold {
@@ -37,37 +37,37 @@ $theme: mat-light-theme(
 .mat-list-base .mat-list-option .mat-list-icon {
   height: 35px !important;
   font-size: 35px !important;
-  color: mat-color($primary);
+  color: mat.get-color-from-palette($primary);
 }
 
 .b-accent {
-  background-color: mat-color($accent);
+  background-color: mat.get-color-from-palette($accent);
   * {
     color: white !important;
   }
 }
 
 .c-accent {
-  color: mat-color($accent);
+  color: mat.get-color-from-palette($accent);
 }
 
 .b-warn {
-  background-color: mat-color($warn);
+  background-color: mat.get-color-from-palette($warn);
   * {
     color: white !important;
   }
 }
 
 .c-warn {
-  color: mat-color($warn);
+  color: mat.get-color-from-palette($warn);
 }
 
 .mat-flat-button.mat-primary,
 .mat-raised-button.mat-primary,
 .mat-fab.mat-primary,
 .mat-mini-fab.mat-primary {
-  background-color: mat-color($primary, 100) !important;
-  color: mat-color($primary, 700) !important;
+  background-color: mat.get-color-from-palette($primary, 100) !important;
+  color: mat.get-color-from-palette($primary, 700) !important;
   border-radius: 300px !important;
 }
 
@@ -75,8 +75,8 @@ $theme: mat-light-theme(
 .mat-raised-button.mat-accent,
 .mat-fab.mat-accent,
 .mat-mini-fab.mat-accent {
-  background-color: mat-color($accent, 100) !important;
-  color: mat-color($accent, 700) !important;
+  background-color: mat.get-color-from-palette($accent, 100) !important;
+  color: mat.get-color-from-palette($accent, 700) !important;
   border-radius: 300px !important;
 }
 
@@ -84,8 +84,8 @@ $theme: mat-light-theme(
 .mat-raised-button.mat-warn,
 .mat-fab.mat-warn,
 .mat-mini-fab.mat-warn {
-  background-color: mat-color($warn, 100) !important;
-  color: mat-color($warn, 700) !important;
+  background-color: mat.get-color-from-palette($warn, 100) !important;
+  color: mat.get-color-from-palette($warn, 700) !important;
   border-radius: 300px !important;
 }
 
@@ -339,11 +339,11 @@ button[full-button] {
 }
 
 .mat-list-base .mat-list-item.deleted * {
-  color: mat-color($warn);
+  color: mat.get-color-from-palette($warn);
 }
 
 .cancel * {
-  color: mat-color($warn) !important;
+  color: mat.get-color-from-palette($warn) !important;
 }
 
 .mat-form-field-appearance-fill[br-l0] .mat-form-field-flex {
