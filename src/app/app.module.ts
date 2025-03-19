@@ -12,30 +12,26 @@ import { DialogoAlerta } from './angular-material/alerta';
 import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    DialogSedes,
-    DialogoAlerta,
-    DialogFactura,
-  ],
-  exports:[
-    MatAutocompleteModule,
-    HttpClientModule
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    MaterialModule,
-    MatAutocompleteModule,
-    MatDialogModule,
-    HttpClientModule
-  ],
-  providers: [],
-  entryComponents: [
-    DialogoAlerta,
-    DialogFactura,
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        DialogSedes,
+        DialogoAlerta,
+        DialogFactura,
+    ],
+    exports: [
+        MatAutocompleteModule,
+        HttpClientModule
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        MaterialModule,
+        MatAutocompleteModule,
+        MatDialogModule,
+        HttpClientModule
+    ],
+    providers: [],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }
