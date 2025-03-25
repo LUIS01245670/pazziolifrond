@@ -28,6 +28,7 @@ export interface PRODUCTO {
 	precio: number;
 	total: number;
 	producto: any;
+	codigobarra:string;
 	[key: string]: any;  
 }
 @Component({
@@ -126,6 +127,7 @@ export class TiendaComponent implements OnInit {
 		codigo: '000',
 		codigoContable: '000',
 		referencia: '000',
+		codigobarra:'0000',
 		cantidad: 0,
 		precio: 0,
 		total: 0,
@@ -156,32 +158,47 @@ export class TiendaComponent implements OnInit {
 		
 	
 	 }
-     ngOnDestroy() {
-		if (this.socketproduct) {
-		  this.subscri.unsubcribe()
-		  console.log("🛑 Se cerró la suscripción del socket.");
-		}
-	}
+     
 	ngOnInit(): void {
 		this.loader = true;
 		if(!localStorage.getItem('pedido') && localStorage.getItem('pedido')===null){
-			this.subscri=this.socketproduct.obtenerInfo('sedes','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"SEDES",canalserver:"sedes"}).subscribe(
-				(data) => {
-					const datos=JSON.parse(data)
-					
-					
-						this.sedelist = datos.mensajePeticion;
-						console.log(this.opcionesFiltradas)
-						this.openDialogSedes();
-						
-					  
-					
-				  },
-				  (error) => {
-					console.error("Error en socket:", error);
-				  }
-				
-			)
+			this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
+            //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+			this.socketServices.escucha.subscribe(
+				(info: any) => {
+					this.loader=false
+					this.totalPagar = 0;
+					this.productosMostrar.forEach(producto => {
+						this.totalPagar += producto.total;
+					});
+                   info=JSON.parse(info)
+					switch (info.tipoConsulta) {
+						case 'PRODUCTO':
+							
+							if (info.estadoPeticion === 'SUCCESS') {
+								console.log("entro aqui success")
+								
+								this.respuestaProductos(info, true);
+							} else {
+								console.log("entro aqui en el error")
+								this.respuestaProductos(info, false);
+							}
+							break;
+						case 'TERCERO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaTerceros(info);
+							}
+							break;
+						case 'PEDIDO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaPedidos(info);
+							}
+							break;
+						default:
+							break;
+					}
+				}
+			);
 		}else{
 		
 			this.productosMostrar=JSON.parse(localStorage.getItem('pedido')|| '{nombre:""}')
@@ -250,7 +267,8 @@ export class TiendaComponent implements OnInit {
 				val = this.buscarDescripcion.value.toString().toLowerCase();
 				this.opcionesFiltradas = [];
 				this.productos.forEach((_prod) => {
-					if (_prod.nombre.toString().toLowerCase().includes(val)) {
+					
+					if (_prod.nombre.toString().toLowerCase().includes(val) || _prod.referencia.toString().toLowerCase().includes(val) || _prod.codigobarra.toString().toLowerCase().includes(val)) {
 						this.opcionesFiltradas.push(_prod);
 					}
 				});
@@ -288,6 +306,7 @@ export class TiendaComponent implements OnInit {
 			codigo: '000',
 			codigoContable: '000',
 			referencia: '000',
+			codigobarra:"0000",
 			cantidad: 0,
 			precio: 0,
 			total: 0,
@@ -615,7 +634,7 @@ export class TiendaComponent implements OnInit {
 		console.log("entro a respuesta productos")
 		if (estado) {
 			console.log(info)
-			this.productos = info.mensajePeticion.map((producto: any) => {
+			this.productos =info.mensajePeticion.map((producto: any) => {
 				
 				return <PRODUCTO>{
 					id: producto.codigo,
@@ -624,6 +643,7 @@ export class TiendaComponent implements OnInit {
 					codigoContable: producto.codigoContable,
 					referencia: producto.referencia,
 					precio: producto.precio1,
+					codigobarra:producto.codigoBarra,
 					total: 0,
 					producto: producto,
 				}

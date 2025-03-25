@@ -2,19 +2,25 @@ import { Injectable } from '@angular/core';
 import {io} from 'socket.io-client';
 import { Observable, fromEvent, Subject, observable } from 'rxjs';
 import { SocketService } from './socket.service';
+interface token{
+  token:string
+
+}
 @Injectable({
   providedIn: 'root'
 })
+
 export class Socket_producto {
   public socket: any;
     public socketConexion!: Observable<any>;
     public socketEscucha: String = "DASHBOARD";  
    
    
-   public conectar(token:any) {
-
+   public conectar() {
+        
       // this.socket = io("http://52.86.140.114:3000");
-      this.socket = io("http://localhost:3000",{ transports: ['websocket'], auth: { token }});
+      
+      this.socket = io("https://tomas-pedidobackend.onrender.com",{ transports: ['websocket']});
       // this.socket = io("localhost:3000");
       this.socket.on("connect", () => {
         console.log("Conectado al servidor con I:", this.socket.id);

@@ -11,6 +11,7 @@ import { Socket_producto } from 'src/services/socket/socket.producto.service.ts.
 import { SocketService } from 'src/services/socket/socket.service';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from 'src/environments/environment';
+
 @Component({
   selector: 'app-inicio-sesion',
   templateUrl: './inicio-sesion.component.html',
@@ -27,7 +28,9 @@ export class InicioSesionComponent implements OnInit {
 
   suscripcionSocket!: Subscription;
 
-  constructor(private cookieService: CookieService,private socketprodu:Socket_producto,private router: Router, private socketServices: SocketService, private app: AppComponent, private dialog: MatDialog, private crypt: CryptService,private serviauth:AuthService) {
+  constructor(private socketprodu:Socket_producto,private router: Router, private socketServices: SocketService, private app: AppComponent, private dialog: MatDialog, private crypt: CryptService,private serviauth:AuthService
+    , private cookieservices:CookieService
+  ) {
     this.inputUsuario = new UntypedFormControl('', [
       Validators.required
     ]);
@@ -45,11 +48,24 @@ export class InicioSesionComponent implements OnInit {
   login(){
     console.log(this.inputUsuario.value)
     this.serviauth.login({ user:this.inputUsuario.value,documento:this.inputdocumento.value}).subscribe(
-      token=>{
-        console.log(token)
-        this.socketprodu.conectar(token) 
-        this.cookieService.set(environment.vendedor,token,1,'/')
-        this.router.navigate(['/admin/tienda'])
+      autenticado=>{
+       
+        this.socketprodu.conectar() 
+        console.log(autenticado.atenticado)
+      if(autenticado.atenticado){
+        const verifiacacookie =()=>{
+          if(this.cookieservices.get('connect.sid')){
+            this.router.navigateByUrl('/admin/tienda');
+          }else{
+            verifiacacookie()
+          }
+         
+      }
+     verifiacacookie()
+    
+         
+    }
+        
       }
 
       ,

@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AdministracionModule } from './plantillas/administracion/administracion.module';
 import { AutenticacionModule } from './plantillas/autenticacion/autenticacion.module';
+import { AuthGuard, Publicguards } from './guards/auth.guard';
 
 const routes: Routes = [
   {
@@ -11,11 +12,13 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    loadChildren: () => AdministracionModule,
+    canActivate:[AuthGuard],
+    loadChildren: () =>  import('./plantillas/administracion/administracion.module').then(m => m.AdministracionModule),
   },
   {
     path: 'auth',
-    loadChildren: () => AutenticacionModule,
+    canActivate:[Publicguards],
+    loadChildren: () => import('./plantillas/autenticacion/autenticacion.module').then(m => m.AutenticacionModule),
   },
 ];
 

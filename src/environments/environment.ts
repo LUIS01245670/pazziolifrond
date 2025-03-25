@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  vendedor:"token_vendedor"
+  vendedor:"token_vendedor",
+  api:"http://192.168.1.35:3000"
 };
 
 /*
