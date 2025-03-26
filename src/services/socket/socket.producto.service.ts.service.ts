@@ -14,7 +14,7 @@ export class Socket_producto {
   public socket: any;
     public socketConexion!: Observable<any>;
     public socketEscucha: String = "DASHBOARD";  
-   
+   public almacen:string=''
    
    public conectar() {
         

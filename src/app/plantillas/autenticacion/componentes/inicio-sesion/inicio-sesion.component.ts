@@ -50,25 +50,22 @@ export class InicioSesionComponent implements OnInit {
     this.serviauth.login({ user:this.inputUsuario.value,documento:this.inputdocumento.value}).subscribe(
       autenticado=>{
        
-        this.socketprodu.conectar() 
-        console.log(autenticado.atenticado)
+        
+        
       if(autenticado.atenticado){
-        const verifiacacookie =()=>{
-          if(this.cookieservices.get('connect.sid')){
-            this.router.navigateByUrl('/admin/tienda');
-          }else{
-            verifiacacookie()
-          }
-         
-      }
-     verifiacacookie()
+            this.socketprodu.conectar() 
+           //console.log(!this.cookieservices.get("connect.sid"))
+             this.router.navigateByUrl('admin/tienda')
+        
     
          
     }
+   
         
-      }
+      },
+     
 
-      ,
+      
       error=>console.log(error)
     );
   }

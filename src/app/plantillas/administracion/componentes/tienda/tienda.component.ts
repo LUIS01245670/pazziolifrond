@@ -147,6 +147,7 @@ export class TiendaComponent implements OnInit {
 	pdf: any;
 	enterPrecio: any = 0;
 	subscri:any
+	almacen:string=''
 	constructor(
 		private _snackBar: MatSnackBar,
 		private socketServices: SocketService,
@@ -155,7 +156,7 @@ export class TiendaComponent implements OnInit {
 		private socketproduct:Socket_producto
 	) {
 		
-		
+		this.almacen=this.socketproduct.almacen
 	
 	 }
      
@@ -200,7 +201,7 @@ export class TiendaComponent implements OnInit {
 				}
 			);
 		}else{
-		
+		    
 			this.productosMostrar=JSON.parse(localStorage.getItem('pedido')|| '{nombre:""}')
 
 		    this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
@@ -341,9 +342,9 @@ export class TiendaComponent implements OnInit {
 				this.cantidad = 1;
 				this.codigo=this.productoActual.codigo
 				this.referencia=this.productoActual.referencia
-                this.cantidadactual=this.productoActual["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]
+                this.cantidadactual=this.productoActual["producto"][`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`]
 				console.log(this.productoActual) 
-				  console.log(this.productoActual[`cantidad${localStorage.getItem("sede")?.slice(-1)}`])
+				  console.log(this.productoActual[`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`])
 				document.getElementById('cantidad')?.focus();
 			} else if (this.productos.length > 0 ) {
 				console.log("antro en esto")
@@ -464,11 +465,11 @@ export class TiendaComponent implements OnInit {
 						return option.codigo===this.productoActual.codigo
 						 })
                            console.log(this.opcionesFiltradas[options])
-						 if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<=0){
-							console.log(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`])
+						 if(this.opcionesFiltradas[options]["producto"][`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`]<=0){
+							console.log(this.opcionesFiltradas[options]["producto"][`cantidad${(Number(this.almacen.slice(-1))-1).toString()}`])
 							this.openSnackBar("este producto esta agotado")
 						 }else{
-						if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<this.productoActual.cantidad){
+						if(this.opcionesFiltradas[options]["producto"][`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`]<this.productoActual.cantidad){
 						  this.openSnackBar("cantidad no disponible")
 
 						}else{
@@ -514,7 +515,7 @@ export class TiendaComponent implements OnInit {
 				let index=this.productosMostrar.findIndex((pro)=>Number(pro.codigo)===this.codigoitemseled)
 				let options=this.opcionesFiltradas.findIndex((pro)=>Number(pro.codigo)===this.codigoitemseled )
 				console.log(this.productoActual.cantidad)
-				if(this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]<this.cantidad){
+				if(this.opcionesFiltradas[options]["producto"][`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`]<this.cantidad){
 					this.openSnackBar("cantidad no disponible")
 	
 				  }else{

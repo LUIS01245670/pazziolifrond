@@ -13,7 +13,8 @@ interface mensaje{
   message:string
 }
 interface respon{
-  response:boolean
+  response:boolean;
+  almacen?:string
 }
 @Injectable({
   providedIn: 'root'

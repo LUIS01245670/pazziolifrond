@@ -30,9 +30,9 @@ export class AuthGuard implements CanActivate {
      return this.serviauth.verificarvendedor().pipe(
         
         map(respon=> {
-          const toke:token | null= this.serviauth.gettoken()
+         
           if (respon?.response) {
-            console.log("nohay token")
+            this.socketproduct.almacen=respon.almacen ?? ''
              this.socketproduct.conectar()
             return true; 
           } else {
