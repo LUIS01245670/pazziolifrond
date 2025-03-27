@@ -32,7 +32,7 @@ export class AuthGuard implements CanActivate {
         map(respon=> {
          
           if (respon?.response) {
-            this.socketproduct.almacen=respon.almacen ?? ''
+          
              this.socketproduct.conectar()
             return true; 
           } else {

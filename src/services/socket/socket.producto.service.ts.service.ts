@@ -20,7 +20,7 @@ export class Socket_producto {
         
       // this.socket = io("http://52.86.140.114:3000");
       
-      this.socket = io("https://tomas-pedidobackend.onrender.com",{ transports: ['websocket']});
+      this.socket = io("http://localhost:3000",{ transports: ['websocket']});
       // this.socket = io("localhost:3000");
       this.socket.on("connect", () => {
         console.log("Conectado al servidor con I:", this.socket.id);

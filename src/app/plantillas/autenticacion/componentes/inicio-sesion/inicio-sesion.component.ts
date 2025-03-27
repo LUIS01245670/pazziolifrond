@@ -52,7 +52,7 @@ export class InicioSesionComponent implements OnInit {
        
         
         
-      if(autenticado.atenticado){
+      if(autenticado.autenticado){
             this.socketprodu.conectar() 
            //console.log(!this.cookieservices.get("connect.sid"))
              this.router.navigateByUrl('admin/tienda')

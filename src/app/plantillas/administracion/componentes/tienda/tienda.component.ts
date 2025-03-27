@@ -153,6 +153,7 @@ export class TiendaComponent implements OnInit {
 		private socketServices: SocketService,
 		private app: AppComponent,
 		public dialog: MatDialog,
+		private socketservidbs:serviciodb,
 		private socketproduct:Socket_producto
 	) {
 		
@@ -161,89 +162,26 @@ export class TiendaComponent implements OnInit {
 	 }
      
 	ngOnInit(): void {
-		this.loader = true;
-		if(!localStorage.getItem('pedido') && localStorage.getItem('pedido')===null){
-			this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
-            //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
-			this.socketServices.escucha.subscribe(
-				(info: any) => {
-					this.loader=false
-					this.totalPagar = 0;
-					this.productosMostrar.forEach(producto => {
-						this.totalPagar += producto.total;
-					});
-                   info=JSON.parse(info)
-					switch (info.tipoConsulta) {
-						case 'PRODUCTO':
-							
-							if (info.estadoPeticion === 'SUCCESS') {
-								console.log("entro aqui success")
-								
-								this.respuestaProductos(info, true);
-							} else {
-								console.log("entro aqui en el error")
-								this.respuestaProductos(info, false);
-							}
-							break;
-						case 'TERCERO':
-							if (info.estadoPeticion === 'SUCCESS') {
-								this.respuestaTerceros(info);
-							}
-							break;
-						case 'PEDIDO':
-							if (info.estadoPeticion === 'SUCCESS') {
-								this.respuestaPedidos(info);
-							}
-							break;
-						default:
-							break;
-					}
+		this.socketservidbs.tienesedeselccionada().subscribe(
+			datos=>{
+				if(datos.respose){
+					
+				this.socketservidbs.obtenerdbfiltradas().subscribe(  data=>{
+					const dialogRef=new this.dialog.open(DialogSedes,{
+						data:data
+					
+					})
+				  })
+                    
+						
+			  
+					
+				
+				}else{
+					console.log("no has seleccionado ningura oranizacion")
 				}
-			);
-		}else{
-		    
-			this.productosMostrar=JSON.parse(localStorage.getItem('pedido')|| '{nombre:""}')
-
-		    this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
-			//this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
-			this.socketServices.escucha.subscribe(
-				(info: any) => {
-					this.loader=false
-					this.totalPagar = 0;
-					this.productosMostrar.forEach(producto => {
-						this.totalPagar += producto.total;
-					});
-                   info=JSON.parse(info)
-					switch (info.tipoConsulta) {
-						case 'PRODUCTO':
-							
-							if (info.estadoPeticion === 'SUCCESS') {
-								console.log("entro aqui success")
-								
-								this.respuestaProductos(info, true);
-							} else {
-								console.log("entro aqui en el error")
-								this.respuestaProductos(info, false);
-							}
-							break;
-						case 'TERCERO':
-							if (info.estadoPeticion === 'SUCCESS') {
-								this.respuestaTerceros(info);
-							}
-							break;
-						case 'PEDIDO':
-							if (info.estadoPeticion === 'SUCCESS') {
-								this.respuestaPedidos(info);
-							}
-							break;
-						default:
-							break;
-					}
-				}
-			);
-			
-
-		}
+			}
+		)
 	
 		
 	}
@@ -834,8 +772,8 @@ export class TiendaComponent implements OnInit {
 		return { diaActual, horaActual }
 	}
 
-	openDialogSedes() {
-		console.log("productos"+this.productos)
+	openDialogorganizacion() {
+		
 		const dialogRef = this.dialog.open(DialogSedes, {
 			data:this.sedelist,
 			disableClose: true
@@ -942,7 +880,7 @@ export class TiendaComponent implements OnInit {
 export class DialogSedes {
 	selectSedes: UntypedFormControl;
 
-	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>) {
+	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data:Array<any>) {
 		this.selectSedes = new UntypedFormControl('', [
 			Validators.required
 		]);
@@ -960,6 +898,7 @@ import { promise } from 'protractor';
 import { resolve } from 'dns';
 import { MatButtonModule } from '@angular/material/button';
 import { Console } from 'console';
+import { serviciodb } from 'src/services/serviciosdbs/serviciodb.service';
 
 @Component({
 	selector: 'dialog-factura',
@@ -1104,6 +1043,8 @@ export class DialogFactura {
 		this.dialogRef.close();
 	}
 }
+
+
 
 
 
