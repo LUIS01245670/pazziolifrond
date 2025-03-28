@@ -164,21 +164,32 @@ export class TiendaComponent implements OnInit {
 	ngOnInit(): void {
 		this.socketservidbs.tienesedeselccionada().subscribe(
 			datos=>{
+			
 				if(datos.respose){
-					
-				this.socketservidbs.obtenerdbfiltradas().subscribe(  data=>{
-					const dialogRef=new this.dialog.open(DialogSedes,{
-						data:data
-					
-					})
-				  })
-                    
-						
-			  
-					
-				
+					this.loader=false
+					console.log(datos.db)
 				}else{
-					console.log("no has seleccionado ningura oranizacion")
+					this.loader=true
+					this.socketservidbs.obtenerdbfiltradas().subscribe(
+						datos=>{
+
+							
+							const dialogRef=this.dialog.open(DialogSedes,{
+								data:datos.opcionesdb
+							})
+
+							dialogRef.afterClosed().subscribe(
+								datos=>{
+									
+								}
+
+
+
+							)
+
+						}
+					)
+					
 				}
 			}
 		)
@@ -880,7 +891,7 @@ export class TiendaComponent implements OnInit {
 export class DialogSedes {
 	selectSedes: UntypedFormControl;
 
-	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data:Array<any>) {
+	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>) {
 		this.selectSedes = new UntypedFormControl('', [
 			Validators.required
 		]);
@@ -1043,8 +1054,6 @@ export class DialogFactura {
 		this.dialogRef.close();
 	}
 }
-
-
 
 
 

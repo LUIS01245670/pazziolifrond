@@ -3,8 +3,9 @@
   <mat-select [formControl]="selectSedes" (keydown)="onNoClick($event)">
     <ng-container *ngIf="data.length>0">
     <mat-option *ngFor="let local of data" [value]="local" [mat-dialog-close]="local" >
-      {{local.almacen===undefined ? 'Sin nombre':local.almacen}}
+      {{local}}
     </mat-option>
+    
   </ng-container>
   </mat-select>
 </mat-form-field>
