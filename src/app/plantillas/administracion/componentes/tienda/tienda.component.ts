@@ -148,6 +148,7 @@ export class TiendaComponent implements OnInit {
 	enterPrecio: any = 0;
 	subscri:any
 	almacen:string=''
+	basedatosactual:string=''
 	constructor(
 		private _snackBar: MatSnackBar,
 		private socketServices: SocketService,
@@ -175,12 +176,13 @@ export class TiendaComponent implements OnInit {
 
 							
 							const dialogRef=this.dialog.open(DialogSedes,{
+
 								data:datos.opcionesdb
 							})
 
 							dialogRef.afterClosed().subscribe(
 								datos=>{
-									
+									this.crearinstanciadb(datos)
 								}
 
 
@@ -195,6 +197,16 @@ export class TiendaComponent implements OnInit {
 		)
 	
 		
+	}
+
+	crearinstanciadb(pruebas:string){
+       this.socketservidbs.crearinstanciadb(pruebas).subscribe(
+		datos=>{
+			if(datos.response){
+				
+			}
+		}
+	   )
 	}
 
 	seleccionaritem(_producto:PRODUCTO){

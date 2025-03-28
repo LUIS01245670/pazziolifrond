@@ -5,6 +5,9 @@ import { environment } from 'src/environments/environment.prod';
 interface arrayempresas{
     opcionesdb:any[]
 }
+interface respuesta{
+    response:boolean
+}
 @Injectable({
   providedIn: 'root'
 })
@@ -23,4 +26,10 @@ export class serviciodb{
         return this.http.get(`${environment.api}/selectempresa`,{withCredentials:true})
     }
 
-}
+    crearinstanciadb(db:string):Observable<respuesta>{
+        return this.http.post<respuesta>(`${environment.api}/crearinstanciadb`,{db:db},{withCredentials:true})
+    }
+
+
+    }
+
