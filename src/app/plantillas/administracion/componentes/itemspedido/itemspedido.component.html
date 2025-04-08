@@ -1,0 +1,34 @@
+<div class="row">
+<table   cdk-table [dataSource]="data" class="col-12">
+    <!-- Position Column -->
+    <ng-container cdkColumnDef="nombre">
+      <th cdk-header-cell *cdkHeaderCellDef> nombre </th>
+      <td cdk-cell *cdkCellDef="let element"> {{element.nombre}} </td>
+    </ng-container>
+  
+    <!-- Name Column -->
+    <ng-container cdkColumnDef="codigoBarra">
+      <th cdk-header-cell *cdkHeaderCellDef> codigobarra</th>
+      <td cdk-cell *cdkCellDef="let element"> {{element.codigoBarra}} </td>
+    </ng-container>
+  
+
+    <ng-container cdkColumnDef="cantidad">
+        <th cdk-header-cell *cdkHeaderCellDef>cantidad</th>
+        <td cdk-cell *cdkCellDef="let element"> {{element.cantidad}} </td>
+      </ng-container>
+    
+    <!-- Weight Column -->
+    <ng-container cdkColumnDef="precio">
+      <th cdk-header-cell *cdkHeaderCellDef>precio</th>
+      <td cdk-cell *cdkCellDef="let element"> {{element.precio}} </td>
+    </ng-container>
+  
+   
+    <tr cdk-header-row *cdkHeaderRowDef="displayedColumns"></tr>
+    <tr cdk-row *cdkRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  <div class="col-12">
+    <span><b>total_general_venta:</b>{{total}}</span>
+  </div>
+</div>

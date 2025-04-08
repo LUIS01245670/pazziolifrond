@@ -1,5 +1,5 @@
 import { Component, ElementRef, Inject, OnInit, ViewChild } from '@angular/core';
-import { UntypedFormControl, Validators } from '@angular/forms';
+import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Subscription } from 'rxjs';
@@ -8,13 +8,17 @@ import { SocketService } from 'src/services/socket/socket.service';
 import { DatosAlerta, DialogoAlerta } from 'src/app/angular-material/alerta';
 import { DatosPedido } from 'src/app/modelos/datos-peticion copy';
 import { Socket_producto} from 'src/services/socket/socket.producto.service.ts.service';
+import {io} from 'socket.io-client';
+import { filter, take } from 'rxjs/operators';
 
 import {
 	MatSnackBar,
 	MatSnackBarRef,
   } from '@angular/material/snack-bar'; 
+
 export interface DialogData {
-	almacen:string;
+	identificacion:string,
+	base_datos:string
 }
 
 export interface PRODUCTO {
@@ -37,7 +41,7 @@ export interface PRODUCTO {
 	styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
-  
+     id_select:string='';
 	sedeSeleccionada: any;
 	terceroConsultado: any = null;
      codigoitemseled:number=0 
@@ -142,7 +146,7 @@ export class TiendaComponent implements OnInit {
 
 	suscripcionSocket!: Subscription;
 
-	loader: boolean = false;
+	loader: boolean = true;
 
 	pdf: any;
 	enterPrecio: any = 0;
@@ -155,20 +159,37 @@ export class TiendaComponent implements OnInit {
 		private app: AppComponent,
 		public dialog: MatDialog,
 		private socketservidbs:serviciodb,
-		private socketproduct:Socket_producto
+		private socketproduct:Socket_producto,
+		private router:Router
 	) {
 		
-		this.almacen=this.socketproduct.almacen
-	
+		
+	    console.log("almacen constructor",this.socketproduct.almacen)
 	 }
      
 	ngOnInit(): void {
+		
+	
+	       this.seleccionardb()
+		
+	}
+
+	seleccionardb(){
 		this.socketservidbs.tienesedeselccionada().subscribe(
 			datos=>{
+				console.log("entro aqui")
 			
 				if(datos.respose){
-					this.loader=false
-					console.log(datos.db)
+					this.loader=true
+					//take para obtener un unico valor del observable y no mantener la suscribcion activa
+					this.socketproduct.obteneralmacen().pipe(take(1)).subscribe(
+						datos=>{
+							this.almacen=datos.almacen
+					       this.iniciarprograma()
+						}
+					)
+					
+                   
 				}else{
 					this.loader=true
 					this.socketservidbs.obtenerdbfiltradas().subscribe(
@@ -177,14 +198,26 @@ export class TiendaComponent implements OnInit {
 							
 							const dialogRef=this.dialog.open(DialogSedes,{
 
-								data:datos.opcionesdb
+								data:datos.opcionesdb,
+								disableClose: true
 							})
 
 							dialogRef.afterClosed().subscribe(
-								datos=>{
-									this.crearinstanciadb(datos)
+								async (datos)=>{
+									 console.log(datos)
+							        if(datos.continuar){
+										console.log("continio aqui")
+										this.loader=false
+										window.location.reload();
+									}
+							
+									//this.crearinstanciadb(datos)
+								
+								
+                                 
 								}
 
+							
 
 
 							)
@@ -195,19 +228,108 @@ export class TiendaComponent implements OnInit {
 				}
 			}
 		)
-	
-		
 	}
 
+	
+    
 	crearinstanciadb(pruebas:string){
        this.socketservidbs.crearinstanciadb(pruebas).subscribe(
 		datos=>{
 			if(datos.response){
-				
+				window.location.reload()
+                
 			}
 		}
 	   )
 	}
+
+
+	iniciarprograma(){
+		console.log("entro aqui a iniciar el programa")
+        if(!localStorage.getItem('pedido') || localStorage.getItem('pedido')===null){
+			this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
+			//this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+			this.socketServices.escucha.subscribe(
+				(info: any) => {
+					this.loader=false
+					this.totalPagar = 0;
+					this.productosMostrar.forEach(producto => {
+						this.totalPagar += producto.total;
+					});
+				   info=JSON.parse(info)
+					switch (info.tipoConsulta) {
+						case 'PRODUCTO':
+							
+							if (info.estadoPeticion === 'SUCCESS') {
+								console.log("entro aqui success")
+								
+								this.respuestaProductos(info, true);
+							} else {
+								console.log("entro aqui en el error")
+								this.respuestaProductos(info, false);
+							}
+							break;
+						case 'TERCERO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaTerceros(info);
+							}
+							break;
+						case 'PEDIDO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaPedidos(info);
+							}
+							break;
+						default:
+							break;
+					}
+				}
+			);
+		}else{
+		
+			this.productosMostrar=JSON.parse(localStorage.getItem('pedido')|| '{nombre:""}')
+
+			this.socketServices.escucha = this.socketproduct.obtenerInfo('aws','pazzioli-pos-3',{metodo:"CONSULTAR",condicion:"",consulta:"productos",sede:localStorage.getItem('sede')});
+			//this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+			this.socketServices.escucha.subscribe(
+				(info: any) => {
+					this.totalPagar = 0;
+					this.productosMostrar.forEach(producto => {
+						this.totalPagar += producto.total;
+					});
+				   info=JSON.parse(info)
+					switch (info.tipoConsulta) {
+						case 'PRODUCTO':
+							
+							if (info.estadoPeticion === 'SUCCESS') {
+								console.log("entro aqui success")
+								
+								this.respuestaProductos(info, true);
+							} else {
+								console.log("entro aqui en el error")
+								this.respuestaProductos(info, false);
+							}
+							break;
+						case 'TERCERO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaTerceros(info);
+							}
+							break;
+						case 'PEDIDO':
+							if (info.estadoPeticion === 'SUCCESS') {
+								this.respuestaPedidos(info);
+							}
+							break;
+						default:
+							break;
+					}
+				}
+			);
+			
+
+		}
+		
+	}
+
 
 	seleccionaritem(_producto:PRODUCTO){
 		console.log(Number(_producto.codigo))
@@ -290,6 +412,76 @@ export class TiendaComponent implements OnInit {
 			__prod.numero = index + 1
 		});
 	}
+    verpedidos(){
+		this.socketproduct.verpedido().subscribe(
+			data=>{
+				const dialogref=this.dialog.open(Pedidoguardado,{
+					width: '100%',
+					height: '80%',
+					data:data.pedido
+
+				})
+
+				dialogref.afterClosed().subscribe(
+					data=>{
+						this.clienteSeleccionado=data.cliente
+						this.productosMostrar=[...data.productos_pedido]
+						this.id_select=data._id
+					   this.totalPagar=this.productosMostrar.reduce((i,item)=>(i+=item.total),0)
+					}
+				)
+			}
+		)
+	}
+
+	reservarpedido(){
+	  const datospedido={
+		cliente:this.clienteSeleccionado,
+		productos_pedido:this.productosMostrar
+
+
+	  }
+	
+	const dialogRef = this.dialog.open(DialogoAlerta, {
+		data: {
+			titulo: 'CORRECTO',
+		mensaje: 'desea continuar',
+		boton: "confirmar",
+		tipo: "warning",
+		boton1:"cancelar",
+		input: false
+		},
+		disableClose: true
+	});
+    dialogRef.afterClosed().subscribe(
+		data=>{
+	        if(data){
+				if(this.id_select!==''){
+					this.socketproduct.actulizarpedido(this.id_select,datospedido).subscribe(
+						data=>{
+						   console.log(data)
+						}
+					)
+					return
+					  }
+					this.socketproduct.reservarpedidos(datospedido).subscribe(
+						data=>{
+							this.openDialogAlerta({
+								mensaje:data.message,
+								tipo:"done",
+								boton:"ok"
+							})
+			
+						
+						}
+					)
+			}
+		}
+	)
+	
+	/**/
+
+	}
 
 	elegirCantidad(_prod: any) {
 		
@@ -303,9 +495,11 @@ export class TiendaComponent implements OnInit {
 				this.cantidad = 1;
 				this.codigo=this.productoActual.codigo
 				this.referencia=this.productoActual.referencia
+				console.log("este almacen",this.socketproduct.almacen)
                 this.cantidadactual=this.productoActual["producto"][`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`]
 				console.log(this.productoActual) 
 				  console.log(this.productoActual[`cantidad${(Number(this.almacen.slice(-1))+1).toString()}`])
+
 				document.getElementById('cantidad')?.focus();
 			} else if (this.productos.length > 0 ) {
 				console.log("antro en esto")
@@ -404,7 +598,7 @@ export class TiendaComponent implements OnInit {
 
 		if (Number(this.cantidad) > 0) {
 			this.productos = [];
-			
+			console.log(this.productoActual)
 			await this.calcularProductoActual();
 			this.productoActual.precio = Number(this.precio);
 			this.productoActual.cantidad = Number(this.cantidad);
@@ -419,6 +613,7 @@ export class TiendaComponent implements OnInit {
 				this.productosMostrar[index].cantidad = _cantidad;
 				this.productosMostrar[index].precio = this.precio;
 				this.productosMostrar[index].total = _precio_total;
+				console.log(this.productosMostrar)
 				localStorage.setItem('pedido',JSON.stringify(this.productosMostrar))
 			} else {
                  
@@ -434,8 +629,10 @@ export class TiendaComponent implements OnInit {
 						  this.openSnackBar("cantidad no disponible")
 
 						}else{
+							delete this.productoActual.producto;
 							let products=[...this.productosMostrar,this.productoActual]
 				          this.productosMostrar=products
+						  console.log(this.productosMostrar)
 				          localStorage.setItem('pedido',JSON.stringify(products))
 						  let cantidad_negativa=this.opcionesFiltradas[options]["producto"][`cantidad${localStorage.getItem("sede")?.slice(-1)}`]-this.productoActual.cantidad
                          
@@ -500,16 +697,17 @@ export class TiendaComponent implements OnInit {
 	}
 	eliminarProducto(e:any,id: string) {
 		e.stopPropagation();
-		console.log(id)
+
+		console.log("codigodelpro",id)
 		document.getElementById('p_' + id)?.classList.add('deleted');
 		
-			let filteredItems = this.productosMostrar.filter((item)=> id!==item.id);
+			let filteredItems = this.productosMostrar.filter((item)=> id!==item.codigo);
 			this.productosMostrar = [...filteredItems];
 			this.totalPagar = 0;
 			this.productosMostrar.forEach(producto => {
 				this.totalPagar += producto.total;
 			});
-			console.log(filteredItems)
+			console.log(this.productosMostrar)
 			this.enumerarProductos();
 
 	}
@@ -608,6 +806,7 @@ export class TiendaComponent implements OnInit {
 					codigobarra:producto.codigoBarra,
 					total: 0,
 					producto: producto,
+
 				}
 			});
 		
@@ -641,6 +840,7 @@ export class TiendaComponent implements OnInit {
 				console.log("entroalsubcribe")
 				
 				if(JSON.parse(dato).estadoPeticion==="SUCCESS"){
+					console.log(JSON.parse(dato).mensajePeticion)
 					this.clientes=JSON.parse(dato).mensajePeticion
 				}
 			}
@@ -863,6 +1063,11 @@ export class TiendaComponent implements OnInit {
 				//this.openDialogFactura();
 				console.log(resultado);
 			}
+
+			
+				if (data.tipo=='done') {
+			    this.reiniciar()
+			}
 			this.loader = false;
 		});
 	}
@@ -899,20 +1104,65 @@ export class TiendaComponent implements OnInit {
 @Component({
 	selector: 'dialog-sedes',
 	templateUrl: 'dialogs/dialog-sedes.html',
+
 })
 export class DialogSedes {
-	selectSedes: UntypedFormControl;
+	
+    form:any
+	constructor(private snackBar: MatSnackBar,private servicodb:serviciodb,private formbuilder:FormBuilder,public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>) {
+		console.log(data)
+		this.form=this.formbuilder.group({
+			selectSedes:this.formbuilder.control('',{
+               validators:[Validators.required],
+			   nonNullable:true
+			}),
+			usuario:this.formbuilder.control('',{
+				validators:[Validators.required],
+				nonNullable:true
+			 })
+			,
+			contrasena:this.formbuilder.control('',{
+				validators:[Validators.required],
+				nonNullable:true
+			 })
+		})
+		
+	}
+	continuar(){
+		console.log("entroaquisede")
 
-	constructor(public dialogRef: MatDialogRef<DialogSedes>, @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>) {
-		this.selectSedes = new UntypedFormControl('', [
-			Validators.required
-		]);
+		if(this.form.valid){
+		this.servicodb.crearinstanciadb({db:this.form.value.selectSedes,
+			user:this.form.value.usuario,contrasena:this.form.value.contrasena}).subscribe(
+            data=>{
+				if(data.response){
+					this.dialogRef.close({
+						continuar:true
+					});
+				}else{
+					console.log("hubo un error inesperado")
+				}
+			},
+			error=>{
+				console.log(error.error)
+			 this.snackBar.open(error.error.error, 'Cerrar', {
+					duration: 3000, // Tiempo en ms
+					verticalPosition: 'top', // Posición superior
+					horizontalPosition: 'center', // Centrado horizontalmente
+					panelClass: ['error-snackbar'] // Clase para estilos
+				  });
+			}
+		)
+		
 	}
-	onNoClick(e: any): void {
+	}
+	/*onNoClick(e: any): void {
 		if (e.keyCode == 13 && this.selectSedes.valid) {
-			this.dialogRef.close(this.selectSedes.value);
+			this.dialogRef.close({
+				sedeleccionada:this.selectSedes.valid
+			});
 		}
-	}
+	}*/
 }
 
 import { jsPDF } from 'jspdf';
@@ -920,8 +1170,11 @@ import autoTable from 'jspdf-autotable'
 import { promise } from 'protractor';
 import { resolve } from 'dns';
 import { MatButtonModule } from '@angular/material/button';
-import { Console } from 'console';
+import { Console, error } from 'console';
 import { serviciodb } from 'src/services/serviciosdbs/serviciodb.service';
+import { rejects } from 'assert';
+import { NavigationEnd, Router } from '@angular/router';
+import { Pedidoguardado } from 'src/app/angular-material/pedidoguardos';
 
 @Component({
 	selector: 'dialog-factura',
@@ -944,7 +1197,7 @@ export class DialogFactura {
 		this.total = data.total;
 		this.infoEmpresa = data.infoEmpresa;
         
-		console.log("constructor tienda")
+		console.log("datos de pedido",data)
 		setTimeout(() => {
 
 			let doc = new jsPDF('p', 'px', 'letter'); // A4 TAMAÑO
@@ -1059,7 +1312,7 @@ export class DialogFactura {
 			//doc.save('MYPdf.pdf'); // PDF GENERADO
 			this.archivoBase64 = doc.output('datauristring');
 			this.dialogRef.close(this.archivoBase64);
-		}, 50000);
+		}, 3000);
 	}
 
 	onNoClick(e: any): void {

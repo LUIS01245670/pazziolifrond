@@ -23,6 +23,7 @@ export class InicioSesionComponent implements OnInit {
   inputdocumento: UntypedFormControl;
   loader: boolean = false;
 
+  
   @ViewChild('inUsuario') inUsuario!: ElementRef;
   @ViewChild('inContrasena') inContrasena!: ElementRef;
 
@@ -46,13 +47,15 @@ export class InicioSesionComponent implements OnInit {
   }
 
   login(){
+   
     console.log(this.inputUsuario.value)
     this.serviauth.login({ user:this.inputUsuario.value,documento:this.inputdocumento.value}).subscribe(
       autenticado=>{
        
-        
+        console.log("si esta autenticado",autenticado.autenticado)
         
       if(autenticado.autenticado){
+         
             this.socketprodu.conectar() 
            //console.log(!this.cookieservices.get("connect.sid"))
              this.router.navigateByUrl('admin/tienda')

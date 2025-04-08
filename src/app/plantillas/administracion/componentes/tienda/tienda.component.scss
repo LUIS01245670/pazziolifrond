@@ -29,6 +29,7 @@ div.separator {
   margin: 0;
   margin-bottom: 4px !important;
   font-size: 19px;
+  display: flex;
   height: 20px !important;
 }
 
@@ -156,12 +157,7 @@ button[pedido] {
 
 
 @media(max-width:970px){
-  .col-4{
-    flex:0 0 60%;
-    max-width:40%;
-
-
-  }
+  
   .prod_card{
     position:absolute;
   
@@ -169,8 +165,11 @@ button[pedido] {
 
   #p_actual {
     height:100px;
+    
   }
+ 
 
+ 
   .vertical .selfScroll{
     overflow-x: auto;
   }
@@ -178,24 +177,75 @@ button[pedido] {
  
 }
 
-@media(max-width:663px){
+@media(max-width:1000px){
  
   .row-pro{
     flex-direction: column;
+   
   }
-  .prod_card{
-    position:absolute;
-    top:calc(100vw - 50px);
-
-
+  
+  .carrito{
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    height: 500px;
   }
 
-  #p_actual {
-    height:200px;
+  mat-card-subtitle {
+    overflow-x: auto;
   }
+  
+ 
 }
 
 .col-4-pro{
   display: flex;
 }
+
+.botonaction{
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media(max-width:700px){
+  button[pedido]{
+    width:100%;
+    
+    padding: 0;
+
+  }
+  .row-action-pro{
+    gap:5px;
+  }
+
+  .col-boton{
+    flex:0 0 50%
+  }
+}
+
+@media(max-width:467px){
+  .col-boton{
+    flex:1;
+    margin-top: 10px;
+    button{
+      width: 100%;
+    }
+    a{
+      width: 100%;
+    }
+  }
+}
+
+.imgicon{
+  svg{
+    color:#000;
+  }
+}
+
+
+button[pedido_con]{
+max-width:100px;
+}
+
 

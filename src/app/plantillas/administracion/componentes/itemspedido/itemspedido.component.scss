@@ -1,0 +1,28 @@
+table{
+    width: 100%;
+   
+}
+
+th,td,tr{
+    display: flex;
+    flex:1;
+    width: 100%;
+   border:1px solid black ;
+     
+
+    
+}
+
+th,td{
+    justify-content: center;
+}
+thead{
+    display: flex;
+    width: 100%;
+    flex: 1;
+}
+tbody{
+    display: flex;
+    width:100%;
+}
+

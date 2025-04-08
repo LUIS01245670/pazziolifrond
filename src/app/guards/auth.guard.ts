@@ -72,6 +72,7 @@ export class Publicguards implements CanActivate {
          
           
         } else {
+          this.socketproduct.conectar()
           this.router.navigateByUrl('admin/tienda')
           return false
          

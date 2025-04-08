@@ -26,10 +26,14 @@ export class serviciodb{
         return this.http.get(`${environment.api}/selectempresa`,{withCredentials:true})
     }
 
-    crearinstanciadb(db:string):Observable<respuesta>{
-        return this.http.post<respuesta>(`${environment.api}/crearinstanciadb`,{db:db},{withCredentials:true})
+    crearinstanciadb(data:any):Observable<respuesta>{
+        return this.http.post<respuesta>(`${environment.api}/crearinstanciadb`,data,{withCredentials:true})
     }
 
+
+     variablesinicializadas():Observable<any>{
+        return this.http.get(`${environment.api}/verificarvariablesseccion`,{withCredentials:true})
+     }
 
     }
 

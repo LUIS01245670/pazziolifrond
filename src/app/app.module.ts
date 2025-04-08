@@ -10,6 +10,11 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogoAlerta } from './angular-material/alerta';
 import { HttpClientModule } from '@angular/common/http';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Dialogdetalles } from './plantillas/administracion/componentes/pedidos/pedidos.component';
+import { MatTableModule } from '@angular/material/table';
+import { Pedidoguardado } from './angular-material/pedidoguardos';
+import { Detallespedido } from './angular-material/detallespedido';
 
 @NgModule({
     declarations: [
@@ -17,19 +22,25 @@ import { HttpClientModule } from '@angular/common/http';
         DialogSedes,
         DialogoAlerta,
         DialogFactura,
+        Dialogdetalles,
+        Pedidoguardado,
+        Detallespedido
     ],
     exports: [
         MatAutocompleteModule,
         HttpClientModule
     ],
     imports: [
+        MatTableModule,
         BrowserModule,
         AppRoutingModule,
         BrowserAnimationsModule,
         MaterialModule,
         MatAutocompleteModule,
         MatDialogModule,
-        HttpClientModule
+        HttpClientModule,
+        ReactiveFormsModule,
+        FormsModule
     ],
     providers: [],
     bootstrap: [AppComponent]

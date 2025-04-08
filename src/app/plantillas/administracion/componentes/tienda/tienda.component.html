@@ -69,13 +69,13 @@
   </div>
 
   <!-- PRODUCTOS -->
-  <div class="col-12 col-sm-12-col-md-6 col-lg-8"  >
+  <div class="col-12 col-sm-12 -col-md-6 col-lg-8"  >
     <mat-card class="search-card">
       <mat-card-header class="search">
         <mat-card-title class="m-0">Productos</mat-card-title>
         <!-- BUSQUEDA DE PRODUCTOS -->
-        <div class="row" style="width: calc(100% - 64px)">
-          <div class="col-12 col-sm-6 col-md-5">
+        <div class="row col-12" style="width: calc(100% - 64px)">
+          <div class="col-6 col-log-6 col-sm-12 col-md-5">
             <mat-form-field appearance="fill" search>
               <mat-label>Descripcion</mat-label>
               <input matInput placeholder="" [formControl]="buscarDescripcion" [matAutocomplete]="auto"
@@ -92,45 +92,35 @@
             </mat-form-field>
           </div>
 
-          <div class="col-12 col-sm-6 col-md-3" style="display: flex;">
-            <mat-form-field appearance="fill" search br-r0 style="border-right: solid 1px #0000002e;">
-              <mat-label>Referencia</mat-label>
-              <input matInput placeholder="" [(ngModel)]="referencia" autocomplete="off"
-              (keyup)="buscarProductos($event,'descripcion')" [matAutocomplete]="ref" id="referencia"/>
-                <mat-autocomplete #ref="matAutocomplete"  >
-                  <virtual-scroller #scroll_prod [items]="opcionesFiltradas" style="height: 246px">
-              <mat-option *ngFor="let option of scroll_prod.viewPortItems" (keyup.enter)="elegirreferencia(option)"
-                      (click)="elegirreferencia(option)" [value]="option.referencia">
-                      {{option.referencia}}
-                    </mat-option>
-                  </virtual-scroller>
-                </mat-autocomplete>
-            </mat-form-field>
-                
-                   
-            <mat-form-field appearance="fill" search br-l0>
-              <mat-label>Código</mat-label>
-              <input matInput placeholder="" #inCodigo name="inputCodigo" [(ngModel)]="codigo" autocomplete="off"
-                (keyup)="eventoEnter($event, 'codigo')" />
-            </mat-form-field>
-          </div>
-
-          <div class="col-4 col-sm-4 col-md-2">
+          <div class=" col-6 col-sm-12 col-md-6 col-lg-6 ">
             <mat-form-field appearance="fill" search>
               <mat-label>Cantidad</mat-label>
               <input matInput #inCantidad placeholder="" name="inputCantidad" [(ngModel)]="cantidad" id="cantidad"
                 type="number" onfocus="this.select()"  />
             </mat-form-field>
           </div>
-
-          <div class="col-8 col-sm-8 col-md-2">
-            <mat-form-field appearance="fill" search>
-              <mat-label>$ Precio</mat-label>
-              <input matInput placeholder="" [(ngModel)]="precio" id="precio" type="number" onfocus="this.select()"
-                (keyup)="eventoEnter($event,'precio')" />
-            </mat-form-field>
-          </div>
+       
         </div>
+        <div class="row col-12">
+      
+
+        <div class="col-boton">
+
+          <a mat-raised-button class="custom-button-pedido" routerLink="/admin/pedido">
+            <mat-icon>home</mat-icon>
+            pedidos_realizados
+
+          </a>
+        </div>
+        <div class="col-boton">
+
+          <button mat-raised-button class="custom-button-pedido" (click)="verpedidos()">
+            <img src="../../../../../assets/images/icon_orders.svg" style="color:#000;" class="imgicon">
+            pedido_x_confirmar
+
+          </button>
+        </div>
+      </div>
         <!-- AGREGAR A LA LISTA -->
         <button mat-fab color="primary" [disabled]="productoActual.id == '_vacio'"
           (click)="eventoEnter({keyCode: 13},'precio')" class="add-product">
@@ -139,7 +129,7 @@
       </mat-card-header>
       <mat-card-content class="overflow-content" >
         <mat-card class="b-primary icon-card prod_card " id="p_actual" >
-          <mat-card-header style="border: none !important">
+          <mat-card-header class="carrito" style="border: none !important;">
             <div mat-card-avatar>
               <mat-icon class="head-icon"> shopping_cart </mat-icon>
             </div>
@@ -147,34 +137,27 @@
               productoActual.nombre
               }}</mat-card-title>
             <!-- <div class="separator"></div> -->
-            <mat-card-subtitle class="client-info" style="font-size: 15px !important;">
-              <div class="row row-pro">
-                <div class="col-6 p-0">
-                  <b>Presentacion:</b> {{productoActual.producto.presentacion? productoActual.producto.presentacion:
-                  ''}}
-                </div>
-                <div class="col-6 p-0">
-                  <b>Und de medida:</b> {{productoActual.producto.nombreUnidadMedida?
-                  productoActual.producto.nombreUnidadMedida:
-                  ''}}
-                </div>
-              </div>
-            </mat-card-subtitle>
+            
             <mat-card-subtitle class="client-info" style="margin: 0 !important;">
               <div class="row row-pro">
 
-                <div class="col-4 col-4-pro p-0" >
+                <div class="col-6  p-0" style="display: flex;" >
                   <b>Cantidaddisponible: </b>{{cantidadactual}}
                 </div>
-                <div class="col-4 col-4-pro p-0">
+                <div class="col-6 p-0">
                   <b>Cantidad: </b>{{ cantidad }}
                 </div>
-                <div class="col-4 col-4-pro p-0">
+
+
+                
+                   
+                <div class="col-6 p-0">
                   <b>Precio: </b>${{precio.toLocaleString("de-DE")}}
                 </div>
-                <div class="col-4 col-4-pro p-0">
+                <div class="col-6 p-0">
                   <b>Total:</b>${{ (cantidad * precio).toLocaleString("de-DE") }}
                 </div>
+
               </div>
             </mat-card-subtitle>
 
@@ -223,7 +206,7 @@
                    <button mat-mini-fab color="accent" class="mr-2"  (click)="actulizaritems($event,_producto)">
                     <mat-icon>edit</mat-icon>
                   </button> 
-                  <button mat-mini-fab color="warn" (click)="eliminarProducto($event,_producto.id)">
+                  <button mat-mini-fab color="warn" (click)="eliminarProducto($event,_producto.codigo)">
                     <mat-icon>delete</mat-icon>
                   </button>
                 </div>
@@ -239,16 +222,27 @@
         </button>
         <!-- TOTAL Y PEDIDO -->
         <div class="row row-prooducts">
-          <div class="col-md-6 col-sm-12 py-0">
+          <div class="col-md-6 col-sm-4 py-0">
             <h1 class="total">$ {{ totalPagar.toLocaleString("de-DE") }}</h1>
           </div>
-          <div class="col-md-6 col-sm-12 py-0">
-            <button mat-flat-button color="primary" full-button pedido (click)="crearPedido()">
-              Realizar pedido
-            </button>
-          </div>
+        
         </div>
       </mat-card-actions>
-    </mat-card>
+      <mat-card-actions class="prod-actions" >
+        <div class="row row-action-pro">
+         <div class="col-md-6 col-sm-12 py-0" class="botonaction" style="flex:1;">
+           <button mat-flat-button color="primary" full-button pedido (click)="reservarpedido()">
+             {{id_select!=='' ? "actulizar_pedido":"reservarpedido"}}
+           </button>
+        </div>
+        <div class="col-md-6 col-sm-12 py-0"   class="botonaction" style="flex:1;">
+         <button mat-flat-button color="primary" full-button pedido (click)="crearPedido()">
+           Realizar pedido
+         </button>
+      </div>
+      </div>
+       </mat-card-actions>
+   
+       </mat-card>
   </div>
 </div>

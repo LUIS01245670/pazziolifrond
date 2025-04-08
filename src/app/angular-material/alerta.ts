@@ -52,7 +52,7 @@ export interface DatosAlerta {
     selector: 'dialogo-alerta',
     template: `
     <div class="contenedor-alert">
-	<mat-icon class="icono-alert" [color]="color">{{icono}}</mat-icon>
+	<mat-icon class="icono-alert" [color]="color" style="height: auto;">{{icono}}</mat-icon>
 	<h1 mat-dialog-title class="titulo-alert">{{titulo}}</h1>
 	<p>{{mensaje}}</p>
 	<div class="row" [hidden]="!input">
@@ -141,7 +141,7 @@ export class DialogoAlerta {
                 this.color = "primary";
             } else if (data.tipo === "warning") {
                 this.icono = "warning";
-                this.color = "accent";
+                this.color = "warn";
             } else {
                 this.icono = "error";
                 this.color = "warn";
