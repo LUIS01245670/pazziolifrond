@@ -92,11 +92,25 @@ div.separator {
 }
 
 button[pedido] {
-  width: 220px;
+  max-width: 200px;
   float: right;
   right: 8px;
 }
+.botonotions{
+  display: flex;
+  justify-content:center;
+  align-items: center;
+  button{
 
+   color: #fff !important;  
+   background:#1f618d !important;
+   text-align: center !important;
+   padding:0 !important;
+   span{
+    word-wrap: break-word;
+   }
+  }
+}
 .prod_card {
   position: absolute;
   bottom: 104px;
@@ -114,6 +128,12 @@ button[pedido] {
 
 .prod_card.active ~ .mat-list-base .mat-list-item:last-child {
   padding-bottom: 156px;
+}
+
+.row-action{
+  display: flex;
+  flex-wrap: wrap;
+ 
 }
 
 .mat-list-base .mat-list-item {
@@ -204,8 +224,8 @@ button[pedido] {
 .botonaction{
   text-align: center;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items:center;
+  justify-content:start;
 }
 
 @media(max-width:700px){
@@ -236,7 +256,12 @@ button[pedido] {
     }
   }
 }
+@media(max-width:700px){
+  .botonotions{
+    margin-top:10px;
+  }
 
+}
 .imgicon{
   svg{
     color:#000;

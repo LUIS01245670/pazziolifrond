@@ -28,9 +28,16 @@
           <virtual-scroller #scroll_clientes [items]="clientes">
             <mat-list-option *ngFor="let _cliente of scroll_clientes.viewPortItems" [value]="_cliente"
               (click)="seleccionarCliente(_cliente)" style="width: calc(100% - 32px); margin: auto; border-radius: 8px">
-              <mat-icon mat-list-icon>face</mat-icon>
+              <div>
+              <img *ngIf="_cliente.imagen ; else sinimagen" [src]="'http://localhost:3000/' + _cliente.imagen" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" >
+               <ng-template #sinimagen>
+                <mat-icon mat-list-icon>face</mat-icon>
+               </ng-template>
+              </div>
+              <div>
               <div mat-line class="bold">{{ _cliente.razonSocial }}</div>
               <div mat-line><b>Id: </b> {{ _cliente.identificacion }}</div>
+              </div>
             </mat-list-option>
           </virtual-scroller>
         </mat-selection-list>
@@ -39,7 +46,10 @@
       <mat-card class="b-primary icon-card" style="height: 107px;">
         <mat-card-header style="border: none !important">
           <div mat-card-avatar>
+            <img *ngIf="clienteSeleccionado.imagen ; else sinimagen" [src]="'http://localhost:3000/' + clienteSeleccionado.imagen" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" >
+            <ng-template #sinimagen>
             <mat-icon class="head-icon" style="margin: 11px 0;"> face </mat-icon>
+            </ng-template>
           </div>
           <mat-card-title class="client-name">{{clienteSeleccionado.nombre}}</mat-card-title>
           <div class="separator"></div>
@@ -94,7 +104,7 @@
 
           <div class=" col-6 col-sm-12 col-md-6 col-lg-6 ">
             <mat-form-field appearance="fill" search>
-              <mat-label>Cantidad</mat-label>
+              <mat-label style="font-size:1rem">Cantidad</mat-label>
               <input matInput #inCantidad placeholder="" name="inputCantidad" [(ngModel)]="cantidad" id="cantidad"
                 type="number" onfocus="this.select()"  />
             </mat-form-field>
@@ -108,7 +118,7 @@
 
           <a mat-raised-button class="custom-button-pedido" routerLink="/admin/pedido">
             <mat-icon>home</mat-icon>
-            pedidos_realizados
+            Pedidos realizados
 
           </a>
         </div>
@@ -116,7 +126,7 @@
 
           <button mat-raised-button class="custom-button-pedido" (click)="verpedidos()">
             <img src="../../../../../assets/images/icon_orders.svg" style="color:#000;" class="imgicon">
-            pedido_x_confirmar
+            Pedidos por confirmar
 
           </button>
         </div>
@@ -177,7 +187,7 @@
                 </div>
                 <div mat-line class="col-12 p-0 row" style="display: flex;">
                   <div class="col-12 col-md-6 p-0">
-                    <b>Código contabe: </b>{{ _producto.codigoContable }}
+                    <b>Código contable: </b>{{ _producto.codigoContable }}
                   </div>
                   <div class="col-12 col-md-6 p-0">
                     <b>Referencia: </b>{{ _producto.referencia }}
@@ -229,18 +239,32 @@
         </div>
       </mat-card-actions>
       <mat-card-actions class="prod-actions" >
-        <div class="row row-action-pro">
-         <div class="col-md-6 col-sm-12 py-0" class="botonaction" style="flex:1;">
-           <button mat-flat-button color="primary" full-button pedido (click)="reservarpedido()">
-             {{id_select!=='' ? "actulizar_pedido":"reservarpedido"}}
-           </button>
-        </div>
-        <div class="col-md-6 col-sm-12 py-0"   class="botonaction" style="flex:1;">
-         <button mat-flat-button color="primary" full-button pedido (click)="crearPedido()">
-           Realizar pedido
-         </button>
+       <div class="row-action">
+        <div   style="flex:1;" class="botonotions">
+          <button mat-flat-button color="primary" full-button pedido (click)="reservarpedido()" style="box-shadow:4px 4px 10px rgba(0, 0, 0, 0.2) !important;">
+            {{id_select!=='' ? "Actualizar pedido":"Reservar pedido"}}
+          </button>
+       </div>
+       <div    style="flex:1; text-align:center;" class="botonotions">
+        <button mat-flat-button color="primary" full-button pedido (click)="crearPedido()"  style="box-shadow:4px 4px 10px rgba(0, 0, 0, 0.2) !important;">
+          Realizar pedido
+        </button>
       </div>
+
+      <div  *ngIf="id_select!==''" style="flex:1; text-align:center;" class="botonotions">
+       
+        <button
+        mat-flat-button
+        color="primary"
+        full-button
+        pedido
+        style="box-shadow:4px 4px 10px rgba(0, 0, 0, 0.2) !important;background:#e74c3c !important ; "
+       (click)="eliminarproductoreservado()"
+      >
+        Eliminar pedido
+      </button>
       </div>
+       </div>
        </mat-card-actions>
    
        </mat-card>

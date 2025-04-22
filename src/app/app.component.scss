@@ -11,6 +11,41 @@
 
 }
 
+.navinfo{
+  position: sticky;
+  z-index:10;
+  background: white;
+  top:65px;
+  display: flex;
+  flex-direction: column;
+  background:#3949ab;
+  border-radius: 4px;
+  box-shadow: 0 0px 17px 0px rgba(129, 121, 211, 0.9) !important ;
+  padding:2px;
+}
+@media (max-width:599px) {
+  .navinfo{
+    top:55px;
+  }
+  
+}
+.navinfo  div{
+ display: flex;
+ justify-content: center;
+ align-items: center;
+ 
+}
+
+.navinfo  div > span{
+ color: #fff;
+}
+
+.navinfo >:nth-child(2){
+  border: 1px dashed #fff;
+}
+
+
+
 .content.auth {
   height: calc(100vh - 0px) !important;
   padding-top: 0 !important;

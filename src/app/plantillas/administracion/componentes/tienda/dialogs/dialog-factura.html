@@ -1,16 +1,110 @@
-<div style="width: calc(100vw - 48px); overflow: auto;">
+<!--me permite referenciar un componente sin nececidad de especirificarle un id-->
+<div style="width:58mm; overflow: auto;" #tirilla>
      <div class="row" >
         <div class="col-12" style="display: flex;flex-direction: column;justify-content: center; align-items: center;">
-        <h1>{{data.cliente.nombre}}</h1>
-        <div><span><strong>NIT.</strong>{{data.cliente.identificacion}}</span></div>
-        <span><strong>carrera</strong>{{data.cliente.direccion}}</span>
-        <span><strong>telefono</strong>{{data.cliente.telefonofijo}}</span>
-        <span><strong>celular</strong>{{data.cliente.telefonofijo}}</span>
-      </div>
-      <div class="col-12">
-        <div>
-            <span><b>fecha</b>:</span>
+        <span style="font-weight:bold;">{{data.config.RAZON_SOCIAL}}</span>
+        <span>NIT. {{(+data.config.NIT.substring(4,12)).toLocaleString("de-DE")}}  {{(data.config.NIT.substring(14))}} </span>
+        <span>pedido No:{{data.numero +1}}</span>
+
+        
+       
         </div>
+        <div class="col-12" style="padding:0; text-align:center; border:1px solid #000;">
+        
+        </div>
+        <div class='col-12'  style="display: flex;flex-direction: column;">
+          <span style="font-size:10px ; font-weight: bold;">comprobante</span>
+         <span style="font-size:10px ; ">fecha emision:{{this.data.fecha_actual}}    {{this.data.horaActual}}</span>
+
+         <span>Cliente:{{this.data.cliente.nombre}}</span>
+         <span>Cliente:{{this.data.cliente.identificacion}}</span>
+         <span>Direccion:{{this.data.cliente.direccion}}</span>
+         <span>Ciudad:{{this.data.cliente.ciudad}}</span>
+         <span>Email: {{data.cliente.email}}</span>
+         <span>Telefono: {{data.cliente.telefonoFijo}}</span>
+        
+         <span>Vendedor:{{this.data.vendedor}}</span>
+         <span>identificacion{{this.data.identificacion}}</span>
+        
+         <span style="width:100%; border:1px solid #000;"></span>
+         <table style="width:100%;">
+
+          <thead  style="width:100%;">
+            <tr style="width:100%;" class="trsuperior">
+              <th>
+                Ref
+              </th>
+
+              <th>
+                descripcion
+              </th>
+            </tr>
+            <tr style="width:100%;">
+              <th>
+                cantidad
+              </th>
+              <th>
+                valor/uni
+              </th>
+              <th>
+                IVA
+              </th>
+              <th>
+                TOTAL
+              </th>
+            </tr>
+          </thead>
+
+         </table>
+         <span style="width:100%; border:1px solid #000;"></span>
+         <table style="width:100%;" *ngFor="let item of data.productos">
+
+          <tbody style="width:100%;">
+            <tr style="width:100%;" class="trsuperior">
+              <td class="tdchild">
+                {{item.referencia}}
+              </td >
+
+              <td class='tdchild'>
+                {{item.nombre}}
+              </td>
+            </tr>
+            <tr style="width:100%;" class="bodyinferior">
+              <td>
+                {{item.cantidad}}
+              </td>
+              <td>
+                x
+              </td>
+              <td>
+                {{item.precio}}
+              </td>
+              <td>
+                {{item.tasaiva}}%
+              </td>
+              <td>
+                {{item.total}}
+              </td>
+            </tr>
+          </tbody>
+
+         </table>
+         <div style="display:flex; width:100% ;position:relative ; margin:10px 0" >
+          <span style="flex:1; border:1px solid #000;  height:0; "></span>
+          <span style="position:absolute; left: 50%; transform: translateX(-50%); background: white; padding: 0 4px; top:-10px; font-size:10px;">totales</span>
+
+          <span style="flex:1; border:1px solid #000; height:0;"></span>
+        </div>
+         <div style="display:flex; justify-content:end;">
+          <span>Total venta:{{this.total}}</span>
+         </div>
+         <div style="display:flex; justify-content:center;">
+          <span>Total items:{{this.total_items}}</span>
+         </div>
+        </div>
+
+      
+       
       </div>
-     </div>
+    
 </div>

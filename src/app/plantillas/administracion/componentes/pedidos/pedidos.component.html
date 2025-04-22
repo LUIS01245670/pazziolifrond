@@ -13,30 +13,36 @@
               The actual rendered columns are set as a property on the row definition" -->
       
         <!-- Position Column -->
+       
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Numero pedido</th>
+          <td mat-cell *matCellDef="let element"> {{element.codigo_pedido}} </td>
+        </ng-container>
+      
         <ng-container matColumnDef="documentovendedor">
-          <th mat-header-cell *matHeaderCellDef>documentovendedor</th>
+          <th mat-header-cell *matHeaderCellDef>Vendedor</th>
           <td mat-cell *matCellDef="let element"> {{element.documentovendedor}} </td>
         </ng-container>
       
         <!-- Name Column -->
         <ng-container matColumnDef="estadopedido">
-          <th mat-header-cell *matHeaderCellDef>estadopedido</th>
+          <th mat-header-cell *matHeaderCellDef>Estado pedido</th>
           <td mat-cell *matCellDef="let element"> {{element.estadopedido}} </td>
         </ng-container>
       
         <!-- Weight Column -->
-        <ng-container matColumnDef="nombre_cliente">
-          <th mat-header-cell *matHeaderCellDef> nombre_cliente </th>
-          <td mat-cell *matCellDef="let element"> {{element.nombre_cliente}} </td>
-        </ng-container>
+        
       
 
         <ng-container matColumnDef="razonsocial_clientes">
-            <th mat-header-cell *matHeaderCellDef>razonsocial_clientes</th>
+            <th mat-header-cell *matHeaderCellDef>Razón social</th>
             <td mat-cell *matCellDef="let element"> {{element.razonsocial_clientes}} </td>
           </ng-container>
         
-    
+          <ng-container matColumnDef="fecha creacion">
+            <th mat-header-cell *matHeaderCellDef>Fecha de creación</th>
+            <td mat-cell *matCellDef="let element"> {{element.fecha_creacion}} </td>
+          </ng-container>
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>Acciones</th>
             <td mat-cell *matCellDef="let element">

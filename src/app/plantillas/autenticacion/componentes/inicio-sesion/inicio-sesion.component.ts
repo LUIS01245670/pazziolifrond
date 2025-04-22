@@ -18,62 +18,66 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./inicio-sesion.component.scss'],
 })
 export class InicioSesionComponent implements OnInit {
-  title: String = "";
+  title: String = '';
   inputUsuario: UntypedFormControl;
+  inputpassword: UntypedFormControl;
   inputdocumento: UntypedFormControl;
-  loader: boolean = false;
-
-  
+  selectSedes: UntypedFormControl;
+  loader: boolean = true;
+  data: any;
   @ViewChild('inUsuario') inUsuario!: ElementRef;
   @ViewChild('inContrasena') inContrasena!: ElementRef;
 
   suscripcionSocket!: Subscription;
 
-  constructor(private socketprodu:Socket_producto,private router: Router, private socketServices: SocketService, private app: AppComponent, private dialog: MatDialog, private crypt: CryptService,private serviauth:AuthService
-    , private cookieservices:CookieService
+  constructor(
+    private socketprodu: Socket_producto,
+    private router: Router,
+    private socketServices: SocketService,
+    private app: AppComponent,
+    private dialog: MatDialog,
+    private crypt: CryptService,
+    private serviauth: AuthService,
+    private cookieservices: CookieService
   ) {
-    this.inputUsuario = new UntypedFormControl('', [
-      Validators.required
-    ]);
-    this.inputdocumento = new UntypedFormControl('', [
-      Validators.required
-    ]);
+    this.serviauth.traerempresa().subscribe((datos) => {
+      this.data = datos.data;
+      this.loader = false;
+      console.log(datos.data);
+    });
+    this.inputdocumento = new UntypedFormControl('', [Validators.required]);
+    this.inputUsuario = new UntypedFormControl('', [Validators.required]);
+    this.inputpassword = new UntypedFormControl('', [Validators.required]);
 
-   
-
- 
-  
-
+    this.selectSedes = new UntypedFormControl('', [Validators.required]);
   }
 
-  login(){
-   
-    console.log(this.inputUsuario.value)
-    this.serviauth.login({ user:this.inputUsuario.value,documento:this.inputdocumento.value}).subscribe(
-      autenticado=>{
-       
-        console.log("si esta autenticado",autenticado.autenticado)
-        
-      if(autenticado.autenticado){
-         
-            this.socketprodu.conectar() 
-           //console.log(!this.cookieservices.get("connect.sid"))
-             this.router.navigateByUrl('admin/tienda')
-        
-    
-         
-    }
-   
-        
-      },
-     
+  login() {
+    console.log(this.inputUsuario.value);
+    this.serviauth
+      .login({
+        user: this.inputUsuario.value,
+        documento: this.inputdocumento.value,
+        password: this.inputpassword.value,
+        db: this.selectSedes.value,
+      })
+      .subscribe(
+        (autenticado) => {
+          console.log('si esta autenticado', autenticado.autenticado);
 
-      
-      error=>console.log(error)
-    );
+          if (autenticado.autenticado) {
+            this.socketprodu.conectar();
+            //console.log(!this.cookieservices.get("connect.sid"))
+            window.location.reload();
+
+            // this.router.navigateByUrl('admin/tienda');
+          }
+        },
+
+        (error) => console.log(error)
+      );
   }
   ngOnInit(): void {
-   console.log("entro al login");
+    console.log('entro al login');
   }
 }
- 
