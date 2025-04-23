@@ -26,10 +26,10 @@ const generatePDF = async (data: any) => {
       product.codigo,
       product.nombre,
       product.referencia,
-      product.presentacion,
+      `${product.presentacion === undefined ? '' : product.presentacion}`,
       product.cantidad.toString(),
-      product.precio.toString(),
-      `$ ${product.total.toLocaleString('de-DE')}`,
+      ` $${product.precio.toLocaleString('de-DE')}`,
+      `$${product.total.toLocaleString('de-DE')}`,
     ]),
   ];
   //Se calcula la suma total de todos los productos usando reduce.
@@ -79,7 +79,7 @@ const generatePDF = async (data: any) => {
       },
       {
         stack: [
-          { text: `Pedido No. ${data.numero + 1}`, style: 'header' },
+          { text: `Pedido No. ${data.numero}`, style: 'header' },
           {
             text: `Fecha de creacion: ${data.fecha_actual}`,
             style: 'subheader',
@@ -105,11 +105,11 @@ const generatePDF = async (data: any) => {
   content.push({
     table: {
       headerRows: 1,
-      widths: ['*', '*', '*', '*', '*', '*', '*'],
+      widths: [40, '*', 80, 80, 40, 50, 50],
       body: tableBody,
     },
     layout: 'lightHorizontalLines',
-    margin: [0, 0, 0, 0],
+    margin: [0, 10, 0, 10],
   });
   //Muestra el total de la compra alineado a la derecha.
 
@@ -120,7 +120,7 @@ const generatePDF = async (data: any) => {
         text: `Total: $ ${totalGeneral}`,
         style: 'total',
         alignment: 'right',
-        margin: [0, 0, 0, 0],
+        margin: [0, 10, 0, 10],
       },
     ],
   });

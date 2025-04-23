@@ -82,7 +82,7 @@ export class Socket_producto {
   ): Observable<any> {
     console.log(flujo);
     return new Observable((observer: any) => {
-      this.obtenerInfo('estadocorreo', canal, flujo).subscribe((data) =>
+      this.obtenerInfo(socket, canal, flujo).subscribe((data) =>
         observer.next(data)
       );
     });
@@ -136,6 +136,16 @@ export class Socket_producto {
   obtenernumeropedido(): Observable<any> {
     return this.http.get(`${environment.api}/obtenernumeropedido`, {
       withCredentials: true,
+    });
+  }
+
+  public enviaremail(data: any): Observable<any> {
+    return new Observable((obser: any) => {
+      console.log(this.socket);
+      this.socket.emit('pazzioli-pos-3', { metodo: 'EMAIL', data });
+      this.socket.on('estadocorreo', (datos: any) => {
+        obser.next(datos);
+      });
     });
   }
 }

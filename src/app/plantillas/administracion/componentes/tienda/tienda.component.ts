@@ -50,6 +50,7 @@ export interface PRODUCTO {
   styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
+  cantidadproducto: string = '';
   nombrevendedor: String = '';
   identificacion: String = '';
   numeropedido: number = 0;
@@ -542,15 +543,9 @@ export class TiendaComponent implements OnInit {
         this.referencia = this.productoActual.referencia;
         console.log('este almacen', this.socketproduct.almacen);
         this.cantidadactual =
-          this.productoActual['producto'][
-            `cantidad${(Number(this.almacen.slice(-1)) + 1).toString()}`
-          ];
+          this.productoActual['producto'][this.cantidadproducto];
         console.log(this.productoActual);
-        console.log(
-          this.productoActual[
-            `cantidad${(Number(this.almacen.slice(-1)) + 1).toString()}`
-          ]
-        );
+        console.log(this.productoActual[this.cantidadproducto]);
 
         document.getElementById('cantidad')?.focus();
       } else if (this.productos.length > 0) {
@@ -662,21 +657,20 @@ export class TiendaComponent implements OnInit {
         });
         console.log(this.opcionesFiltradas[options]);
         if (
-          this.opcionesFiltradas[options]['producto'][
-            `cantidad${(Number(this.almacen.slice(-1)) + 1).toString()}`
-          ] <= 0
+          this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <=
+          0
         ) {
           console.log(
             this.opcionesFiltradas[options]['producto'][
               `cantidad${(Number(this.almacen.slice(-1)) - 1).toString()}`
             ]
           );
+          this.cantidadproducto;
           this.openSnackBar('este producto esta agotado');
         } else {
           if (
-            this.opcionesFiltradas[options]['producto'][
-              `cantidad${(Number(this.almacen.slice(-1)) + 1).toString()}`
-            ] < this.productoActual.cantidad
+            this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <
+            this.productoActual.cantidad
           ) {
             this.openSnackBar('cantidad no disponible');
           } else {
@@ -688,7 +682,7 @@ export class TiendaComponent implements OnInit {
             localStorage.setItem('pedido', JSON.stringify(products));
             let cantidad_negativa =
               this.opcionesFiltradas[options]['producto'][
-                `cantidad${localStorage.getItem('sede')?.slice(-1)}`
+                this.cantidadproducto
               ] - this.productoActual.cantidad;
           }
         }
@@ -728,9 +722,8 @@ export class TiendaComponent implements OnInit {
         );
         console.log(this.productoActual.cantidad);
         if (
-          this.opcionesFiltradas[options]['producto'][
-            `cantidad${(Number(this.almacen.slice(-1)) + 1).toString()}`
-          ] < this.cantidad
+          this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <
+          this.cantidad
         ) {
           this.openSnackBar('cantidad no disponible');
         } else {
@@ -845,6 +838,7 @@ export class TiendaComponent implements OnInit {
 
   respuestaProductos(info: any, estado: Boolean) {
     console.log('entro a respuesta productos');
+
     if (estado) {
       console.log(info);
       this.productos = info.mensajePeticion.map((producto: any) => {
@@ -862,7 +856,13 @@ export class TiendaComponent implements OnInit {
           presentacion: producto.presentacion,
         };
       });
-
+      if (this.almacen === 'BODEGA') {
+        this.cantidadproducto = 'cantidad';
+      } else {
+        this.cantidadproducto = `cantidad${(
+          Number(this.almacen.slice(-1)) + 1
+        ).toString()}`;
+      }
       this.opcionesFiltradas = this.productos;
       //this.inDescripcion.openPanel();
     } else {
@@ -974,7 +974,7 @@ export class TiendaComponent implements OnInit {
       });
       dialogref.afterClosed().subscribe((datos) => {
         if (datos) {
-          this.openDialogFactura();
+          this.enviarPedido();
         }
       });
     }
@@ -1025,22 +1025,9 @@ export class TiendaComponent implements OnInit {
         })
         .subscribe((inf) => {
           console.log('datos informacion', inf);
-          this.socketproduct
-            .obtenerInfo('aws', 'pazzioli-pos-3', {
-              metodo: 'CONSULTAR',
-              condicion: '',
-              consulta: 'productos',
-              sede: localStorage.getItem('sede'),
-            })
-            .subscribe((data) => {
-              if (inf.estadoPeticion === 'SUCCESS') {
-                if (data.estadoPeticion === 'SUCCESS') {
-                  let info = JSON.parse(data);
-
-                  this.respuestaProductos(info, true);
-                }
-              }
-            });
+          if (inf.estadoPeticion === 'SUCCESS') {
+            this.openDialogFactura();
+          }
         });
     } catch (error) {
       console.log(error);
@@ -1188,6 +1175,7 @@ export class TiendaComponent implements OnInit {
     this.loader = true;
     const obtenerpedido: Promise<number> = new Promise((resolve, reject) => {
       this.socketproduct.obtenernumeropedido().subscribe(async (datos) => {
+        console.log(datos);
         resolve(datos.codigo.codigo);
       });
     });
@@ -1232,6 +1220,7 @@ export class TiendaComponent implements OnInit {
       });
       dialoref.afterClosed().subscribe(async (datos) => {
         console.log('generar pdf', datos);
+
         if (datos) {
           const pdf = await generatePDF({
             productos: this.productosMostrar,
@@ -1246,14 +1235,61 @@ export class TiendaComponent implements OnInit {
             identificacion: this.identificacion,
           });
           this.pdf = pdf;
-          this.enviarPedido();
-          this.loader = false;
-          this.deleteAll();
+          this.socketproduct
+            .enviaremail({
+              idpedido: numerofactura,
+              itemspedido: this.productosMostrar,
+              cliente: this.clienteSeleccionado,
+              pdf: this.pdf,
+            })
+            .subscribe((datos) => {
+              if (datos.estadoPeticion === 'Done') {
+                this.socketproduct
+                  .obtenerInfo('aws', 'pazzioli-pos-3', {
+                    metodo: 'CONSULTAR',
+                    condicion: '',
+                    consulta: 'productos',
+                    sede: localStorage.getItem('sede'),
+                  })
+                  .subscribe((data) => {
+                    if (data.estadoPeticion === 'SUCCESS') {
+                      let info = JSON.parse(data);
+
+                      this.respuestaProductos(info, true);
+                    }
+                    this.deleteAll();
+                  });
+              }
+            });
         } else {
           this.pdf = null;
-          this.enviarPedido();
-          this.loader = false;
-          this.deleteAll();
+          this.socketproduct
+            .enviaremail({
+              idpedido: numerofactura,
+              itemspedido: this.productosMostrar,
+              cliente: this.clienteSeleccionado,
+              pdf: this.pdf,
+            })
+            .subscribe((datos) => {
+              if (datos.estadoPeticion === 'Done') {
+                this.socketproduct
+                  .obtenerInfo('aws', 'pazzioli-pos-3', {
+                    metodo: 'CONSULTAR',
+                    condicion: '',
+                    consulta: 'productos',
+                    sede: localStorage.getItem('sede'),
+                  })
+                  .subscribe((data) => {
+                    if (data.estadoPeticion === 'SUCCESS') {
+                      let info = JSON.parse(data);
+
+                      this.respuestaProductos(info, true);
+
+                      this.deleteAll();
+                    }
+                  });
+              }
+            });
         }
       });
     });
