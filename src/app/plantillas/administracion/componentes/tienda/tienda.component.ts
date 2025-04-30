@@ -61,7 +61,7 @@ export class TiendaComponent implements OnInit {
   @ViewChild('inCodigo') inCodigo!: ElementRef;
   @ViewChild(MatAutocompleteTrigger, { read: MatAutocompleteTrigger })
   inDescripcion!: MatAutocompleteTrigger;
-
+  fechahora: string = '';
   @ViewChild('inCantidad') inCantidad!: ElementRef;
   @ViewChild('inPrecio') inPrecio!: ElementRef;
 
@@ -965,10 +965,10 @@ export class TiendaComponent implements OnInit {
 			this.openDialogAlerta(respon);*/
       const dialogref = this.dialog.open(DialogoAlerta, {
         data: {
-          boton: 'confirmar',
-          boton1: 'cancelar',
-          tipo: 'warning',
-          mensaje: 'estas seguro que deseas realizar ese pedido',
+          boton: 'Confirmar',
+          boton1: 'Cancelar',
+          tipo: 'question',
+          mensaje: 'Confirma realizar este pedido?',
         },
         disableClose: true,
       });
@@ -983,9 +983,12 @@ export class TiendaComponent implements OnInit {
   enviarPedido() {
     try {
       this.loader = true;
+      this.totalPagar = 0;
       let fechaActual = this.obtenerFechaHora();
+      this.fechahora = `${fechaActual.diaActual} ${fechaActual.horaActual}`;
       let itemsPedidos = this.productosMostrar.map((producto) => {
         console.log('productos a enviar', producto);
+        this.totalPagar += producto.total;
         return {
           codigoProducto: producto.codigo,
           valor: producto.precio,
@@ -1207,91 +1210,60 @@ export class TiendaComponent implements OnInit {
       document.getElementsByClassName('cdk-overlay-container')
     );
     //elementos[0].style.zIndex = "0";
-    dialogRef.afterClosed().subscribe((resultado) => {
+    dialogRef.afterClosed().subscribe(async (resultado) => {
       // PDF CONVERTIDO A BASE64
 
-      const dialoref = this.dialog.open(DialogoAlerta, {
+      /* const dialoref = this.dialog.open(DialogoAlerta, {
         data: {
           boton: 'Generar',
           boton1: 'cancelar',
           mensaje: 'Quisieras generar pdf ',
           tipo: 'warning',
         },
+      });*/
+      /*dialoref.afterClosed().subscribe(async (datos) => {
+        console.log('generar pdf', datos);*/
+      this.router.navigateByUrl('pedido/tirilla');
+      const pdf = await generatePDF({
+        productos: this.productosMostrar,
+        cliente: this.clienteSeleccionado,
+        total: this.totalPagar,
+        infoEmpresa: this.clienteSeleccionado,
+        fecha_actual: diaActual,
+        horaActual: Horaforma(horaActual),
+        config: this.configuracion,
+        numero: numerofactura,
+        nombre: this.nombrevendedor,
+        identificacion: this.identificacion,
       });
-      dialoref.afterClosed().subscribe(async (datos) => {
-        console.log('generar pdf', datos);
+      this.pdf = pdf;
+      this.socketproduct
+        .enviaremail({
+          idpedido: numerofactura,
+          itemspedido: this.productosMostrar,
+          cliente: this.clienteSeleccionado,
+          pdf: this.pdf,
+          fecha: this.fechahora,
+        })
+        .subscribe((datos) => {
+          if (datos.estadoPeticion === 'Done') {
+            this.socketproduct
+              .obtenerInfo('aws', 'pazzioli-pos-3', {
+                metodo: 'CONSULTAR',
+                condicion: '',
+                consulta: 'productos',
+                sede: localStorage.getItem('sede'),
+              })
+              .subscribe((data) => {
+                if (data.estadoPeticion === 'SUCCESS') {
+                  let info = JSON.parse(data);
 
-        if (datos) {
-          const pdf = await generatePDF({
-            productos: this.productosMostrar,
-            cliente: this.clienteSeleccionado,
-            total: this.totalPagar,
-            infoEmpresa: this.clienteSeleccionado,
-            fecha_actual: diaActual,
-            horaActual: Horaforma(horaActual),
-            config: this.configuracion,
-            numero: numerofactura,
-            nombre: this.nombrevendedor,
-            identificacion: this.identificacion,
-          });
-          this.pdf = pdf;
-          this.socketproduct
-            .enviaremail({
-              idpedido: numerofactura,
-              itemspedido: this.productosMostrar,
-              cliente: this.clienteSeleccionado,
-              pdf: this.pdf,
-            })
-            .subscribe((datos) => {
-              if (datos.estadoPeticion === 'Done') {
-                this.socketproduct
-                  .obtenerInfo('aws', 'pazzioli-pos-3', {
-                    metodo: 'CONSULTAR',
-                    condicion: '',
-                    consulta: 'productos',
-                    sede: localStorage.getItem('sede'),
-                  })
-                  .subscribe((data) => {
-                    if (data.estadoPeticion === 'SUCCESS') {
-                      let info = JSON.parse(data);
-
-                      this.respuestaProductos(info, true);
-                    }
-                    this.deleteAll();
-                  });
-              }
-            });
-        } else {
-          this.pdf = null;
-          this.socketproduct
-            .enviaremail({
-              idpedido: numerofactura,
-              itemspedido: this.productosMostrar,
-              cliente: this.clienteSeleccionado,
-              pdf: this.pdf,
-            })
-            .subscribe((datos) => {
-              if (datos.estadoPeticion === 'Done') {
-                this.socketproduct
-                  .obtenerInfo('aws', 'pazzioli-pos-3', {
-                    metodo: 'CONSULTAR',
-                    condicion: '',
-                    consulta: 'productos',
-                    sede: localStorage.getItem('sede'),
-                  })
-                  .subscribe((data) => {
-                    if (data.estadoPeticion === 'SUCCESS') {
-                      let info = JSON.parse(data);
-
-                      this.respuestaProductos(info, true);
-
-                      this.deleteAll();
-                    }
-                  });
-              }
-            });
-        }
-      });
+                  this.respuestaProductos(info, true);
+                }
+                this.deleteAll();
+              });
+          }
+        });
     });
   }
 }
@@ -1377,10 +1349,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { Console, error } from 'console';
 import { serviciodb } from 'src/services/serviciosdbs/serviciodb.service';
 import { rejects } from 'assert';
-import { NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Route, Router } from '@angular/router';
 import { Pedidoguardado } from 'src/app/angular-material/pedidoguardos';
 import generatePDF from './pdf/pdfpedido';
 import { Horaforma } from 'src/app/utils/formatearhora';
+import { Platform } from '@ionic/angular';
 
 @Component({
   selector: 'dialog-factura',
@@ -1442,7 +1415,9 @@ export class DialogFactura {
   constructor(
     public dialogRef: MatDialogRef<DialogFactura>,
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private servisocket: Socket_producto
+    private servisocket: Socket_producto,
+    private platform: Platform,
+    private route: Router
   ) {
     this.dataSource = data.productos;
     this.clienteSeleccionado = data.cliente;
@@ -1579,10 +1554,17 @@ export class DialogFactura {
     /* this.htmlRenderizado = this.tirillaRef.nativeElement.outerHTML;
     console.log(this.htmlRenderizado); // Esto ya es un string con todo el contenido*/
     setTimeout(() => {
-      this.imprimir();
-      this.fechaactul = `${this.data.fecha_actual}`;
-      this.horaactual = `${this.data.horaActual}`;
-      this.dialogRef.close(null);
+      if (!this.platform.is('mobile')) {
+        this.imprimir();
+        this.fechaactul = `${this.data.fecha_actual}`;
+        this.horaactual = `${this.data.horaActual}`;
+        this.dialogRef.close(null);
+      } else {
+        this.fechaactul = `${this.data.fecha_actual}`;
+        this.horaactual = `${this.data.horaActual}`;
+
+        this.dialogRef.close(null);
+      }
     }, 1000);
   }
   imprimir() {

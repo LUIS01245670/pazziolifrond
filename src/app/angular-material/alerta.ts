@@ -59,7 +59,7 @@ export interface DatosAlerta {
       <mat-icon class="icono-alert" [color]="color" style="height: auto;">{{
         icono
       }}</mat-icon>
-      <h1 mat-dialog-title class="titulo-alert">{{ titulo }}</h1>
+      <h1 mat-dialog-title class="titulo-alert" *ngIf="titulo">{{ titulo }}</h1>
       <p>{{ mensaje }}</p>
       <div class="row" [hidden]="!input">
         <div class="col-md-12">

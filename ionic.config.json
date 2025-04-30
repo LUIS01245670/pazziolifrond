@@ -1,0 +1,7 @@
+{
+  "name": "pazziolifrond",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "angular"
+}

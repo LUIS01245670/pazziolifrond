@@ -11,8 +11,28 @@ import { ItemspedidoComponent } from './componentes/itemspedido/itemspedido.comp
 import { MatTableModule } from '@angular/material/table';
 import { CdkTableModule } from '@angular/cdk/table';
 import { MatIconModule } from '@angular/material/icon';
+import { IonicModule } from '@ionic/angular';
+import { InpresiontirillaComponent } from './componentes/inpresiontirilla/inpresiontirilla.component';
+import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
+
 @NgModule({
-  declarations: [TiendaComponent, RedireccionComponent, PedidosComponent, ItemspedidoComponent],
-  imports: [CommonModule, RouterModule.forChild(AdminRoutes), MaterialModule,ReactiveFormsModule,MatTableModule,CdkTableModule,MatIconModule],
+  declarations: [
+    TiendaComponent,
+    RedireccionComponent,
+    PedidosComponent,
+    ItemspedidoComponent,
+    InpresiontirillaComponent,
+  ],
+  imports: [
+    CommonModule,
+    RouterModule.forChild(AdminRoutes),
+    MaterialModule,
+    ReactiveFormsModule,
+    MatTableModule,
+    CdkTableModule,
+    MatIconModule,
+    IonicModule.forRoot(),
+  ],
+  providers: [BluetoothSerial],
 })
 export class AdministracionModule {}

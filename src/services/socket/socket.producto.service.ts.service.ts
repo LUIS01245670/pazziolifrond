@@ -22,7 +22,7 @@ export class Socket_producto {
   public conectar() {
     // this.socket = io("http://52.86.140.114:3000");
 
-    this.socket = io('http://localhost:3000', {
+    this.socket = io(`${environment.api}`, {
       transports: ['websocket'],
       withCredentials: true,
     });
@@ -94,7 +94,7 @@ export class Socket_producto {
     });
   }
 
-  public obteneritemspedido(codigo: string): Observable<any> {
+  public obteneritemspedido(codigo: number): Observable<any> {
     return this.http.get(
       `${environment.api}/obteneritemspedido?codigo=${codigo}`,
       { withCredentials: true }

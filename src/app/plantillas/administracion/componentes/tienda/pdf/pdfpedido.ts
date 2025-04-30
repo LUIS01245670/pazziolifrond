@@ -18,9 +18,9 @@ const generatePDF = async (data: any) => {
       { text: 'Descripción', style: 'tableHeader' },
       { text: 'Referencia', style: 'tableHeader' },
       { text: 'Presentación', style: 'tableHeader' },
-      { text: 'Cantidad', style: 'tableHeader' },
+      { text: 'Cant.', style: 'tableHeader' },
       { text: 'Precio', style: 'tableHeader' },
-      { text: 'TOTAL', style: 'tableHeader' },
+      { text: 'Total', style: 'tableHeader' },
     ],
     ...data?.productos.map((product: any) => [
       product.codigo,
@@ -66,11 +66,11 @@ const generatePDF = async (data: any) => {
             style: 'subheader',
           },
           {
-            text: `email: ${data.cliente.email}`,
+            text: `Email: ${data.cliente.email}`,
             style: 'subheader',
           },
           {
-            text: `telefono: ${data.cliente.telefonoFijo}`,
+            text: `Telefono: ${data.cliente.telefonoFijo}`,
             style: 'subheader',
           },
         ],
@@ -89,7 +89,7 @@ const generatePDF = async (data: any) => {
             style: 'subheader',
           },
           {
-            text: `vendedor: ${data.nombre}`,
+            text: `Vendedor: ${data.nombre}`,
             style: 'subheader',
           },
         ],
