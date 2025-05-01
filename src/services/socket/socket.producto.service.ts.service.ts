@@ -22,7 +22,7 @@ export class Socket_producto {
   public conectar() {
     // this.socket = io("http://52.86.140.114:3000");
 
-    this.socket = io('http://localhost:3000', {
+    this.socket = io(`${environment.api}`, {
       transports: ['websocket'],
       withCredentials: true,
     });
