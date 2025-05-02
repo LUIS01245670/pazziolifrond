@@ -15,6 +15,7 @@ import { Dialogdetalles } from './plantillas/administracion/componentes/pedidos/
 import { MatTableModule } from '@angular/material/table';
 import { Pedidoguardado } from './angular-material/pedidoguardos';
 import { Detallespedido } from './angular-material/detallespedido';
+import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
 
 @NgModule({
     declarations: [
@@ -24,7 +25,8 @@ import { Detallespedido } from './angular-material/detallespedido';
         DialogFactura,
         Dialogdetalles,
         Pedidoguardado,
-        Detallespedido
+        Detallespedido,
+        NotFoundComponentComponent
     ],
     exports: [
         MatAutocompleteModule,

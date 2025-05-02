@@ -1553,15 +1553,15 @@ export class DialogFactura {
     // Aquí capturas TODO el HTML del componente ya interpretado/renderizado
     /* this.htmlRenderizado = this.tirillaRef.nativeElement.outerHTML;
     console.log(this.htmlRenderizado); // Esto ya es un string con todo el contenido*/
-    this.imprimir();
+
     setTimeout(() => {
       if (!this.platform.is('mobile')) {
-        // this.imprimir();
+        this.imprimirmovil();
         this.fechaactul = `${this.data.fecha_actual}`;
         this.horaactual = `${this.data.horaActual}`;
         this.dialogRef.close(null);
       } else {
-        //this.imprimir();
+        this.imprimir();
         this.fechaactul = `${this.data.fecha_actual}`;
         this.horaactual = `${this.data.horaActual}`;
 
@@ -1649,5 +1649,31 @@ export class DialogFactura {
     /* enviarImagenAlServidor(base64Imagen: string) {
     this.servisocket.enviarImagenAlServidor(base64Imagen);
   }*/
+  }
+
+  imprimirmovil() {
+    const contenidoOriginal = document.body.innerHTML; // Guarda el contenido actual
+    const contenidoTirilla = this.tirillaRef.nativeElement.innerHTML;
+
+    document.body.innerHTML = `
+      <style>
+        body { font-family: monospace; font-size: 12px; width:58mm; padding: 10px; }
+        h3, p { margin: 0; text-align: center; }
+        hr { border: none; border-top: 1px dashed #000; margin: 4px 0; }
+        .row > div > span { font-size: 10px; }
+        tr { display: flex; }
+        tr > th { flex: 1; display: flex; justify-content: center; font-size: 10px; }
+        .trsuperior > :nth-child(1) { flex: 1; justify-content: start; margin-left: 8px; }
+        .trsuperior > :nth-child(2) { flex: 2; justify-content: start; margin-left: 10px; }
+        .tdchild { font-size: 8px; }
+        .bodyinferior > td { font-size: 10px; flex: 1; }
+      </style>
+      ${contenidoTirilla}
+    `;
+
+    window.print();
+
+    // Después de imprimir, restauras la vista original
+    document.body.innerHTML = contenidoOriginal;
   }
 }

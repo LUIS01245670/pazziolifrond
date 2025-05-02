@@ -3,6 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { AdministracionModule } from './plantillas/administracion/administracion.module';
 import { AutenticacionModule } from './plantillas/autenticacion/autenticacion.module';
 import { AuthGuard, Publicguards } from './guards/auth.guard';
+import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
 
 const routes: Routes = [
   {
@@ -12,13 +13,23 @@ const routes: Routes = [
   },
   {
     path: 'admin',
-    canActivate:[AuthGuard],
-    loadChildren: () =>  import('./plantillas/administracion/administracion.module').then(m => m.AdministracionModule),
+    canActivate: [AuthGuard],
+    loadChildren: () =>
+      import('./plantillas/administracion/administracion.module').then(
+        (m) => m.AdministracionModule
+      ),
   },
   {
     path: 'auth',
-    canActivate:[Publicguards],
-    loadChildren: () => import('./plantillas/autenticacion/autenticacion.module').then(m => m.AutenticacionModule),
+    canActivate: [Publicguards],
+    loadChildren: () =>
+      import('./plantillas/autenticacion/autenticacion.module').then(
+        (m) => m.AutenticacionModule
+      ),
+  },
+  {
+    path: '**',
+    component: NotFoundComponentComponent,
   },
 ];
 
