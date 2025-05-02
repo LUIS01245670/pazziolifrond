@@ -7,6 +7,11 @@ console.log(pdfFonts);
 (pdfMake as any).vfs = pdfFonts;
 
 const generatePDF = async (data: any) => {
+  const nuevaVentana = window.open('', '_blank');
+  if (!nuevaVentana) {
+    alert('El navegador bloqueó la ventana emergente. Permite pop-ups.');
+    return;
+  }
   console.log(data);
   //Se crea el contenido de la tabla, con:
   //Una fila de encabezado (títulos).
@@ -18,9 +23,9 @@ const generatePDF = async (data: any) => {
       { text: 'Descripción', style: 'tableHeader' },
       { text: 'Referencia', style: 'tableHeader' },
       { text: 'Presentación', style: 'tableHeader' },
-      { text: 'Cantidad', style: 'tableHeader' },
+      { text: 'Cant.', style: 'tableHeader' },
       { text: 'Precio', style: 'tableHeader' },
-      { text: 'TOTAL', style: 'tableHeader' },
+      { text: 'Total', style: 'tableHeader' },
     ],
     ...data?.productos.map((product: any) => [
       product.codigo,
@@ -66,11 +71,11 @@ const generatePDF = async (data: any) => {
             style: 'subheader',
           },
           {
-            text: `email: ${data.cliente.email}`,
+            text: `Email: ${data.cliente.email}`,
             style: 'subheader',
           },
           {
-            text: `telefono: ${data.cliente.telefonoFijo}`,
+            text: `Telefono: ${data.cliente.telefonoFijo}`,
             style: 'subheader',
           },
         ],
@@ -89,7 +94,7 @@ const generatePDF = async (data: any) => {
             style: 'subheader',
           },
           {
-            text: `vendedor: ${data.nombre}`,
+            text: `Vendedor: ${data.nombre}`,
             style: 'subheader',
           },
         ],
@@ -152,7 +157,11 @@ const generatePDF = async (data: any) => {
   };
   //Genera el PDF y lo abre en una nueva pestaña del navegador.
 
-  pdfMake.createPdf(docDefinition).open();
+  // ✅ 3. Genera el PDF y escribe el contenido en la ventana ya abierta
+  pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    nuevaVentana.location.href = url;
+  });
   function getPdfBase64(docDefinition: any): Promise<string> {
     return new Promise((resolve) => {
       pdfMake.createPdf(docDefinition).getBase64((base64: string) => {

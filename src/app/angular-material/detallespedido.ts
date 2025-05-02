@@ -56,7 +56,8 @@ interface producto {
               <table style="width:100%;">
                 <thead>
                   <tr>
-                    <th>Descripcion_producto</th>
+                    <th>Codigo</th>
+                    <th>Descripcion</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
                     <th>Total</th>
@@ -69,10 +70,11 @@ interface producto {
                       let _producto of scroll_productosMostrar.viewPortItems
                     "
                   >
+                    <td>{{ _producto.codigo }}</td>
                     <td>{{ _producto.nombre }}</td>
                     <td>{{ _producto.cantidad }}</td>
-                    <td>{{ _producto.precio }}</td>
-                    <td>{{ _producto.total }}</td>
+                    <td>$ {{ _producto.precio.toLocaleString('de-DE') }}</td>
+                    <td>$ {{ _producto.total.toLocaleString('de-DE') }}</td>
                   </tr>
                 </tbody>
               </table>

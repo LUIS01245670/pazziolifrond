@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">pazzioli-front</string>
+    <string name="title_activity_main">pazzioli-front</string>
+    <string name="package_name">com.pazzioli.web</string>
+    <string name="custom_url_scheme">com.pazzioli.web</string>
+</resources>

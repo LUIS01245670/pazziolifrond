@@ -94,7 +94,7 @@ export class Socket_producto {
     });
   }
 
-  public obteneritemspedido(codigo: string): Observable<any> {
+  public obteneritemspedido(codigo: number): Observable<any> {
     return this.http.get(
       `${environment.api}/obteneritemspedido?codigo=${codigo}`,
       { withCredentials: true }

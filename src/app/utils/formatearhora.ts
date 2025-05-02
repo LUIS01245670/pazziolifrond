@@ -1,5 +1,6 @@
 export const Horaforma = (formato: string): string => {
   //Para agregar si es AM o PM a tu función formatearfecha, puedes obtener la hora y luego determinar si está antes o después del mediodía.
+  console.log(formato);
   const formaarray: string[] = formato.split(':');
 
   const pad = (n: number) => n.toString().padStart(2, '0');
