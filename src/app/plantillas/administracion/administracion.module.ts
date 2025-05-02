@@ -12,7 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { CdkTableModule } from '@angular/cdk/table';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
-import { InpresiontirillaComponent } from './componentes/inpresiontirilla/inpresiontirilla.component';
+
 import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
 
 @NgModule({
@@ -21,7 +21,6 @@ import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
     RedireccionComponent,
     PedidosComponent,
     ItemspedidoComponent,
-    InpresiontirillaComponent,
   ],
   imports: [
     CommonModule,

@@ -22,10 +22,7 @@ export const AdminRoutes: Routes = [
     path: 'pedido',
     component: PedidosComponent,
   },
-  {
-    path: 'pedido/tirilla',
-    component: InpresiontirillaComponent,
-  },
+
   {
     path: 'pedido/:codigo',
     component: ItemspedidoComponent,
