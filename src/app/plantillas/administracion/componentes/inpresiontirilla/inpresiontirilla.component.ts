@@ -1,7 +1,8 @@
-import { Platform } from '@angular/cdk/platform';
+import { Platform } from '@ionic/angular';
 import { Component, OnInit } from '@angular/core';
-import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
+
 import { AlertController } from '@ionic/angular';
+declare var BTPrinter: any;
 @Component({
   selector: 'app-inpresiontirilla',
   templateUrl: './inpresiontirilla.component.html',
@@ -9,80 +10,32 @@ import { AlertController } from '@ionic/angular';
 })
 export class InpresiontirillaComponent implements OnInit {
   public activado: boolean = false;
-  public mensaje: string = 'jbjhbjbh';
-  operaciones = [
-    {
-      nombre: 'Iniciar',
-      argumentos: [],
-    },
-    {
-      nombre: 'EstablecerAlineacion',
-      argumentos: [1],
-    },
 
-    {
-      nombre: 'EscribirTexto',
-      argumentos: ['Hola Angular desde parzibyte.me'],
-    },
-    {
-      nombre: 'Feed',
-      argumentos: [1],
-    },
-    {
-      nombre: 'EscribirTexto',
-      argumentos: [this.mensaje],
-    },
-    {
-      nombre: 'Feed',
-      argumentos: [1],
-    },
-    {
-      nombre: 'DescargarImagenDeInternetEImprimir',
-      argumentos: ['https://github.com/parzibyte.png', 380, 0, true],
-    },
-  ];
   constructor(
-    private bluetooth: BluetoothSerial,
     private platform: Platform,
     private alertController: AlertController
   ) {
-    this.checkBluetooth();
+    if (this.platform.is('android') || this.platform.is('ios')) {
+      this.activado = true;
+      this.listPrinters(); // Listar impresoras solo en móvil
+    } else {
+      this.activado = false;
+      alert(
+        'Funcionalidad de impresión solo disponible en dispositivos móviles'
+      );
+    }
   }
 
-  checkBluetooth() {
-    this.bluetooth
-      .isEnabled()
-      .then(async () => {
-        console.log('Bluetooth está encendido');
-        this.activado = true;
-        const alert = await this.alertController.create({
-          message: 'Bluetooth está encendido',
-          buttons: ['OK'],
-        });
-
-        await alert.present();
-        this.listDevices();
-      })
-      .catch(async () => {
-        console.log('Bluetooth NO está encendido');
-        const alert = await this.alertController.create({
-          message: 'Bluetooth está encendido',
-          buttons: ['OK'],
-        });
-
-        await alert.present();
-      });
-  }
-
-  listDevices() {
-    this.bluetooth
-      .list()
-      .then((devices) => {
-        console.log('Dispositivos emparejados:', devices);
-      })
-      .catch((error) => {
-        console.error('Error listando dispositivos:', error);
-      });
+  listPrinters() {
+    BTPrinter.list(
+      (printers: any) => {
+        alert('Impresoras encontradas:');
+        alert('Impresoras encontradas: ' + JSON.stringify(printers));
+      },
+      (err: any) => {
+        alert('Error al listar impresoras');
+      }
+    );
   }
   ngOnInit(): void {}
 }

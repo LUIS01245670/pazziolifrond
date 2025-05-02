@@ -7,6 +7,11 @@ console.log(pdfFonts);
 (pdfMake as any).vfs = pdfFonts;
 
 const generatePDF = async (data: any) => {
+  const nuevaVentana = window.open('', '_blank');
+  if (!nuevaVentana) {
+    alert('El navegador bloqueó la ventana emergente. Permite pop-ups.');
+    return;
+  }
   console.log(data);
   //Se crea el contenido de la tabla, con:
   //Una fila de encabezado (títulos).
@@ -152,7 +157,11 @@ const generatePDF = async (data: any) => {
   };
   //Genera el PDF y lo abre en una nueva pestaña del navegador.
 
-  pdfMake.createPdf(docDefinition).open();
+  // ✅ 3. Genera el PDF y escribe el contenido en la ventana ya abierta
+  pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
+    const url = URL.createObjectURL(blob);
+    nuevaVentana.location.href = url;
+  });
   function getPdfBase64(docDefinition: any): Promise<string> {
     return new Promise((resolve) => {
       pdfMake.createPdf(docDefinition).getBase64((base64: string) => {

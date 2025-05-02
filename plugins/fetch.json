@@ -1,0 +1,10 @@
+{
+  "com.kbarrios.btprinter": {
+    "source": {
+      "type": "registry",
+      "id": "cordova-plugin-btprinter@^1.0.9"
+    },
+    "is_top_level": true,
+    "variables": {}
+  }
+}

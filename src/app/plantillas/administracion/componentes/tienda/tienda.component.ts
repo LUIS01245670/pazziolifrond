@@ -1553,13 +1553,15 @@ export class DialogFactura {
     // Aquí capturas TODO el HTML del componente ya interpretado/renderizado
     /* this.htmlRenderizado = this.tirillaRef.nativeElement.outerHTML;
     console.log(this.htmlRenderizado); // Esto ya es un string con todo el contenido*/
+    this.imprimir();
     setTimeout(() => {
       if (!this.platform.is('mobile')) {
-        this.imprimir();
+        // this.imprimir();
         this.fechaactul = `${this.data.fecha_actual}`;
         this.horaactual = `${this.data.horaActual}`;
         this.dialogRef.close(null);
       } else {
+        //this.imprimir();
         this.fechaactul = `${this.data.fecha_actual}`;
         this.horaactual = `${this.data.horaActual}`;
 

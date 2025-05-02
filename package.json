@@ -23,11 +23,15 @@
     "@angular/router": "^14.3.0",
     "@awesome-cordova-plugins/bluetooth-serial": "^5.46.0",
     "@awesome-cordova-plugins/core": "^5.46.0",
+    "@capacitor/android": "^7.2.0",
+    "@capacitor/cli": "^5.7.8",
+    "@capacitor/core": "^5.7.8",
     "@ionic/angular": "^6.3.8",
     "@types/pdfmake": "^0.2.9",
     "@types/socket.io-client": "^1.4.34",
     "base-64": "^1.0.0",
     "cordova-plugin-bluetooth-serial": "^0.4.7",
+    "cordova-plugin-btprinter": "^1.0.9",
     "cordova-res": "^0.15.4",
     "crypto-js": "^4.0.0",
     "html2canvas": "^1.4.1",
@@ -61,5 +65,10 @@
     "ts-node": "~8.3.0",
     "tslint": "~6.1.0",
     "typescript": "^4.6.4"
+  },
+  "cordova": {
+    "plugins": {
+      "com.kbarrios.btprinter": {}
+    }
   }
 }
