@@ -1,5 +1,5 @@
 export const environment = {
   production: true,
   vendedor: 'token_vendedor',
-  api: 'http://localhost:3000/api',
+  api: 'http://74.50.73.244:3000/api',
 };
