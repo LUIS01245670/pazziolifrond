@@ -51,6 +51,7 @@ export interface PRODUCTO {
   styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
+  ventana: any = null;
   cantidadproducto: string = '';
   nombrevendedor: String = '';
   identificacion: String = '';
@@ -921,6 +922,7 @@ export class TiendaComponent implements OnInit {
   }
   crearPedido() {
     console.log(this.clienteSeleccionado.codigo);
+
     if (this.productosMostrar.length <= 0) {
       const data: DatosAlerta = {
         titulo: 'ERROR',
@@ -975,6 +977,29 @@ export class TiendaComponent implements OnInit {
       });
       dialogref.afterClosed().subscribe((datos) => {
         if (datos) {
+          this.ventana = window.open('', '_blank');
+          this.ventana.document.write(`
+          <html>
+            <head>
+              <title>Visualizador PDF</title>
+            
+              <style>
+              @media print {
+                #printBtn {
+                  visibility: hidden;
+                }
+              }
+            </style>
+      
+            </head>
+            <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
+              <p style="font-size:18px; color:#333;" id="loadingText" >Generando PDF, espera un momento...</p>
+              <canvas id="pdfCanvas" style="width:100%; max-width:600px; display:none;"></canvas>
+            
+            
+            </body>
+          </html>
+        `);
           this.enviarPedido();
         }
       });
@@ -1185,18 +1210,21 @@ export class TiendaComponent implements OnInit {
     });
 
     numerofactura = await obtenerpedido;
-    generatePDFtirilla({
-      productos: this.productosMostrar,
-      cliente: this.clienteSeleccionado,
-      total: this.totalPagar,
-      infoEmpresa: this.clienteSeleccionado,
-      fecha_actual: diaActual,
-      horaActual: Horaforma(horaActual),
-      config: this.configuracion,
-      numero: numerofactura,
-      vendedor: this.nombrevendedor,
-      identificacion: this.identificacion,
-    });
+    generatePDFtirilla(
+      {
+        productos: this.productosMostrar,
+        cliente: this.clienteSeleccionado,
+        total: this.totalPagar,
+        infoEmpresa: this.clienteSeleccionado,
+        fecha_actual: diaActual,
+        horaActual: Horaforma(horaActual),
+        config: this.configuracion,
+        numero: numerofactura,
+        vendedor: this.nombrevendedor,
+        identificacion: this.identificacion,
+      },
+      this.ventana
+    );
 
     const pdf = await generatePDFemail({
       productos: this.productosMostrar,
@@ -1658,6 +1686,5 @@ export class DialogFactura {
 
   imprimirmovil() {
     console.log('esmovil');
-    generatePDFtirilla(this.data);
   }
 }

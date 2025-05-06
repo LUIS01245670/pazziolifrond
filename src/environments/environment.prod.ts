@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
   vendedor: 'token_vendedor',
-  api: 'http://192.168.1.20:3000/api',
-  apisocket: 'http://192.168.1.20:3000',
+  api: 'https://pazzioli.cavsystems.com.co/api',
+  apisocket: 'https://pazzioli.cavsystems.com.co',
 };

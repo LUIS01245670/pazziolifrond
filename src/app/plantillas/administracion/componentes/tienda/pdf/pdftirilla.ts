@@ -6,7 +6,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 console.log(pdfFonts);
 (pdfMake as any).vfs = pdfFonts;
 
-const generatePDFtirilla = async (data: any) => {
+const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   console.log(data);
   //Se crea el contenido de la tabla, con:
   //Una fila de encabezado (títulos).
@@ -189,7 +189,7 @@ const generatePDFtirilla = async (data: any) => {
   //Genera el PDF y lo abre en una nueva pestaña del navegador.
   pdfMake.createPdf(docDefinition).getBlob((blob: Blob) => {
     const url = URL.createObjectURL(blob); // Crea un URL temporal para el PDF que generaste con pdfMake.
-    const nuevaVentana = window.open('', '_blank');
+    //nuevaVentana = window.open('', '_blank');
     if (nuevaVentana) {
       const esMovil =
         /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
@@ -211,7 +211,7 @@ const generatePDFtirilla = async (data: any) => {
 
       </head>
       <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
-        <p style="font-size:18px; color:#333;" id="loadingText" >Generando PDF, espera un momento...</p>
+       
         <canvas id="pdfCanvas" style="width:100%; max-width:600px; display:none;"></canvas>
         <button id="printBtn"
           style="
