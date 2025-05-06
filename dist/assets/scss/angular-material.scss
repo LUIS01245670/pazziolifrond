@@ -1,0 +1,461 @@
+// Import library functions for theme creation.
+@use '@angular/material' as mat;
+
+// Define your application's custom theme.
+$primary: mat.define-palette(mat.$indigo-palette, 600);
+$accent: mat.define-palette(mat.$green-palette, 400);
+$warn: mat.define-palette(mat.$red-palette, 400);
+$theme: mat.define-light-theme(
+  (
+    color: (
+      primary: $primary,
+      accent: $accent,
+      warn: $warn,
+    ),
+  )
+);
+
+// Include theme styles for Angular Material components.
+@include mat.all-component-themes($theme);
+
+.b-primary {
+  background-color: mat.get-color-from-palette($primary);
+  * {
+    color: white !important;
+  }
+}
+
+.c-primary {
+  color: mat.get-color-from-palette($primary);
+}
+
+.bold {
+  font-weight: 600 !important;
+}
+
+.mat-list-base .mat-list-item .mat-list-icon,
+.mat-list-base .mat-list-option .mat-list-icon {
+  height: 35px !important;
+  font-size: 35px !important;
+  color: mat.get-color-from-palette($primary);
+}
+
+.b-accent {
+  background-color: mat.get-color-from-palette($accent);
+  * {
+    color: white !important;
+  }
+}
+
+.c-accent {
+  color: mat.get-color-from-palette($accent);
+}
+
+.b-warn {
+  background-color: mat.get-color-from-palette($warn);
+  * {
+    color: white !important;
+  }
+}
+
+.c-warn {
+  color: mat.get-color-from-palette($warn);
+}
+
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-fab.mat-primary,
+.mat-mini-fab.mat-primary {
+  background-color: mat.get-color-from-palette($primary, 100) !important;
+  color: mat.get-color-from-palette($primary, 700) !important;
+  border-radius: 300px !important;
+}
+
+.mat-flat-button.mat-accent,
+.mat-raised-button.mat-accent,
+.mat-fab.mat-accent,
+.mat-mini-fab.mat-accent {
+  background-color: mat.get-color-from-palette($accent, 100) !important;
+  color: mat.get-color-from-palette($accent, 700) !important;
+  border-radius: 300px !important;
+}
+
+.mat-flat-button.mat-warn,
+.mat-raised-button.mat-warn,
+.mat-fab.mat-warn,
+.mat-mini-fab.mat-warn {
+  background-color: mat.get-color-from-palette($warn, 100) !important;
+  color: mat.get-color-from-palette($warn, 700) !important;
+  border-radius: 300px !important;
+}
+
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary,
+.mat-fab.mat-primary,
+.mat-mini-fab.mat-primary,
+.mat-flat-button.mat-accent,
+.mat-raised-button.mat-accent,
+.mat-fab.mat-accent,
+.mat-mini-fab.mat-accent,
+.mat-flat-button.mat-warn,
+.mat-raised-button.mat-warn,
+.mat-fab.mat-warn,
+.mat-mini-fab.mat-warn,
+.mat-flat-button,
+.mat-raised-button,
+.mat-fab,
+.mat-mini-fab .mat-raised-button,
+.mat-button,
+.mat-icon-button,
+.mat-stroked-button,
+.mat-flat-button,
+.mat-flat-button.mat-primary.mat-button-disabled,
+.mat-flat-button.mat-accent.mat-button-disabled,
+.mat-flat-button.mat-warn.mat-button-disabled,
+.mat-flat-button.mat-button-disabled.mat-button-disabled,
+.mat-raised-button.mat-primary.mat-button-disabled,
+.mat-raised-button.mat-accent.mat-button-disabled,
+.mat-raised-button.mat-warn.mat-button-disabled,
+.mat-raised-button.mat-button-disabled.mat-button-disabled,
+.mat-fab.mat-primary.mat-button-disabled,
+.mat-fab.mat-accent.mat-button-disabled,
+.mat-fab.mat-warn.mat-button-disabled,
+.mat-fab.mat-button-disabled.mat-button-disabled,
+.mat-mini-fab.mat-primary.mat-button-disabled,
+.mat-mini-fab.mat-accent.mat-button-disabled,
+.mat-mini-fab.mat-warn.mat-button-disabled,
+.mat-mini-fab.mat-button-disabled.mat-button-disabled {
+  border-radius: 300px !important;
+  box-shadow: none !important;
+}
+
+.mat-flat-button.mat-primary.mat-button-disabled,
+.mat-flat-button.mat-accent.mat-button-disabled,
+.mat-flat-button.mat-warn.mat-button-disabled,
+.mat-flat-button.mat-button-disabled.mat-button-disabled,
+.mat-raised-button.mat-primary.mat-button-disabled,
+.mat-raised-button.mat-accent.mat-button-disabled,
+.mat-raised-button.mat-warn.mat-button-disabled,
+.mat-raised-button.mat-button-disabled.mat-button-disabled,
+.mat-fab.mat-primary.mat-button-disabled,
+.mat-fab.mat-accent.mat-button-disabled,
+.mat-fab.mat-warn.mat-button-disabled,
+.mat-fab.mat-button-disabled.mat-button-disabled,
+.mat-mini-fab.mat-primary.mat-button-disabled,
+.mat-mini-fab.mat-accent.mat-button-disabled,
+.mat-mini-fab.mat-warn.mat-button-disabled,
+.mat-mini-fab.mat-button-disabled.mat-button-disabled {
+  filter: grayscale(1);
+}
+
+.mat-card {
+  box-shadow: 0 6px 21px 0px rgb(39 38 49 / 10%) !important;
+  border-radius: 17px !important;
+}
+
+.mat-card-content {
+  margin-bottom: 0x !important;
+  padding: 10px 0 !important;
+}
+
+.mat-drawer-container {
+  height: 100vh;
+  width: 100%;
+}
+
+.mat-drawer {
+  width: 250px;
+  padding: 10px;
+}
+
+.mat-drawer:not(.mat-drawer-side) {
+  box-shadow: 0 6px 50px 0px rgb(39 38 49 / 10%) !important;
+}
+
+.mat-form-field {
+  width: 100%;
+}
+
+.mat-form-field-appearance-fill .mat-form-field-flex {
+  border-radius: 10px !important;
+  background-color: #9e9e9e40;
+}
+
+.mat-form-field-underline {
+  display: none;
+}
+
+.mat-input-element {
+  font-weight: 500;
+}
+
+.mat-select-panel,
+.mat-autocomplete-panel {
+  box-shadow: 0 6px 21px 0px rgb(39 38 49 / 10%) !important;
+  border-radius: 17px !important;
+  border: solid 5px transparent !important;
+}
+
+.mat-card-header {
+  border-bottom: solid 1px #8081883d;
+}
+
+.mat-card-actions {
+  border-top: solid 1px #8081883d;
+}
+
+.mat-toolbar {
+  box-shadow: 0 6px 21px 0px rgb(39 38 49 / 10%) !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw !important;
+  z-index: 100;
+  background-color: white !important;
+}
+
+.mat-drawer-container,
+body {
+  background-color: #fafbfe;
+}
+
+* {
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+
+  /* Non-prefixed version, currently supported by Chrome and Opera */
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    // display: none !important;
+  }
+
+  *:hover::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+  }
+
+  *::-webkit-scrollbar-corner {
+    background-color: transparent !important;
+  }
+
+  *::-webkit-scrollbar-track {
+    background-color: rgba(255, 255, 255, 0);
+    opacity: 0;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: rgba(130, 157, 190, 0.185);
+    border-radius: 15px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(130, 157, 190, 0.233);
+    border-radius: 15px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+  }
+
+  *::-webkit-scrollbar-thumb:active {
+    background-color: rgba(130, 157, 190, 0.233);
+    border-radius: 15px;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+  }
+
+  * {
+    scrollbar-color: rgba(116, 116, 116, 0.212) rgba(255, 255, 255, 0);
+    scrollbar-width: thin;
+  }
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 900 !important;
+  box-shadow: none !important;
+}
+
+.full {
+  height: 100%;
+}
+
+button[full-button] {
+  width: 100%;
+  height: 60px;
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.mat-toolbar,
+.mat-toolbar h1,
+.mat-toolbar h2,
+.mat-toolbar h3,
+.mat-toolbar h4,
+.mat-toolbar h5,
+.mat-toolbar h6 {
+  font-weight: 800;
+}
+
+.mat-card-header .mat-card-title {
+  font-weight: 700;
+}
+
+.mat-card-header.search {
+  display: block !important;
+}
+
+[search] .mat-form-field-wrapper {
+  padding: 0 !important;
+}
+
+.mat-list-base .mat-list-item.mat-3-line,
+.mat-list-base .mat-list-option.mat-3-line {
+  height: 60px !important;
+}
+
+.mat-autocomplete-panel.mat-autocomplete-visible {
+  min-width: 384px !important;
+}
+
+.mat-list-base .mat-list-item.deleted * {
+  color: mat.get-color-from-palette($warn);
+}
+
+.cancel * {
+  color: mat.get-color-from-palette($warn) !important;
+}
+
+.mat-form-field-appearance-fill[br-l0] .mat-form-field-flex {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+}
+
+.mat-form-field-appearance-fill[br-r0] .mat-form-field-flex {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+*.elipsis{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mat-list-base .mat-list-item .mat-list-item-content-reverse, .mat-list-base .mat-list-option .mat-list-item-content-reverse {
+  padding: 0 !important;
+}
+
+.contenedor-alert {
+  min-width: 20vw;
+  padding: 14px 0;
+  position: relative;
+  display: inline-grid;
+
+  p {
+    width: calc(100% - -1px);
+    max-width: 400px;
+    margin: 19px auto;
+    text-align: center;
+    white-space: pre-line;
+    padding: 0 20px;
+  }
+}
+
+.titulo-alert {
+  text-align: start;
+  margin-top: 5px;
+  width: fit-content;
+  margin: 28px auto 8px auto !important;
+  text-transform: uppercase !important;
+}
+
+.icono-alert {
+  position: relative;
+  margin: auto;
+  width: -webkit-fit-content !important;
+  width: -moz-fit-content !important;
+  width: 100% !important;
+  font-size: 50px;
+  text-align: center;
+}
+
+.botones-alert {
+  justify-content: flex-end;
+  margin-top: 15px;
+
+  :first-child {
+    margin-right: 10px;
+  }
+}
+
+.mensaje-alerta {
+  font-size: 15px;
+  padding: 5px;
+  border-radius: 10px;
+}
+
+@media screen and (max-width: 400px) {
+  .botones-alert {
+    justify-content: center;
+  }
+}
+
+dialogo-alerta {
+  position: relative;
+  display: block;
+}
+
+.botones-alert.mat-dialog-actions {
+  padding: 0px 0;
+  height: fit-content;
+  margin-top: 0;
+  min-height: fit-content !important;
+}
+
+
+//////////////////// SNACKBARS ///////////////////
+
+.imageLogo{
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/a/ab/Logo_TV_2015.png');
+  width: 100px;
+  height: 100px;
+  background-size: contain;
+  background-position: center;
+}
+
+mat-row, mat-header-row, mat-footer-row, th.mat-header-cell, td.mat-cell, td.mat-footer-cell {
+  border-bottom-color: rgba(0, 0, 0, 0.12);
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  .dataLabel{
+    display: -webkit-box;
+    max-width: 300px;
+    height: fit-content;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.625;
+  }
+}
