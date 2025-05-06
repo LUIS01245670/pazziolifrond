@@ -5,6 +5,7 @@ import {
   OnInit,
   ViewChild,
 } from '@angular/core';
+import { Platform } from '@ionic/angular';
 import { FormBuilder, UntypedFormControl, Validators } from '@angular/forms';
 import {
   MatDialog,
@@ -1184,7 +1185,60 @@ export class TiendaComponent implements OnInit {
     });
 
     numerofactura = await obtenerpedido;
-    const dialogRef = this.dialog.open(DialogFactura, {
+    generatePDFtirilla({
+      productos: this.productosMostrar,
+      cliente: this.clienteSeleccionado,
+      total: this.totalPagar,
+      infoEmpresa: this.clienteSeleccionado,
+      fecha_actual: diaActual,
+      horaActual: Horaforma(horaActual),
+      config: this.configuracion,
+      numero: numerofactura,
+      vendedor: this.nombrevendedor,
+      identificacion: this.identificacion,
+    });
+
+    const pdf = await generatePDFemail({
+      productos: this.productosMostrar,
+      cliente: this.clienteSeleccionado,
+      total: this.totalPagar,
+      infoEmpresa: this.clienteSeleccionado,
+      fecha_actual: diaActual,
+      horaActual: Horaforma(horaActual),
+      config: this.configuracion,
+      numero: numerofactura,
+      nombre: this.nombrevendedor,
+      identificacion: this.identificacion,
+    });
+    this.pdf = pdf;
+    this.socketproduct
+      .enviaremail({
+        idpedido: numerofactura,
+        itemspedido: this.productosMostrar,
+        cliente: this.clienteSeleccionado,
+        pdf: this.pdf,
+        fecha: this.fechahora,
+      })
+      .subscribe((datos) => {
+        if (datos.estadoPeticion === 'Done') {
+          this.socketproduct
+            .obtenerInfo('aws', 'pazzioli-pos-3', {
+              metodo: 'CONSULTAR',
+              condicion: '',
+              consulta: 'productos',
+              sede: localStorage.getItem('sede'),
+            })
+            .subscribe((data) => {
+              if (data.estadoPeticion === 'SUCCESS') {
+                let info = JSON.parse(data);
+
+                this.respuestaProductos(info, true);
+              }
+              this.deleteAll();
+            });
+        }
+      });
+    /*const dialogRef = this.dialog.open(DialogFactura, {
       data: {
         productos: this.productosMostrar,
         cliente: this.clienteSeleccionado,
@@ -1221,50 +1275,11 @@ export class TiendaComponent implements OnInit {
           tipo: 'warning',
         },
       });*/
-      /*dialoref.afterClosed().subscribe(async (datos) => {
-        console.log('generar pdf', datos);*/
-      this.router.navigateByUrl('pedido/tirilla');
-      const pdf = await generatePDF({
-        productos: this.productosMostrar,
-        cliente: this.clienteSeleccionado,
-        total: this.totalPagar,
-        infoEmpresa: this.clienteSeleccionado,
-        fecha_actual: diaActual,
-        horaActual: Horaforma(horaActual),
-        config: this.configuracion,
-        numero: numerofactura,
-        nombre: this.nombrevendedor,
-        identificacion: this.identificacion,
-      });
-      this.pdf = pdf;
-      this.socketproduct
-        .enviaremail({
-          idpedido: numerofactura,
-          itemspedido: this.productosMostrar,
-          cliente: this.clienteSeleccionado,
-          pdf: this.pdf,
-          fecha: this.fechahora,
-        })
-        .subscribe((datos) => {
-          if (datos.estadoPeticion === 'Done') {
-            this.socketproduct
-              .obtenerInfo('aws', 'pazzioli-pos-3', {
-                metodo: 'CONSULTAR',
-                condicion: '',
-                consulta: 'productos',
-                sede: localStorage.getItem('sede'),
-              })
-              .subscribe((data) => {
-                if (data.estadoPeticion === 'SUCCESS') {
-                  let info = JSON.parse(data);
+    /*dialoref.afterClosed().subscribe(async (datos) => {
+        console.log('generar pdf', datos);
 
-                  this.respuestaProductos(info, true);
-                }
-                this.deleteAll();
-              });
-          }
-        });
-    });
+    
+    });*/
   }
 }
 
@@ -1353,7 +1368,8 @@ import { NavigationEnd, Route, Router } from '@angular/router';
 import { Pedidoguardado } from 'src/app/angular-material/pedidoguardos';
 import generatePDF from './pdf/pdfpedido';
 import { Horaforma } from 'src/app/utils/formatearhora';
-import { Platform } from '@ionic/angular';
+import generatePDFtirilla from './pdf/pdftirilla';
+import { generatePDFemail } from './pdf/pdf';
 
 @Component({
   selector: 'dialog-factura',
@@ -1555,18 +1571,7 @@ export class DialogFactura {
     console.log(this.htmlRenderizado); // Esto ya es un string con todo el contenido*/
 
     setTimeout(() => {
-      if (!this.platform.is('mobile')) {
-        this.imprimirmovil();
-        this.fechaactul = `${this.data.fecha_actual}`;
-        this.horaactual = `${this.data.horaActual}`;
-        this.dialogRef.close(null);
-      } else {
-        this.imprimir();
-        this.fechaactul = `${this.data.fecha_actual}`;
-        this.horaactual = `${this.data.horaActual}`;
-
-        this.dialogRef.close(null);
-      }
+      this.dialogRef.close(null);
     }, 1000);
   }
   imprimir() {
@@ -1652,28 +1657,7 @@ export class DialogFactura {
   }
 
   imprimirmovil() {
-    const contenidoOriginal = document.body.innerHTML; // Guarda el contenido actual
-    const contenidoTirilla = this.tirillaRef.nativeElement.innerHTML;
-
-    document.body.innerHTML = `
-      <style>
-        body { font-family: monospace; font-size: 12px; width:58mm; padding: 10px; }
-        h3, p { margin: 0; text-align: center; }
-        hr { border: none; border-top: 1px dashed #000; margin: 4px 0; }
-        .row > div > span { font-size: 10px; }
-        tr { display: flex; }
-        tr > th { flex: 1; display: flex; justify-content: center; font-size: 10px; }
-        .trsuperior > :nth-child(1) { flex: 1; justify-content: start; margin-left: 8px; }
-        .trsuperior > :nth-child(2) { flex: 2; justify-content: start; margin-left: 10px; }
-        .tdchild { font-size: 8px; }
-        .bodyinferior > td { font-size: 10px; flex: 1; }
-      </style>
-      ${contenidoTirilla}
-    `;
-
-    window.print();
-
-    // Después de imprimir, restauras la vista original
-    document.body.innerHTML = contenidoOriginal;
+    console.log('esmovil');
+    generatePDFtirilla(this.data);
   }
 }

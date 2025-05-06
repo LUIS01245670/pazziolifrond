@@ -3,7 +3,7 @@ import { TiendaComponent } from './componentes/tienda/tienda.component';
 import { RedireccionComponent } from './componentes/redireccion/redireccion.component';
 import { PedidosComponent } from './componentes/pedidos/pedidos.component';
 import { ItemspedidoComponent } from './componentes/itemspedido/itemspedido.component';
-import { InpresiontirillaComponent } from './componentes/inpresiontirilla/inpresiontirilla.component';
+
 //runGuardsAndResolvers esto me permitira que cada ves que navegue de nuevo aqui se vulva a ejecuta el oningt
 export const AdminRoutes: Routes = [
   {
