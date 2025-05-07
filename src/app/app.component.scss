@@ -23,6 +23,8 @@
   box-shadow: 0 0px 17px 0px rgba(129, 121, 211, 0.9) !important ;
   padding:2px;
   width: 100%;
+  width: 100vw;   /* ocupa todo el viewport horizontal */
+  min-width: 100%; /* asegura que si el contenido crece, la barra también */
 }
 @media (max-width:599px) {
   .navinfo{
