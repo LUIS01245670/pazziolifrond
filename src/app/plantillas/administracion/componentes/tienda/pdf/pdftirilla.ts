@@ -133,6 +133,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
           }%    ${product.total.toLocaleString('de-DE')}`,
           margin: [10, 0, 0, 0], // espacio entre productos
           style: 'subheader',
+          wordBreak: 'break-word',
         };
       }),
     ],
@@ -166,23 +167,10 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   });
   //Define estilos reutilizables usados en el contenido: encabezados, subencabezados, etc.
   const styles = {
-    header: {
-      fontSize: 8, // antes 14
-      bold: true,
-    },
-    subheader: {
-      fontSize: 7, // antes 12
-      margin: [0, 2, 0, 2], // menos margen
-    },
-    tableHeader: {
-      bold: true,
-      fontSize: 7, // antes 12
-      color: 'black',
-    },
-    total: {
-      fontSize: 7, // antes 12
-      bold: true,
-    },
+    header: { fontSize: 6, bold: true },
+    subheader: { fontSize: 5, margin: [0, 1, 0, 1] },
+    tableHeader: { bold: true, fontSize: 6, color: 'black' },
+    total: { fontSize: 6, bold: true },
   };
   //docDefinition es el objeto completo que define el PDF a generar.
 
@@ -269,8 +257,8 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
             //Ajusta el tamaño del lienzo (<canvas>) para que coincida exactamente con el tamaño del PDF.
             //Si el PDF mide 900x1200 ➔ el canvas se ajusta a 900x1200.
             // Esto es importante, porque si el canvas es más pequeño o más grande, la imagen del PDF saldría borrosa o cortada.
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+            canvas.height = scaledViewport.height;
+            canvas.width = scaledViewport.width;
             //Aquí es donde pdf.js "dibuja" la página del PDF dentro del canvas.
             //canvasContext: el pincel que dibuja.
   
