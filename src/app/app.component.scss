@@ -53,3 +53,23 @@
   height: calc(100vh - 0px) !important;
   padding-top: 0 !important;
 }
+
+
+:host {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.navinfo {
+  flex: 0 0 auto; /* Altura fija según contenido */
+  padding: 8px;
+  background-color: #1976d2; /* solo ejemplo */
+  color: #fff;
+}
+
+.content {
+  flex: 1 1 auto; /* Esto hace que crezca y ocupe lo que sobra */
+  overflow: auto; /* Aquí se aplicará el scroll */
+  min-height: 0; /* Importante para que funcione bien con flexbox */
+}
