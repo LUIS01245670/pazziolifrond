@@ -137,21 +137,18 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
       }),
     ],
     alignment: 'left',
-    width: '*',
   });
 
   content.push({ text: '\n' });
   content.push({
     stack: [{ text: `________________________________`, style: 'header' }],
     alignment: 'left',
-    width: '*',
   });
   content.push({ text: '\n' });
 
   content.push({
     stack: [{ text: `Total venta:${totalGeneral}`, style: 'subheader' }],
     alignment: 'right',
-    width: '*',
   });
 
   content.push({ text: '\n' });
@@ -159,7 +156,6 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({
     stack: [{ text: `Total items:${cantidad}`, style: 'subheader' }],
     alignment: 'center',
-    width: '*',
   });
 
   content.push({ text: '\n' });
@@ -167,25 +163,24 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({
     stack: [{ text: `gracias por su compra`, style: 'subheader' }],
     alignment: 'center',
-    width: '*',
   });
   //Define estilos reutilizables usados en el contenido: encabezados, subencabezados, etc.
   const styles = {
     header: {
-      fontSize: 14,
+      fontSize: 8, // antes 14
       bold: true,
     },
     subheader: {
-      fontSize: 12,
-      margin: [0, 5, 0, 5],
+      fontSize: 7, // antes 12
+      margin: [0, 2, 0, 2], // menos margen
     },
     tableHeader: {
       bold: true,
-      fontSize: 12,
+      fontSize: 7, // antes 12
       color: 'black',
     },
     total: {
-      fontSize: 12,
+      fontSize: 7, // antes 12
       bold: true,
     },
   };
