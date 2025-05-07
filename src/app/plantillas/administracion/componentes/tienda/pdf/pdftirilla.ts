@@ -199,7 +199,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
     //Si quieres un ancho típico de tirilla:
     //Para 80mm ➔ 80 * 2.83 ≈ 226 puntos
     pageSize: {
-      width: 227, // 200 puntos ≈ 72 puntos = 1 pulgada  ➔ 200 puntos ≈ 70mm
+      width: 164.14, // 200 puntos ≈ 72 puntos = 1 pulgada  ➔ 200 puntos ≈ 70mm
       height: 'auto', // La altura se ajusta automáticamente según el contenido (tirilla larga)
     },
     pageMargins: [10, 10, 10, 10], // Márgenes pequeños para maximizar espacio
@@ -232,7 +232,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
       </head>
       <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
        
-        <canvas id="pdfCanvas" style="width:384px"; max-width:384px; display:none;"></canvas>
+        <canvas id="pdfCanvas" style="width:100%"; max-width:464px; display:none;"></canvas>
         <button id="printBtn"
           style="
             margin-top:20px;
@@ -263,10 +263,14 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
           // Carga la primera página
           pdf.getPage(1).then((page) => {
             //Dibuja la página en el <canvas>
-            const scale = 1;
+            
+            const anchoImpresoraPx = 384; // usa 384 si es 58mm o 576 si es 80mm
+
+          const viewport = page.getViewport({ scale:1 });
+           const scale = anchoImpresoraPx / viewport.width;
             // Le dice a pdf.js: "Quiero ver la página 1 del PDF con un zoom //de 1.5x"
             //viewport contiene el tamaño real (ancho y alto) que tendrá la página cuando se dibuje.
-            const viewport = page.getViewport({ scale });
+            const scaledViewport = page.getViewport({ scale });
             //Ajusta el tamaño del lienzo (<canvas>) para que coincida exactamente con el tamaño del PDF.
             //Si el PDF mide 900x1200 ➔ el canvas se ajusta a 900x1200.
             // Esto es importante, porque si el canvas es más pequeño o más grande, la imagen del PDF saldría borrosa o cortada.
@@ -276,7 +280,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
             //canvasContext: el pincel que dibuja.
   
             // viewport: el tamaño y zoom que debe tener
-            page.render({ canvasContext: context, viewport }).promise.then(() => {
+            page.render({ canvasContext: context, viewport:scaledViewport }).promise.then(() => {
               // ✅ Mostrar canvas y botón
               canvas.style.display = 'block';
               printBtn.style.display = 'block';
