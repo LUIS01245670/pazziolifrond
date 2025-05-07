@@ -38,6 +38,10 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
     (sum: any, product: any) => sum + product.total,
     0
   );
+  const cantidad = data.productos.reduce(
+    (sum: any, product: any) => sum + product.cantidad,
+    0
+  );
   //Aquí se va construyendo todo el contenido que aparecerá en el PDF, paso a paso:
   const content: any[] = [];
   //Aquí se va construyendo todo el contenido que aparecerá en el PDF, paso a paso:
@@ -104,8 +108,8 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({ text: '\n' });
   content.push({
     stack: [
-      { text: `ref        descripción`, style: 'header' },
-      { text: `cantidad   valor/uni   iva   total`, style: 'header' },
+      { text: `ref        descripción`, style: 'subheader' },
+      { text: `cantidad   valor/uni   iva   total`, style: 'subheader' },
     ],
     alignment: 'left',
     width: '*',
@@ -128,7 +132,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
             product.tasaiva
           }%    ${product.total.toLocaleString('de-DE')}`,
           margin: [10, 0, 0, 0], // espacio entre productos
-          style: 'header',
+          style: 'subheader',
         };
       }),
     ],
@@ -145,8 +149,24 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({ text: '\n' });
 
   content.push({
-    stack: [{ text: `Total venta:${totalGeneral}`, style: 'header' }],
+    stack: [{ text: `Total venta:${totalGeneral}`, style: 'subheader' }],
     alignment: 'right',
+    width: '*',
+  });
+
+  content.push({ text: '\n' });
+
+  content.push({
+    stack: [{ text: `Total items:${cantidad}`, style: 'subheader' }],
+    alignment: 'center',
+    width: '*',
+  });
+
+  content.push({ text: '\n' });
+
+  content.push({
+    stack: [{ text: `gracias por su compra`, style: 'subheader' }],
+    alignment: 'center',
     width: '*',
   });
   //Define estilos reutilizables usados en el contenido: encabezados, subencabezados, etc.
