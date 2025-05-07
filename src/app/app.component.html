@@ -14,21 +14,22 @@
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </mat-toolbar>
-    <div class="navinfo" *ngIf="data?.response">
-      <div>
-        <mat-icon style="color:#fff">business</mat-icon>
-        <span>{{data.config.RAZON_SOCIAL}}</span>
-      </div>
-      <div>
-
-      </div>
-      <div>
-        <mat-icon style="color:#fff">storefront</mat-icon>
-        <span>{{data.alias}}</span>
-      </div>
-    </div>
+   
 
     <div class="content" [class.auth]="!showToolbar">
+      <div class="navinfo" *ngIf="data?.response">
+        <div>
+          <mat-icon style="color:#fff">business</mat-icon>
+          <span>{{data.config.RAZON_SOCIAL}}</span>
+        </div>
+        <div>
+  
+        </div>
+        <div>
+          <mat-icon style="color:#fff">storefront</mat-icon>
+          <span>{{data.alias}}</span>
+        </div>
+      </div>
       <router-outlet></router-outlet>
     </div>
 
