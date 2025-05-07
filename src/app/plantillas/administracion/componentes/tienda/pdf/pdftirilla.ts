@@ -217,14 +217,6 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
         );
       if (esMovil) {
         nuevaVentana.document.write(`
-            <html>
-              <head><title>Visualizador PDF</title></head>
-              <body style="margin:0">
-                <iframe src="${url}" type="application/pdf" width="100%" height="100%" style="border:none;"></iframe>
-              </body>
-            </html>
-          `);
-        /*  nuevaVentana.document.write(`
     <html>
       <head>
         <title>Visualizador PDF</title>
@@ -240,7 +232,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
       </head>
       <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
        
-        <canvas id="pdfCanvas" style="width:100%; max-width:600px; display:none;"></canvas>
+        <canvas id="pdfCanvas" style="width:384px"; max-width:384px; display:none;"></canvas>
         <button id="printBtn"
           style="
             margin-top:20px;
@@ -271,7 +263,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
           // Carga la primera página
           pdf.getPage(1).then((page) => {
             //Dibuja la página en el <canvas>
-            const scale = 1.5;
+            const scale = 1;
             // Le dice a pdf.js: "Quiero ver la página 1 del PDF con un zoom //de 1.5x"
             //viewport contiene el tamaño real (ancho y alto) que tendrá la página cuando se dibuje.
             const viewport = page.getViewport({ scale });
@@ -310,7 +302,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
        
       </body>
     </html>
-  `);*/
+  `);
         nuevaVentana.document.close();
         // ✅ 3. Genera el PDF y escribe el contenido en la ventana ya abierta
 
