@@ -288,7 +288,13 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   
         // Botón imprimir
         printBtn.addEventListener('click', () => {
-          window.print();
+          try{
+            window.print();
+          }catch(e){
+           alert('no se puedo imprimir ',e)
+          }
+          
+          
         }); 
       });
        </script>
