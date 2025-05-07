@@ -217,6 +217,14 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
         );
       if (esMovil) {
         nuevaVentana.document.write(`
+            <html>
+              <head><title>Visualizador PDF</title></head>
+              <body style="margin:0">
+                <iframe src="${url}" type="application/pdf" width="100%" height="100%" style="border:none;"></iframe>
+              </body>
+            </html>
+          `);
+        /*  nuevaVentana.document.write(`
     <html>
       <head>
         <title>Visualizador PDF</title>
@@ -302,7 +310,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
        
       </body>
     </html>
-  `);
+  `);*/
         nuevaVentana.document.close();
         // ✅ 3. Genera el PDF y escribe el contenido en la ventana ya abierta
 
