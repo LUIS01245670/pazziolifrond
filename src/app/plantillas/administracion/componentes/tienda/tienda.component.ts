@@ -981,9 +981,9 @@ export class TiendaComponent implements OnInit {
             /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
               navigator.userAgent
             );
-          if (esMovil) {
-            this.ventana = window.open('', '_blank');
-            this.ventana.document.write(`
+          // if (esMovil) {
+          this.ventana = window.open('', '_blank');
+          this.ventana.document.write(`
           <html>
             <head>
               <title>Visualizador PDF</title>
@@ -1005,7 +1005,7 @@ export class TiendaComponent implements OnInit {
             </body>
           </html>
         `);
-          }
+          //}
           this.enviarPedido();
         }
       });

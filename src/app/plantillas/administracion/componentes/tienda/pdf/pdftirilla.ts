@@ -11,7 +11,14 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   //Se crea el contenido de la tabla, con:
   //Una fila de encabezado (títulos).
   //Una fila por cada producto en el array recibido.
-
+  const esMovillinea =
+    /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
+      navigator.userAgent
+    );
+  const linea = !esMovillinea
+    ? `_____________________________________`
+    : `_________________`;
+  const saltoslineas = !esMovillinea ? '\t\t\t' : '';
   const tableBody = [
     [
       { text: 'Codigo', style: 'tableHeader' },
@@ -55,10 +62,11 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
       },
     ],
     alignment: 'center',
+    width: '*',
   });
 
   content.push({
-    stack: [{ text: `_________________________________`, style: 'header' }],
+    stack: [{ text: linea, style: 'header' }],
     alignment: 'left',
     width: '*',
   });
@@ -101,15 +109,18 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   });
   content.push({ text: '\n' });
   content.push({
-    stack: [{ text: `________________________________`, style: 'header' }],
+    stack: [{ text: linea, style: 'header' }],
     alignment: 'left',
     width: '*',
   });
   content.push({ text: '\n' });
   content.push({
     stack: [
-      { text: `ref        descripción`, style: 'subheader' },
-      { text: `cantidad   valor/uni   iva   total`, style: 'subheader' },
+      { text: `ref             descripción`, style: 'subheader' },
+      {
+        text: `cantidad        valor/uni      iva ${saltoslineas}total`,
+        style: 'subheader',
+      },
     ],
     alignment: 'left',
     width: '*',
@@ -117,39 +128,52 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
 
   content.push({ text: '\n' });
   content.push({
-    stack: [{ text: `________________________________`, style: 'header' }],
+    stack: [{ text: linea, style: 'header' }],
     alignment: 'left',
     width: '*',
   });
   content.push({ text: '\n' });
+  const datapro: any = [];
+  data.productos.map((product: any) => {
+    datapro.push([
+      ...datapro,
+      {
+        text: `${product.referencia}        ${product.nombre}  `,
+        style: 'subheader',
+        wordBreak: 'break-word',
+      },
+      {
+        text: `${
+          product.cantidad
+        }       x       ${product.precio.toLocaleString(
+          'de-DE'
+        )}${saltoslineas} ${
+          product.tasaiva
+        }%${saltoslineas} ${product.total.toLocaleString('de-DE')}`,
+
+        style: 'subheader',
+        wordBreak: 'break-word',
+      },
+    ]);
+  });
   content.push({
-    stack: [
-      ...data?.productos.map((product: any) => {
-        return {
-          text: `${product.referencia}    ${product.nombre}\n  ${
-            product.cantidad
-          }    x     ${product.precio.toLocaleString('de-DE')}     ${
-            product.tasaiva
-          }%    ${product.total.toLocaleString('de-DE')}`,
-          margin: [10, 0, 0, 0], // espacio entre productos
-          style: 'subheader',
-          wordBreak: 'break-word',
-        };
-      }),
-    ],
+    stack: [...datapro],
     alignment: 'left',
+    width: '*',
   });
 
   content.push({ text: '\n' });
   content.push({
-    stack: [{ text: `________________________________`, style: 'header' }],
+    stack: [{ text: linea, style: 'header' }],
     alignment: 'left',
+    width: '*',
   });
   content.push({ text: '\n' });
 
   content.push({
     stack: [{ text: `Total venta:${totalGeneral}`, style: 'subheader' }],
     alignment: 'right',
+    width: '*',
   });
 
   content.push({ text: '\n' });
@@ -157,6 +181,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({
     stack: [{ text: `Total items:${cantidad}`, style: 'subheader' }],
     alignment: 'center',
+    width: '*',
   });
 
   content.push({ text: '\n' });
@@ -164,13 +189,27 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
   content.push({
     stack: [{ text: `gracias por su compra`, style: 'subheader' }],
     alignment: 'center',
+    width: '*',
   });
   //Define estilos reutilizables usados en el contenido: encabezados, subencabezados, etc.
   const styles = {
-    header: { fontSize: 6, bold: true },
-    subheader: { fontSize: 5, margin: [0, 1, 0, 1] },
-    tableHeader: { bold: true, fontSize: 6, color: 'black' },
-    total: { fontSize: 6, bold: true },
+    header: {
+      fontSize: !esMovillinea ? 12 : 25,
+      bold: true,
+    },
+    subheader: {
+      fontSize: !esMovillinea ? 10 : 15,
+      margin: [0, 5, 0, 5],
+    },
+    tableHeader: {
+      bold: true,
+      fontSize: !esMovillinea ? 15 : 20,
+      color: 'black',
+    },
+    total: {
+      fontSize: !esMovillinea ? 15 : 20,
+      bold: true,
+    },
   };
   //docDefinition es el objeto completo que define el PDF a generar.
 
@@ -182,7 +221,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
     //Si quieres un ancho típico de tirilla:
     //Para 80mm ➔ 80 * 2.83 ≈ 226 puntos
     pageSize: {
-      width: 164.14, // 200 puntos ≈ 72 puntos = 1 pulgada  ➔ 200 puntos ≈ 70mm
+      width: 226, // 200 puntos ≈ 72 puntos = 1 pulgada  ➔ 200 puntos ≈ 70mm
       height: 'auto', // La altura se ajusta automáticamente según el contenido (tirilla larga)
     },
     pageMargins: [10, 10, 10, 10], // Márgenes pequeños para maximizar espacio
@@ -209,13 +248,16 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
           #printBtn {
             visibility: hidden;
           }
+          *{
+            padding:0
+          }
         }
       </style>
 
       </head>
-      <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
+      <body style="margin:0; padding:0; display:flex; flex-direction:column;  align-items:center; height:100vh; font-family:sans-serif;">
        
-        <canvas id="pdfCanvas" style="width:100%"; max-width:464px; display:none;"></canvas>
+        <canvas id="pdfCanvas" style="width:100%; max-width:600px; display:none;"></canvas>
         <button id="printBtn"
           style="
             margin-top:20px;
@@ -269,6 +311,8 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
               printBtn.style.display = 'block';
               loadingText.style.display = 'none';
               bod.style.display='block'
+              
+
             });
           });
         });
@@ -307,6 +351,11 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
               <head><title>Visualizador PDF</title></head>
               <body style="margin:0">
                 <iframe src="${url}" type="application/pdf" width="100%" height="100%" style="border:none;"></iframe>
+
+                <script>
+                const loadingText = document.getElementById('loadingText');
+                loadingText.style.display = 'none';
+                </script>
               </body>
             </html>
           `);
