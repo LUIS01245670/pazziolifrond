@@ -1218,6 +1218,7 @@ export class TiendaComponent implements OnInit {
     numerofactura = await obtenerpedido;
     generatePDFtirilla(
       {
+        numerofactura,
         productos: this.productosMostrar,
         cliente: this.clienteSeleccionado,
         total: this.totalPagar,

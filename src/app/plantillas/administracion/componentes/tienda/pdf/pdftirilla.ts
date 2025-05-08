@@ -320,6 +320,12 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
         // Botón imprimir
         printBtn.addEventListener('click', () => {
           try{
+            printBtn.style.display = 'none'; // ocultar el botón antes de imprimir
+const img = document.createElement('img');
+img.src = canvas.toDataURL(); // convierte el canvas a imagen base64
+document.body.innerHTML = ''; // limpia el body
+document.body.appendChild(img); // agrega la imagen
+window.print();
             window.print();
           }catch(e){
            alert('no se puedo imprimir ',e)
