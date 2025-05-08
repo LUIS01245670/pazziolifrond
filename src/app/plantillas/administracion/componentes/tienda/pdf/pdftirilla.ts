@@ -279,7 +279,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
         const canvas = document.getElementById('pdfCanvas');
         const context = canvas.getContext('2d');
         const printBtn = document.getElementById('printBtn');
-        const loadingText = document.getElementById('loadingText');
+       // const loadingText = document.getElementById('loadingText');
         const bod = document.body;
         // Cargar PDF con pdf.js
         //Usa pdf.js para cargar el PDF (desde el URL temporal)
@@ -322,7 +322,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
               canvas.style.display="none"
               printBtn.style.display = 'block';
 
-              loadingText.style.display = 'none';
+             // loadingText.style.display = 'none';
             };
           
             
