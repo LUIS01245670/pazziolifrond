@@ -307,7 +307,18 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
             // viewport: el tamaño y zoom que debe tener
             page.render({ canvasContext: context, viewport:scaledViewport }).promise.then(() => {
               // ✅ Mostrar canvas y botón
-              canvas.style.display = 'block';
+             // canvas.style.display = 'block';
+             printBtn.style.display = 'none'; // ocultar el botón antes de imprimir
+             const img = document.createElement('img');
+             img.src = canvas.toDataURL(); // convierte el canvas a imagen base64
+             // ✅ Ajusta la imagen para que ocupe todo el ancho de la página impresa
+             img.style.width = '100%';
+             img.style.height = 'auto';
+             img.style.display = 'block';
+             img.style.margin = '0 auto';
+             
+             document.body.innerHTML = ''; // limpia el body
+             document.body.appendChild(img); // agrega la imagen
               printBtn.style.display = 'block';
               loadingText.style.display = 'none';
               bod.style.display='block'
@@ -320,17 +331,7 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
         // Botón imprimir
         printBtn.addEventListener('click', () => {
           try{
-            printBtn.style.display = 'none'; // ocultar el botón antes de imprimir
-const img = document.createElement('img');
-img.src = canvas.toDataURL(); // convierte el canvas a imagen base64
-// ✅ Ajusta la imagen para que ocupe todo el ancho de la página impresa
-img.style.width = '100%';
-img.style.height = 'auto';
-img.style.display = 'block';
-img.style.margin = '0 auto';
-
-document.body.innerHTML = ''; // limpia el body
-document.body.appendChild(img); // agrega la imagen
+          
 
             window.print();
           }catch(e){
