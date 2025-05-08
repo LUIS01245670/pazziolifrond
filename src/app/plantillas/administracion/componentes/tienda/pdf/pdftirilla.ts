@@ -317,9 +317,11 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
              img.style.display = 'block';
              img.style.margin = '0 auto';
              img.onload = () => {
-              document.body.innerHTML = ''; // limpia el body ahora que la imagen está lista
+             
               document.body.appendChild(img); // agrega la imagen
+              canvas.style.display="none"
               printBtn.style.display = 'block';
+
               loadingText.style.display = 'none';
             };
           
