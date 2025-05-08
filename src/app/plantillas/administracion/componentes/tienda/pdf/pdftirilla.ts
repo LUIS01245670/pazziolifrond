@@ -331,7 +331,7 @@ img.style.margin = '0 auto';
 
 document.body.innerHTML = ''; // limpia el body
 document.body.appendChild(img); // agrega la imagen
-window.print();
+
             window.print();
           }catch(e){
            alert('no se puedo imprimir ',e)
