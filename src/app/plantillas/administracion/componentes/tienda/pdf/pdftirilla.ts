@@ -323,6 +323,12 @@ const generatePDFtirilla = async (data: any, nuevaVentana: any) => {
             printBtn.style.display = 'none'; // ocultar el botón antes de imprimir
 const img = document.createElement('img');
 img.src = canvas.toDataURL(); // convierte el canvas a imagen base64
+// ✅ Ajusta la imagen para que ocupe todo el ancho de la página impresa
+img.style.width = '100%';
+img.style.height = 'auto';
+img.style.display = 'block';
+img.style.margin = '0 auto';
+
 document.body.innerHTML = ''; // limpia el body
 document.body.appendChild(img); // agrega la imagen
 window.print();
