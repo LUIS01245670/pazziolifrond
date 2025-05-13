@@ -1,11 +1,9 @@
 <mat-drawer-container class="example-container" [hasBackdrop]="true">
   <mat-drawer #drawer [mode]="'over'">
-    <div class="menu" *ngIf="showToolbar">
-    </div>
+    <div class="menu" *ngIf="showToolbar"></div>
   </mat-drawer>
   <mat-drawer-content>
-
-    <mat-toolbar >
+    <mat-toolbar>
       <!-- <button mat-icon-button (click)="drawer.toggle()">
         <mat-icon>menu</mat-icon>
       </button> -->
@@ -14,24 +12,27 @@
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </mat-toolbar>
-   
+
     <div class="navinfo" *ngIf="data?.response">
       <div>
-        <mat-icon style="color:#fff">business</mat-icon>
-        <span>{{data.config.RAZON_SOCIAL}}</span>
+        <mat-icon style="color: #fff">business</mat-icon>
+        <span>{{ data.config.RAZON_SOCIAL }}</span>
       </div>
-      <div>
+      <div></div>
 
-      </div>
       <div>
-        <mat-icon style="color:#fff">storefront</mat-icon>
-        <span>{{data.alias}}</span>
+        <div>
+          <mat-icon style="color: #fff">storefront</mat-icon>
+          <span>{{ data.alias }}</span>
+        </div>
+        <div>
+          <mat-icon style="color: #fff">person</mat-icon>
+          <span>{{ data.nombreusuario }} ({{ data.nombre }})</span>
+        </div>
       </div>
     </div>
     <div class="content" [class.auth]="!showToolbar">
-     
       <router-outlet></router-outlet>
     </div>
-
   </mat-drawer-content>
 </mat-drawer-container>

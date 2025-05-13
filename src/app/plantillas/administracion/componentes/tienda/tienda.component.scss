@@ -37,6 +37,7 @@ div.separator {
 .client-info {
   margin: 0% !important;
   font-size: 15px;
+ 
   .mat-icon {
     width: 15px !important;
     height: 15px !important;
@@ -99,19 +100,16 @@ button[pedido] {
   font-size: 1.2rem !important;
 }
 .botonotions{
-  display: flex;
-  justify-content:center;
-  align-items: center;
-  button{
+
+  
 
    color: #fff !important;  
    background:#1f618d !important;
    text-align: center !important;
    padding:0 !important;
-   span{
-    word-wrap: break-word;
-   }
-  }
+   margin-left: 10px;
+  
+  
 }
 .prod_card {
   position: absolute;
@@ -181,8 +179,17 @@ button[pedido] {
 @media(max-width:970px){
   
   .prod_card{
-    position:absolute;
+   // position:absolute;
+   max-height:140px !important;
   
+  }
+
+ .card-list{
+  bottom:160px;
+ }
+  .botonesactions{
+    flex-direction: column;
+    align-items: center;
   }
 
   #p_actual {
@@ -198,6 +205,18 @@ button[pedido] {
 
  
 }
+.row-pro{
+ flex-wrap: wrap;
+ 
+}
+.card_shoping{
+  height: 120px !important;
+}
+
+.carrito{
+ display: flex;
+
+}
 
 @media(max-width:1000px){
  
@@ -210,6 +229,7 @@ button[pedido] {
     overflow-x: auto !important;
     overflow-y: hidden !important;
     height: 500px;
+
   }
 
   mat-card-subtitle {
@@ -243,7 +263,7 @@ button[pedido] {
   }
 
   .col-boton{
-    flex:0 0 50%
+    flex:1 0 50%
   }
 }
 
@@ -276,5 +296,22 @@ button[pedido_con]{
 max-width:100px;
 
 }
+
+::ng-deep .mat-list-text{
+  display:flex !important;
+  flex-direction:row !important;
+  column-gap: 10px;
+
+ 
+
+  
+}
+.clientelist{
+  max-height: 200px;
+  overflow: auto;
+}
+
+
+
 
 

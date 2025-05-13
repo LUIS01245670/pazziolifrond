@@ -1,14 +1,40 @@
 .loginback {
   background: url(../../../../../assets/images/pazzioli.png);
-  background-size:40%;
+  background-size:200px;
   background-repeat: no-repeat;
-  background-position:right;
+  background-position:center;
+ 
 
 
 }
 
+@media (max-width:821px){
+  
+    .logindiv{
+      align-items: center !important;
+  
+    }
+  
+}
 
+@media (max-width:760px){
+  .loginpa{
+    flex-direction: column-reverse;
+    
+  }
+  .logindiv{
+  
+    
+      align-items:start !important;
+  
+    
+  }
 
+}
+
+.hidden{
+  display: none;
+}
 .login-form {
   background: rgba(255, 255, 255, 0.2); 
   box-shadow: 0 0px 82px 130px white !important;
@@ -18,4 +44,20 @@
   font-size: 30px;
   text-shadow: -1px 1px 100px rgba(0, 0, 0, 0.92), 1px 1px 100px rgba(0, 0, 0, 0.44), 1px -1px 100px rgba(0, 0, 0, 0.71), -1px -1px 100px rgba(0, 0, 0, 0.185);
   color: white;
+}
+
+.example-button-row {
+  display: table-cell;
+  max-width: 600px;
+  button{
+    background-color: #fff;
+    max-width:90px;
+    width: 90PX;
+  }
+  
+}
+
+
+.example-button-row .mat-mdc-button-base {
+  margin: 8px 8px 8px 0;
 }

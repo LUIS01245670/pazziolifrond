@@ -1,83 +1,133 @@
-<mat-spinner [diameter]="50" [strokeWidth]="3" class=" loader loader-fixed" [class.shown]="loader">
+<mat-spinner
+  [diameter]="50"
+  [strokeWidth]="3"
+  class="loader loader-fixed"
+  [class.shown]="loader"
+>
 </mat-spinner>
-<label class="loader loader-text mat-text-primary" style="position: fixed !important;"
-  [class.shown]="loader">Espere...</label>
+<label
+  class="loader loader-text mat-text-primary"
+  style="position: fixed !important"
+  [class.shown]="loader"
+  >Espere...</label
+>
 
-<div class="row full loginback loader-content" [class.hidden]="loader">
-  <div class="mx-auto col-12 col-sm-8 col-md-6 col-lg-4 login-form">
-    <div class="row full">
-      <div class="col-12 m-auto p-0 row">
-        <div class="col-10 m-auto">
-          <mat-form-field appearance="fill">
-            <mat-label>Identificacion</mat-label>
-            <input
-              matInput
-              placeholder="Ingrese su usuario"
-              #inUsuario
-              [formControl]="inputdocumento"
-              autocomplete="off"
-            />
-            <mat-icon matSuffix>person</mat-icon>
-            <!-- <mat-hint>Hint</mat-hint> -->
-          </mat-form-field>
-        </div>
-        <div class="col-10 m-auto">
-          <mat-form-field appearance="fill">
-            <mat-label>Nombre de usuario</mat-label>
-            <input
-              matInput
-              placeholder="Ingrese su usuario"
-              #inUsuario
-              [formControl]="inputUsuario"
-              autocomplete="off"
-            />
-            <mat-icon matSuffix>person</mat-icon>
-            <!-- <mat-hint>Hint</mat-hint> -->
-          </mat-form-field>
-        </div>
-         
-        <div class="col-10 m-auto">
-          <mat-form-field appearance="fill">
-            <mat-label>Contraseña</mat-label>
-            <input
-              matInput
-              #inContrasena
-              type="password"
-              placeholder="Ingrese su contraseña"
-              [formControl]="inputpassword"
-              autocomplete="off"
-            />
-            <mat-icon matSuffix>lock</mat-icon>
-            <!-- <mat-hint>Hint</mat-hint> -->
-          </mat-form-field>
-        </div>
+<div
+  class="col-12 m-auto p-0 row"
+  *ngIf="!loader"
+  style="
+    display: flex;
+    padding: 20px !important;
+    justify-content: center;
+    margin: auto !important;
+    height: 100%;
+  "
+  class="loginpa"
+>
+  <div
+    style="flex: 0 2 50%; display: flex; justify-content: center; height: 100%"
+    class="logindiv"
+  >
+    <div style="width: 100%; height: 50% !important">
+      <div class="col-10 m-auto">
+        <div
+          *ngIf="mensaje !== ''"
+          style="
+            background-color: #e74c3c;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 20px;
+            padding: 8px;
+            margin-bottom: 10px;
+            flex-direction: column;
+          "
+        >
+          <span style="color: #ffff; text-align: end">{{ mensaje }}</span>
+          <div
+            *ngIf="this.botoncierresesion"
+            style="display: flex; justify-content: space-between; width: 100%"
+          >
+            <div
+              class="example-button-row"
+              style="width: 50%; display: flex; justify-content: center"
+            >
+              <button mat-button (click)="cancelar()">cancelar</button>
+            </div>
 
-        <div class="col-10 m-auto">
-          <mat-form-field appearance="fill">
-            <mat-label>Seleccione la sede</mat-label>
-            <mat-select [formControl]="selectSedes">
-            
-              <mat-option *ngFor="let local of data" [value]="local.base_datos" >
-              {{local.empresa}}
-              </mat-option>
-          
-            </mat-select>
-            <mat-error>campo requerido</mat-error>
-          </mat-form-field>
-          
+            <div
+              class="example-button-row"
+              style="width: 50%; display: flex; justify-content: center"
+            >
+              <button mat-button (click)="cerrarsesionuser()">cerrar</button>
+            </div>
           </div>
-          
-         
-        <div class="col-10 m-auto" >
-          <button mat-flat-button color="primary" full-button (click)="login()">
-          Iniciar sesión
-
-          </button>
         </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Identificacion</mat-label>
+          <input
+            matInput
+            placeholder="Ingrese su usuario"
+            #inUsuario
+            [formControl]="inputdocumento"
+            autocomplete="off"
+          />
+          <mat-icon matSuffix>person</mat-icon>
+          <!-- <mat-hint>Hint</mat-hint> -->
+        </mat-form-field>
+      </div>
+      <div class="col-10 m-auto">
+        <mat-form-field appearance="fill">
+          <mat-label>Nombre de usuario</mat-label>
+          <input
+            matInput
+            placeholder="Ingrese su usuario"
+            #inUsuario
+            [formControl]="inputUsuario"
+            autocomplete="off"
+          />
+          <mat-icon matSuffix>person</mat-icon>
+          <!-- <mat-hint>Hint</mat-hint> -->
+        </mat-form-field>
+      </div>
+
+      <div class="col-10 m-auto">
+        <mat-form-field appearance="fill">
+          <mat-label>Contraseña</mat-label>
+          <input
+            matInput
+            #inContrasena
+            type="password"
+            placeholder="Ingrese su contraseña"
+            [formControl]="inputpassword"
+            autocomplete="off"
+          />
+          <mat-icon matSuffix>lock</mat-icon>
+          <!-- <mat-hint>Hint</mat-hint> -->
+        </mat-form-field>
+      </div>
+
+      <div class="col-10 m-auto">
+        <mat-form-field appearance="fill">
+          <mat-label>Seleccione la sede</mat-label>
+          <mat-select [formControl]="selectSedes">
+            <mat-option *ngFor="let local of data" [value]="local.base_datos">
+              {{ local.empresa }}
+            </mat-option>
+          </mat-select>
+          <mat-error>campo requerido</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="col-10 m-auto">
+        <button mat-flat-button color="primary" full-button (click)="login()">
+          Iniciar sesión
+        </button>
       </div>
     </div>
   </div>
-  <div class="mx-auto col-12 col-sm-8 col-md-6 col-lg-8">
-   
-  </div>
+  <div
+    class="col-12 col-sm-8 col-md-6 col-lg-8 loginback"
+    style="flex: 1 1 200px"
+  ></div>
 </div>

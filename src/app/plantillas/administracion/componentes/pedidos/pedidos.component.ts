@@ -4,7 +4,7 @@ import {
   MatDialog,
   MatDialogRef,
 } from '@angular/material/dialog';
-import { DialogData, DialogSedes } from '../tienda/tienda.component';
+import { DialogData } from '../tienda/tienda.component';
 import { serviciodb } from 'src/services/serviciosdbs/serviciodb.service';
 import { Router } from '@angular/router';
 import { Socket_producto } from 'src/services/socket/socket.producto.service.ts.service';
@@ -38,12 +38,14 @@ export class PedidosComponent implements OnInit {
     private productser: Socket_producto
   ) {
     this.sedeselect.tienesedeselccionada().subscribe((data) => {
+      console.log(data.response);
       if (!data.response) {
-        this.router.navigateByUrl('admin/tienda');
+        window.location.reload();
       } else {
-        this.productser
-          .obtenerpedidos_realizados()
-          .subscribe((data) => (this.pedido = data.pedidos));
+        this.productser.obtenerpedidos_realizados().subscribe((data) => {
+          console.log('datos', data);
+          this.pedido = data.pedidos;
+        });
       }
     });
   }

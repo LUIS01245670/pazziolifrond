@@ -43,6 +43,7 @@ export interface PRODUCTO {
   codigobarra: string;
   tasaiva: string;
   presentacion: string;
+  cantidaddisponible: number;
   [key: string]: any;
 }
 @Component({
@@ -51,6 +52,8 @@ export interface PRODUCTO {
   styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
+  shoping_card1: boolean = false;
+  shoping_card2: boolean = false;
   ventana: any = null;
   cantidadproducto: string = '';
   nombrevendedor: String = '';
@@ -69,7 +72,7 @@ export class TiendaComponent implements OnInit {
 
   clientes: any[] = [];
   clientesIniciales: any[] = [];
-
+  productinico: PRODUCTO[] = [];
   productos: PRODUCTO[] = [
     /*{
 			cantidad: 13,
@@ -122,7 +125,7 @@ export class TiendaComponent implements OnInit {
 	 	producto: {}
 	 },*/
   ];
-  sedelist: DialogSedes[] = [];
+
   productosMostrar: PRODUCTO[] = [];
 
   buscarDescripcion = new UntypedFormControl('');
@@ -156,6 +159,7 @@ export class TiendaComponent implements OnInit {
     producto: {},
     tasaiva: '',
     presentacion: '',
+    cantidaddisponible: 0,
   };
   cantidadactual: number = 0;
   cantidad: number = 0;
@@ -209,24 +213,6 @@ export class TiendaComponent implements OnInit {
             this.iniciarprograma();
           });
       } else {
-        this.loader = true;
-        this.socketservidbs.obtenerdbfiltradas().subscribe((datos) => {
-          const dialogRef = this.dialog.open(DialogSedes, {
-            data: datos.opcionesdb,
-            disableClose: true,
-          });
-
-          dialogRef.afterClosed().subscribe(async (datos) => {
-            console.log(datos);
-            if (datos.continuar) {
-              console.log('continio aqui');
-              this.loader = false;
-              window.location.reload();
-            }
-
-            //this.crearinstanciadb(datos)
-          });
-        });
       }
     });
   }
@@ -339,7 +325,14 @@ export class TiendaComponent implements OnInit {
   }
 
   seleccionaritem(_producto: PRODUCTO) {
-    console.log(Number(_producto.codigo));
+    this.shoping_card2 = true;
+    this.shoping_card1 = false;
+    console.log(this.productos);
+    const indexproduct = this.productinico.findIndex(
+      (product) => product.codigo === _producto.codigo
+    );
+    console.log(indexproduct);
+    this.cantidadactual = this.productinico[indexproduct]?.cantidaddisponible;
     this.codigoitemseled = Number(_producto.codigo);
     this.productoActual = _producto;
     this.precio = this.productoActual.precio;
@@ -391,6 +384,8 @@ export class TiendaComponent implements OnInit {
 
   reiniciar() {
     document.getElementById('p_actual')?.classList.remove('active');
+    this.shoping_card1 = false;
+    this.shoping_card2 = false;
     this.productoActual = {
       numero: 0,
       id: '_vacio',
@@ -405,6 +400,7 @@ export class TiendaComponent implements OnInit {
       producto: {},
       tasaiva: '',
       presentacion: '',
+      cantidaddisponible: 0,
     };
     this.codigo = '';
     this.referencia = '';
@@ -537,6 +533,7 @@ export class TiendaComponent implements OnInit {
     if (typeof _prod == 'object') {
       if (this.buscarDescripcion.value) {
         console.log(_prod);
+        this.shoping_card1 = true;
         this.productoActual = { numero: null, ..._prod };
         this.precio = this.productoActual.precio;
         document.getElementById('p_actual')?.classList.add('active');
@@ -769,6 +766,7 @@ export class TiendaComponent implements OnInit {
   }
 
   async eventoEnter(e: any, input: String) {
+    this.shoping_card1 = false;
     await this.calcularProductoActual();
     if (e.keyCode == 13) {
       switch (input) {
@@ -856,8 +854,10 @@ export class TiendaComponent implements OnInit {
           producto: producto,
           tasaiva: producto.tasaIva,
           presentacion: producto.presentacion,
+          cantidaddisponible: producto.cantidad,
         };
       });
+      this.productinico = this.productos;
       if (this.almacen === 'BODEGA') {
         this.cantidadproducto = 'cantidad';
       } else {
@@ -887,23 +887,26 @@ export class TiendaComponent implements OnInit {
     });
   }
   autocompletarinputclient(valor: string) {
-    console.log(valor);
-    this.socketproduct
-      .obtenerInfo('terceros', 'pazzioli-pos-3', {
-        metodo: 'CONSULTAR',
-        condicion: 'nombres',
-        consulta: 'TERCEROS',
-        canalserver: 'terceros',
-        datoCondicion: valor,
-      })
-      .subscribe((dato) => {
-        console.log('entroalsubcribe');
-
-        if (JSON.parse(dato).estadoPeticion === 'SUCCESS') {
-          console.log(JSON.parse(dato).mensajePeticion);
-          this.clientes = JSON.parse(dato).mensajePeticion;
-        }
-      });
+    if (valor === '') {
+      this.clientes = [];
+    } else {
+      this.socketproduct
+        .obtenerInfo('terceros', 'pazzioli-pos-3', {
+          metodo: 'CONSULTAR',
+          condicion: 'nombres',
+          consulta: 'TERCEROS',
+          canalserver: 'terceros',
+          datoCondicion: valor,
+        })
+        .subscribe((dato) => {
+          console.log('entroalsubcribe');
+          console.log(dato);
+          if (JSON.parse(dato).estadoPeticion === 'SUCCESS') {
+            console.log(JSON.parse(dato).mensajePeticion);
+            this.clientes = JSON.parse(dato).mensajePeticion;
+          }
+        });
+    }
   }
   buscarClientes() {
     this.clientes = [];
@@ -977,35 +980,6 @@ export class TiendaComponent implements OnInit {
       });
       dialogref.afterClosed().subscribe((datos) => {
         if (datos) {
-          const esMovil =
-            /Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(
-              navigator.userAgent
-            );
-          // if (esMovil) {
-          this.ventana = window.open('', '_blank');
-          this.ventana.document.write(`
-          <html>
-            <head>
-              <title>Visualizador PDF</title>
-            
-              <style>
-              @media print {
-                #printBtn {
-                  visibility: hidden;
-                }
-              }
-            </style>
-      
-            </head>
-            <body style="margin:0; padding:0; display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
-              <p style="font-size:18px; color:#333;" id="loadingText" >Generando PDF, espera un momento...</p>
-              <canvas id="pdfCanvas" style="width:100%; max-width:600px; display:none;"></canvas>
-            
-            
-            </body>
-          </html>
-        `);
-          //}
           this.enviarPedido();
         }
       });
@@ -1121,59 +1095,6 @@ export class TiendaComponent implements OnInit {
     return { diaActual, horaActual };
   }
 
-  openDialogorganizacion() {
-    const dialogRef = this.dialog.open(DialogSedes, {
-      data: this.sedelist,
-      disableClose: true,
-    }); //
-
-    dialogRef.afterClosed().subscribe((result) => {
-      this.sedeSeleccionada = result;
-      console.log(this.sedeSeleccionada);
-      localStorage.setItem('sede', this.sedeSeleccionada.almacen);
-      this.socketServices.escucha = this.socketproduct.obtenerInfo(
-        'aws',
-        'pazzioli-pos-3',
-        {
-          metodo: 'CONSULTAR',
-          condicion: '',
-          consulta: 'productos',
-          sede: this.sedeSeleccionada.almacen,
-        }
-      );
-      //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
-      this.socketServices.escucha.subscribe((info: any) => {
-        this.loader = false;
-
-        info = JSON.parse(info);
-        switch (info.tipoConsulta) {
-          case 'PRODUCTO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              console.log('entro aqui success');
-
-              this.respuestaProductos(info, true);
-            } else {
-              console.log('entro aqui en el error');
-              this.respuestaProductos(info, false);
-            }
-            break;
-          case 'TERCERO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaTerceros(info);
-            }
-            break;
-          case 'PEDIDO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaPedidos(info);
-            }
-            break;
-          default:
-            break;
-        }
-      });
-    });
-  }
-
   respuestaTerceros(info: any) {
     this.clientes = info.mensajePeticion;
     this.clientesIniciales = info.mensajePeticion;
@@ -1216,24 +1137,8 @@ export class TiendaComponent implements OnInit {
     });
 
     numerofactura = await obtenerpedido;
-    generatePDFtirilla(
-      {
-        numerofactura,
-        productos: this.productosMostrar,
-        cliente: this.clienteSeleccionado,
-        total: this.totalPagar,
-        infoEmpresa: this.clienteSeleccionado,
-        fecha_actual: diaActual,
-        horaActual: Horaforma(horaActual),
-        config: this.configuracion,
-        numero: numerofactura,
-        vendedor: this.nombrevendedor,
-        identificacion: this.identificacion,
-      },
-      this.ventana
-    );
 
-    const pdf = await generatePDFemail({
+    const pdf = await generatePDF({
       productos: this.productosMostrar,
       cliente: this.clienteSeleccionado,
       total: this.totalPagar,
@@ -1319,75 +1224,7 @@ export class TiendaComponent implements OnInit {
 }
 
 /*-----------------------clases_componentes_dialogs------------------------------------------------------------  */
-@Component({
-  selector: 'dialog-sedes',
-  templateUrl: 'dialogs/dialog-sedes.html',
-})
-export class DialogSedes {
-  form: any;
-  constructor(
-    private snackBar: MatSnackBar,
-    private servicodb: serviciodb,
-    private formbuilder: FormBuilder,
-    public dialogRef: MatDialogRef<DialogSedes>,
-    @Inject(MAT_DIALOG_DATA) public data: Array<DialogData>
-  ) {
-    console.log(data);
-    this.form = this.formbuilder.group({
-      selectSedes: this.formbuilder.control('', {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      usuario: this.formbuilder.control('', {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-      contrasena: this.formbuilder.control('', {
-        validators: [Validators.required],
-        nonNullable: true,
-      }),
-    });
-  }
-  continuar() {
-    console.log('entroaquisede');
 
-    if (this.form.valid) {
-      this.servicodb
-        .crearinstanciadb({
-          db: this.form.value.selectSedes,
-          user: this.form.value.usuario,
-          contrasena: this.form.value.contrasena,
-        })
-        .subscribe(
-          (data) => {
-            if (data.response) {
-              this.dialogRef.close({
-                continuar: true,
-              });
-            } else {
-              console.log('hubo un error inesperado');
-            }
-          },
-          (error) => {
-            console.log(error.error);
-            this.snackBar.open(error.error.error, 'Cerrar', {
-              duration: 3000, // Tiempo en ms
-              verticalPosition: 'top', // Posición superior
-              horizontalPosition: 'center', // Centrado horizontalmente
-              panelClass: ['error-snackbar'], // Clase para estilos
-            });
-          }
-        );
-    }
-  }
-  /*onNoClick(e: any): void {
-		if (e.keyCode == 13 && this.selectSedes.valid) {
-			this.dialogRef.close({
-				sedeleccionada:this.selectSedes.valid
-			});
-		}
-	}*/
-}
 //html2canvas me convierte cualquier pante del don a una imagen
 import html2canvas from 'html2canvas';
 

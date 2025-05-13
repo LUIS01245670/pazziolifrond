@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import {
   MatDialog,
@@ -18,11 +18,12 @@ import { serviciodb } from 'src/services/serviciosdbs/serviciodb.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   title = 'Pedidos';
   showToolbar: boolean = true;
   public sedes: any;
   public terceroSeleccionado: any;
+  private visibilityHandler = this.handleVisibilityChange.bind(this);
   data: any;
   constructor(
     private router: Router,
@@ -34,12 +35,26 @@ export class AppComponent implements OnInit {
   ) {}
   ngOnInit(): void {
     console.log('datos inicio configuracion');
-    this.serviciodb.tienesedeselccionada().subscribe((data) => {
-      this.data = data;
-      console.log('datos navegacion', data);
-    });
+    document.addEventListener('visibilitychange', this.visibilityHandler);
+  }
+  ngOnDestroy(): void {
+    document.removeEventListener('visibilitychange', this.visibilityHandler);
   }
 
+  handleVisibilityChange() {
+    this.serviauth.verificarvendedor().subscribe((data) => {
+      if (!data?.response) {
+        this.data = null;
+        this.router.navigate(['auth/login']);
+      } else {
+        this.serviciodb.tienesedeselccionada().subscribe((data) => {
+          this.data = data;
+
+          console.log('datos navegacion', data);
+        });
+      }
+    });
+  }
   salir() {
     this.serviauth.salir().subscribe((res) => {
       console.log(res);

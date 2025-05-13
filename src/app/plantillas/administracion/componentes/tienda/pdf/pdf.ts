@@ -29,13 +29,13 @@ export const generatePDFemail = async (data: any) => {
       `${product.presentacion === undefined ? '' : product.presentacion}`,
       product.cantidad.toString(),
       ` $${product.precio.toLocaleString('de-DE')}`,
-      `$${product.total.toLocaleString('de-DE')}`,
+      `$${(product.cantidad * product.precio).toLocaleString('de-DE')}`,
     ]),
   ];
   //Se calcula la suma total de todos los productos usando reduce.
 
   const totalGeneral = data.productos.reduce(
-    (sum: any, product: any) => sum + product.total,
+    (sum: any, product: any) => sum + product.cantidad * product.precio,
     0
   );
   //Aquí se va construyendo todo el contenido que aparecerá en el PDF, paso a paso:

@@ -5,7 +5,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MaterialModule } from './angular-material/angular-material.module';
-import { DialogSedes, DialogFactura } from './plantillas/administracion/componentes/tienda/tienda.component';
+import { DialogFactura } from './plantillas/administracion/componentes/tienda/tienda.component';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DialogoAlerta } from './angular-material/alerta';
@@ -18,33 +18,29 @@ import { Detallespedido } from './angular-material/detallespedido';
 import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        DialogSedes,
-        DialogoAlerta,
-        DialogFactura,
-        Dialogdetalles,
-        Pedidoguardado,
-        Detallespedido,
-        NotFoundComponentComponent
-    ],
-    exports: [
-        MatAutocompleteModule,
-        HttpClientModule
-    ],
-    imports: [
-        MatTableModule,
-        BrowserModule,
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        MaterialModule,
-        MatAutocompleteModule,
-        MatDialogModule,
-        HttpClientModule,
-        ReactiveFormsModule,
-        FormsModule
-    ],
-    providers: [],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    DialogoAlerta,
+    DialogFactura,
+    Dialogdetalles,
+    Pedidoguardado,
+    Detallespedido,
+    NotFoundComponentComponent,
+  ],
+  exports: [MatAutocompleteModule, HttpClientModule],
+  imports: [
+    MatTableModule,
+    BrowserModule,
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    MaterialModule,
+    MatAutocompleteModule,
+    MatDialogModule,
+    HttpClientModule,
+    ReactiveFormsModule,
+    FormsModule,
+  ],
+  providers: [],
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

@@ -27,9 +27,9 @@ export class InicioSesionComponent implements OnInit {
   data: any;
   @ViewChild('inUsuario') inUsuario!: ElementRef;
   @ViewChild('inContrasena') inContrasena!: ElementRef;
-
+  mensaje: string = '';
   suscripcionSocket!: Subscription;
-
+  botoncierresesion: boolean | undefined = false;
   constructor(
     private socketprodu: Socket_producto,
     private router: Router,
@@ -52,6 +52,19 @@ export class InicioSesionComponent implements OnInit {
     this.selectSedes = new UntypedFormControl('', [Validators.required]);
   }
 
+  cancelar() {
+    this.botoncierresesion = false;
+    this.mensaje = '';
+  }
+  cerrarsesionuser() {
+    this.serviauth.salir().subscribe(
+      (res) => {
+        this.botoncierresesion = false;
+        this.mensaje = '';
+      },
+      (error) => console.log(error)
+    );
+  }
   login() {
     console.log(this.inputUsuario.value);
     this.serviauth
@@ -74,7 +87,17 @@ export class InicioSesionComponent implements OnInit {
           }
         },
 
-        (error) => console.log(error)
+        (error) => {
+          this.mensaje = error.error.mensaje;
+          if (error.error.opcion) {
+            this.mensaje = error.error.mensaje;
+            this.botoncierresesion = error.error.opcion;
+          } else {
+            setTimeout(() => {
+              this.mensaje = '';
+            }, 4000);
+          }
+        }
       );
   }
   ngOnInit(): void {

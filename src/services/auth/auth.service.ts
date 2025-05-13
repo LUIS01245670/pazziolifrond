@@ -14,6 +14,7 @@ interface mensaje {
 interface respon {
   response: boolean;
   almacen?: string;
+  refrescar?: boolean;
 }
 @Injectable({
   providedIn: 'root',
