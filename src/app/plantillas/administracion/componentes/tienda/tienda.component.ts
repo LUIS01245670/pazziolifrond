@@ -20,7 +20,7 @@ import { DatosAlerta, DialogoAlerta } from 'src/app/angular-material/alerta';
 import { DatosPedido } from 'src/app/modelos/datos-peticion copy';
 import { Socket_producto } from 'src/services/socket/socket.producto.service.ts.service';
 import { io } from 'socket.io-client';
-import { filter, take } from 'rxjs/operators';
+import { debounceTime, filter, take } from 'rxjs/operators';
 
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
@@ -178,6 +178,7 @@ export class TiendaComponent implements OnInit {
   almacen: string = '';
   basedatosactual: string = '';
   configuracion!: any;
+
   constructor(
     private _snackBar: MatSnackBar,
     private socketServices: SocketService,
@@ -343,13 +344,17 @@ export class TiendaComponent implements OnInit {
   }
 
   buscarProductos(key: any, campo: String) {
-    if (this.productos.length > 0) {
+    console.log(this.opcionesFiltradas);
+    console.log(this.productinico.length);
+    if (this.productinico.length > 0) {
       console.log('productos rellenos');
       let val = '';
       console.log(this.buscarDescripcion.value);
       if (this.buscarDescripcion.value) {
         val = this.buscarDescripcion.value.toString().toLowerCase();
+
         this.opcionesFiltradas = [];
+        console.log(this.productos);
         this.productos.forEach((_prod) => {
           if (
             _prod.nombre.toString().toLowerCase().includes(val) ||
@@ -407,6 +412,7 @@ export class TiendaComponent implements OnInit {
     this.cantidad = 0;
     this.precio = 0;
     this.buscarDescripcion.patchValue('');
+
     //document.getElementById('descripcion')?.focus();
     document.getElementById('p_actual')?.classList.remove('active');
     this.codigoitemseled = 0;
@@ -632,7 +638,7 @@ export class TiendaComponent implements OnInit {
 
   async agregarProducto() {
     if (Number(this.cantidad) > 0) {
-      this.productos = [];
+      this.opcionesFiltradas = [];
       console.log(this.productoActual);
       await this.calcularProductoActual();
       this.productoActual.precio = Number(this.precio);
@@ -651,24 +657,25 @@ export class TiendaComponent implements OnInit {
         console.log(this.productosMostrar);
         localStorage.setItem('pedido', JSON.stringify(this.productosMostrar));
       } else {
-        let options = this.opcionesFiltradas.findIndex((option) => {
+        let options = this.productinico.findIndex((option) => {
           return option.codigo === this.productoActual.codigo;
         });
-        console.log(this.opcionesFiltradas[options]);
-        if (
-          this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <=
-          0
-        ) {
-          console.log(
+
+        if (this.productinico[options].cantidaddisponible <= 0) {
+          /* console.log(
             this.opcionesFiltradas[options]['producto'][
               `cantidad${(Number(this.almacen.slice(-1)) - 1).toString()}`
             ]
-          );
+          );*/
           this.cantidadproducto;
           this.openSnackBar('este producto esta agotado');
         } else {
+          console.log(
+            'opciones filtradas',
+            this.productinico[options].cantidaddisponible
+          );
           if (
-            this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <
+            this.productinico[options].cantidaddisponible <
             this.productoActual.cantidad
           ) {
             this.openSnackBar('cantidad no disponible');
@@ -679,10 +686,6 @@ export class TiendaComponent implements OnInit {
             this.productosMostrar = products;
             console.log(this.productosMostrar);
             localStorage.setItem('pedido', JSON.stringify(products));
-            let cantidad_negativa =
-              this.opcionesFiltradas[options]['producto'][
-                this.cantidadproducto
-              ] - this.productoActual.cantidad;
           }
         }
       }

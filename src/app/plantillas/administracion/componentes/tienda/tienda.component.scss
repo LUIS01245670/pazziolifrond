@@ -220,23 +220,15 @@ button[pedido] {
 
 @media(max-width:1000px){
  
-  .row-pro{
-    flex-direction: column;
-   
-  }
+ 
   
-  .carrito{
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-    height: 500px;
-
-  }
-
-  mat-card-subtitle {
-    overflow-x: auto;
-  }
   
  
+  
+ 
+}
+.overflow-content{
+  overflow-y: auto !important;
 }
 
 .col-4-pro{
@@ -285,6 +277,24 @@ button[pedido] {
   }
 
 }
+@media (max-width:590px) {
+  .row-pro{
+    flex-direction: column !important;
+    width:100% !important;
+    
+  }
+   .overflow-content{
+    max-height: 300px !important;
+   }
+  mat-card.carro {
+    height: 200px !important;
+    max-height: 200px !important;
+    bottom:35px;
+  }
+
+  
+}
+
 .imgicon{
   svg{
     color:#000;
@@ -312,6 +322,51 @@ max-width:100px;
 }
 
 
+.carrito{
+  ::ng-deep .mat-card-header-text{
+    display: flex !important;
+    flex-direction: column !important;
+    width:100%;
+    max-width: calc(100% - 80px) !important;
+   
+    ::ng-deep .mat-card-title{
+      height:fit-content !important;
+      span{
+        display: inline-block;
+        width:100%;
+       word-wrap: break-word !important;
+       height:fit-content;
+      }
+    }
+  }
+}
+
+.carrito2 {
+  ::ng-deep .mat-card-header-text {
+    display: flex !important;
+    width: 100%;
+    max-width: calc(100% - 130px) !important;
+    flex-wrap: wrap !important;
+    
+
+    ::ng-deep .mat-card-title {
+      display: block !important; /* FORZAR que ocupe ancho completo */
+      width: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+
+      span {
+        display: block !important;
+        max-width: 100% !important;
+        white-space: normal !important;           // ← esto es clave al estebleserlo normal esto me pemitira pasa el contido  de mi span a la siguiente linea
+        overflow-wrap: break-word !important; //Significa: "Si una palabra muy larga no cabe en su contenedor, permite romperla en
+        word-break: break-word !important;
+      }
+    }
+  }
+}
 
 
-
+.prod_card{
+  height: 120px !important;
+}

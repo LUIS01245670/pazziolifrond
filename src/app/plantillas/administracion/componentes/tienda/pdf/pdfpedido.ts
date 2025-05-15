@@ -110,7 +110,7 @@ const generatePDF = async (data: any) => {
   content.push({
     table: {
       headerRows: 1,
-      widths: [40, '*', 80, 80, 40, 50, 50],
+      widths: [40, 90, 60, 60, 20, 80, 80],
       body: tableBody,
     },
     layout: 'lightHorizontalLines',
@@ -122,7 +122,7 @@ const generatePDF = async (data: any) => {
     columns: [
       { text: '', width: '*' },
       {
-        text: `Total: $ ${totalGeneral}`,
+        text: `Total: $ ${totalGeneral.toLocaleString('de-DE')}`,
         style: 'total',
         alignment: 'right',
         margin: [0, 10, 0, 10],

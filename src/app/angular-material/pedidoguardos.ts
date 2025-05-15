@@ -56,50 +56,52 @@ interface producto {
           <mat-card-title style="text-align:center"
             >Pedidos por confirmar</mat-card-title
           >
-          <mat-list style="width: 100%; height:100%">
-            <mat-form-field appearance="fill" class="google-search-input">
-              <input
-                matInput
-                (keyup)="buscarcliente()"
-                [(ngModel)]="terminobusqueda"
-              />
-              <button mat-icon-button matSuffix>
-                <mat-icon>search</mat-icon>
-              </button>
-            </mat-form-field>
+          <virtual-scroller
+            #scroll_productosMostrar
+            [items]="data"
+            style="width: 100%; height:100%"
+          >
+            <mat-list style="width: 100%; height:100%">
+              <mat-form-field appearance="fill" class="google-search-input">
+                <input
+                  matInput
+                  (keyup)="buscarcliente()"
+                  [(ngModel)]="terminobusqueda"
+                />
+                <button mat-icon-button matSuffix>
+                  <mat-icon>search</mat-icon>
+                </button>
+              </mat-form-field>
 
-            <virtual-scroller
-              #scroll_productosMostrar
-              [items]="data"
-              style="width: 100%; height:100%"
-            >
               <div
                 *ngFor="let _producto of scroll_productosMostrar.viewPortItems"
                 [id]="'p_' + _producto._id"
                 class="row"
               >
-                <div style="width: 100%;" class="col-12">
-                  <mat-card>
+                <div style="width: 100%; " class="col-12">
+                  <mat-card style="width:100%;">
                     <mat-card-content (click)="elegirpedido(_producto._id)">
-                      <table style="width:100%;">
-                        <thead>
-                          <tr>
-                            <th>Identificacion</th>
-                            <th>Nombre cliente</th>
-                            <th>Fecha reserva</th>
-                            <th>Hora reserva</th>
-                          </tr>
-                        </thead>
+                      <div style="width: 100%; overflow-x: auto !important;">
+                        <table style="width:100%;">
+                          <thead>
+                            <tr>
+                              <th>Identificacion</th>
+                              <th>Nombre cliente</th>
+                              <th>Fecha reserva</th>
+                              <th>Hora reserva</th>
+                            </tr>
+                          </thead>
 
-                        <tbody>
-                          <tr>
-                            <td>{{ _producto.cliente.identificacion }}</td>
-                            <td>{{ _producto.cliente.nombre }}</td>
-                            <td>{{ formatearfecha(_producto.createdAt) }}</td>
-                            <td>{{ formaterahora(_producto.createdAt) }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
+                          <tbody>
+                            <tr>
+                              <td>{{ _producto.cliente.identificacion }}</td>
+                              <td>{{ _producto.cliente.nombre }}</td>
+                              <td>{{ formatearfecha(_producto.createdAt) }}</td>
+                              <td>{{ formaterahora(_producto.createdAt) }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
                       <mat-card-actions [class.hiden]="id !== _producto._id">
                         <div class="row">
                           <div
@@ -138,8 +140,8 @@ interface producto {
                   </mat-card>
                 </div>
               </div>
-            </virtual-scroller>
-          </mat-list>
+            </mat-list>
+          </virtual-scroller>
         </mat-card-content>
       </mat-card>
     </div>
@@ -186,6 +188,7 @@ interface producto {
 
       tr {
         display: flex;
+        column-gap: 10px;
       }
     `,
   ],

@@ -121,14 +121,15 @@
       class="b-primary card_shoping"
       id="p_actual"
       *ngIf="shoping_card1"
+      style="height: 175px !important"
     >
       <mat-card-header class="carrito" style="border: none !important">
         <div mat-card-avatar>
           <mat-icon class="head-icon"> shopping_cart </mat-icon>
         </div>
-        <mat-card-title class="client-name">{{
-          productoActual.nombre
-        }}</mat-card-title>
+        <mat-card-title class="client-name">
+          <span>{{ productoActual.nombre }}</span></mat-card-title
+        >
         <!-- <div class="separator"></div> -->
 
         <mat-card-subtitle class="client-info" style="margin: 0 !important">
@@ -218,30 +219,38 @@
           </div>
         </div>
         <div class="row col-12">
-          <div class="col-boton">
-            <a
-              mat-raised-button
-              class="custom-button-pedido"
-              [routerLink]="['/admin/pedido']"
-              [replaceUrl]="true"
+          <div class="col-12" style="display: flex; flex-wrap: wrap">
+            <div
+              class="col-boton"
+              style="display: flex; justify-content: center; flex-grow: 1"
             >
-              <mat-icon>home</mat-icon>
-              Pedidos realizados
-            </a>
-          </div>
-          <div class="col-boton">
-            <button
-              mat-raised-button
-              class="custom-button-pedido"
-              (click)="verpedidos()"
+              <a
+                mat-raised-button
+                class="custom-button-pedido"
+                [routerLink]="['/admin/pedido']"
+                [replaceUrl]="true"
+              >
+                <mat-icon>home</mat-icon>
+                Pedidos realizados
+              </a>
+            </div>
+            <div
+              class="col-boton"
+              style="display: flex; justify-content: center; flex-grow: 1"
             >
-              <img
-                src="../../../../../assets/images/icon_orders.svg"
-                style="color: #000"
-                class="imgicon"
-              />
-              Pedidos por confirmar
-            </button>
+              <button
+                mat-raised-button
+                class="custom-button-pedido"
+                (click)="verpedidos()"
+              >
+                <img
+                  src="../../../../../assets/images/icon_orders.svg"
+                  style="color: #000"
+                  class="imgicon"
+                />
+                Pedidos por confirmar
+              </button>
+            </div>
           </div>
           <div
             style="
@@ -251,6 +260,7 @@
               justify-content: space-between;
               flex-wrap: wrap;
             "
+            class="col-12"
           >
             <button
               mat-fab
@@ -276,34 +286,46 @@
           <mat-icon>add</mat-icon>
         </button>
       </mat-card-header>
-      <mat-card-content class="overflow-content" style="max-height: 150px">
+      <mat-card-content class="overflow-content">
         <mat-card
-          class="b-primary icon-card prod_card card-list active"
+          class="b-primary icon-card prod_card card-list active carro"
           *ngIf="this.shoping_card2"
         >
-          <mat-card-header class="carrito" style="border: none !important">
+          <mat-card-header
+            class="carrito2"
+            style="border: none !important; height: fit-content"
+          >
             <div mat-card-avatar>
               <mat-icon class="head-icon"> shopping_cart </mat-icon>
             </div>
-            <mat-card-title class="client-name">{{
-              productoActual.nombre
-            }}</mat-card-title>
+            <mat-card-title class="client-name"
+              ><span>{{ productoActual.nombre }}</span></mat-card-title
+            >
             <!-- <div class="separator"></div> -->
 
-            <mat-card-subtitle class="client-info" style="margin: 0 !important">
-              <div class="row row-pro">
-                <div class="col-6 p-0" style="display: flex">
-                  <b>Cantidaddisponible: </b>{{ cantidadactual }}
+            <mat-card-subtitle
+              class="client-info"
+              style="margin: 0 !important ; width: 100% !important"
+            >
+              <div
+                class="row row-pro"
+                style="width: 100% !important ; justify-content: space-between"
+              >
+                <div>
+                  <div class="p-0" style="display: flex">
+                    <b>Cantidaddisponible: </b>{{ cantidadactual }}
+                  </div>
+                  <div class="p-0"><b>Cantidad: </b>{{ cantidad }}</div>
                 </div>
-                <div class="col-6 p-0"><b>Cantidad: </b>{{ cantidad }}</div>
-
-                <div class="col-6 p-0">
-                  <b>Precio: </b>${{ precio.toLocaleString("de-DE") }}
-                </div>
-                <div class="col-6 p-0">
-                  <b>Total:</b>${{
-                    (cantidad * precio).toLocaleString("de-DE")
-                  }}
+                <div>
+                  <div class="p-0">
+                    <b>Precio: </b>${{ precio.toLocaleString("de-DE") }}
+                  </div>
+                  <div class="p-0">
+                    <b>Total:</b>${{
+                      (cantidad * precio).toLocaleString("de-DE")
+                    }}
+                  </div>
                 </div>
               </div>
             </mat-card-subtitle>
@@ -326,6 +348,7 @@
               [id]="'p_' + _producto.id"
               (click)="seleccionaritem(_producto)"
               [class.active_product]="codigoitemseled === _producto.codigo"
+              style="max-height: 400px !important"
             >
               <div class="row row-list-product" style="width: 100%">
                 <div mat-line class="col-12 p-0">

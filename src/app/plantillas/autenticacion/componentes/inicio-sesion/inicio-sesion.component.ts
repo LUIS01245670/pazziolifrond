@@ -19,17 +19,26 @@ import { environment } from 'src/environments/environment';
 })
 export class InicioSesionComponent implements OnInit {
   title: String = '';
-  inputUsuario: UntypedFormControl;
-  inputpassword: UntypedFormControl;
-  inputdocumento: UntypedFormControl;
-  selectSedes: UntypedFormControl;
-  loader: boolean = true;
+  inputUsuario: UntypedFormControl = new UntypedFormControl('', [
+    Validators.required,
+  ]);
+  inputpassword: UntypedFormControl = new UntypedFormControl('', [
+    Validators.required,
+  ]);
+  inputdocumento: UntypedFormControl = new UntypedFormControl('', [
+    Validators.required,
+  ]);
+  selectSedes: UntypedFormControl = new UntypedFormControl('', [
+    Validators.required,
+  ]);
+  loader: boolean = false;
   data: any;
   @ViewChild('inUsuario') inUsuario!: ElementRef;
   @ViewChild('inContrasena') inContrasena!: ElementRef;
   mensaje: string = '';
   suscripcionSocket!: Subscription;
   botoncierresesion: boolean | undefined = false;
+  campovisible: boolean = true;
   constructor(
     private socketprodu: Socket_producto,
     private router: Router,
@@ -40,27 +49,50 @@ export class InicioSesionComponent implements OnInit {
     private serviauth: AuthService,
     private cookieservices: CookieService
   ) {
-    this.serviauth.traerempresa().subscribe((datos) => {
-      this.data = datos.data;
-      this.loader = false;
-      console.log(datos.data);
-    });
-    this.inputdocumento = new UntypedFormControl('', [Validators.required]);
-    this.inputUsuario = new UntypedFormControl('', [Validators.required]);
-    this.inputpassword = new UntypedFormControl('', [Validators.required]);
-
-    this.selectSedes = new UntypedFormControl('', [Validators.required]);
+    this.inputUsuario.disable();
+    this.inputpassword.disable();
+    this.selectSedes.disable();
   }
+  traerempresas() {
+    this.serviauth
+      .traerempresa(this.inputdocumento.value)
+      .subscribe((datos) => {
+        if (datos.data.length > 0) {
+          this.data = datos.data;
+          this.inputUsuario.enable();
+          this.inputpassword.enable();
+          this.selectSedes.enable();
 
+          this.campovisible = false;
+          console.log(datos.data);
+        } else {
+          this.mensaje = 'identificacion no registrada';
+          this.inputUsuario.disable();
+          this.inputpassword.disable();
+          this.selectSedes.disable();
+          this.campovisible = true;
+          setTimeout(() => {
+            this.mensaje = '';
+          }, 4000);
+        }
+      });
+  }
+  limpiarimputs() {
+    this.inputUsuario.setValue('');
+    this.inputpassword.setValue('');
+    this.selectSedes.setValue('');
+  }
   cancelar() {
     this.botoncierresesion = false;
     this.mensaje = '';
+    this.limpiarimputs();
   }
   cerrarsesionuser() {
     this.serviauth.salir().subscribe(
       (res) => {
         this.botoncierresesion = false;
         this.mensaje = '';
+        this.login();
       },
       (error) => console.log(error)
     );
@@ -88,11 +120,12 @@ export class InicioSesionComponent implements OnInit {
         },
 
         (error) => {
-          this.mensaje = error.error.mensaje;
           if (error.error.opcion) {
             this.mensaje = error.error.mensaje;
             this.botoncierresesion = error.error.opcion;
           } else {
+            this.mensaje = error.error.mensaje;
+            this.limpiarimputs();
             setTimeout(() => {
               this.mensaje = '';
             }, 4000);

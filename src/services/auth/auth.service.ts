@@ -65,8 +65,8 @@ export class AuthService {
       withCredentials: true,
     });
   }
-  traerempresa(): Observable<any> {
-    return this.http.get(`${environment.api}/traerempresas`, {
+  traerempresa(info: string): Observable<any> {
+    return this.http.get(`${environment.api}/traerempresas?documento=${info}`, {
       withCredentials: true,
     });
   }

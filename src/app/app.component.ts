@@ -34,6 +34,11 @@ export class AppComponent implements OnInit, OnDestroy {
     private serviciodb: serviciodb
   ) {}
   ngOnInit(): void {
+    this.serviciodb.tienesedeselccionada().subscribe((data) => {
+      this.data = data;
+
+      console.log('datos navegacion', data);
+    });
     console.log('datos inicio configuracion');
     document.addEventListener('visibilitychange', this.visibilityHandler);
   }
