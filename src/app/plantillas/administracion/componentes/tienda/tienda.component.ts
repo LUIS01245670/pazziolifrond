@@ -201,6 +201,7 @@ export class TiendaComponent implements OnInit {
 
       if (datos.response) {
         this.loader = true;
+        console.log('procesando datos');
         //take para obtener un unico valor del observable y no mantener la suscribcion activa
         this.socketproduct
           .obteneralmacen()
@@ -214,6 +215,7 @@ export class TiendaComponent implements OnInit {
             this.iniciarprograma();
           });
       } else {
+        console.log('fue falso');
       }
     });
   }
@@ -244,6 +246,7 @@ export class TiendaComponent implements OnInit {
       );
       //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
       this.socketServices.escucha.subscribe((info: any) => {
+        console.log(info);
         this.loader = false;
         this.totalPagar = 0;
         this.productosMostrar.forEach((producto) => {
@@ -279,7 +282,7 @@ export class TiendaComponent implements OnInit {
       this.productosMostrar = JSON.parse(
         localStorage.getItem('pedido') || '{nombre:""}'
       );
-
+      console.log('caso contrario pedido');
       this.socketServices.escucha = this.socketproduct.obtenerInfo(
         'aws',
         'pazzioli-pos-3',
@@ -290,9 +293,11 @@ export class TiendaComponent implements OnInit {
           sede: localStorage.getItem('sede'),
         }
       );
+
       //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
       this.socketServices.escucha.subscribe((info: any) => {
         this.totalPagar = 0;
+
         this.productosMostrar.forEach((producto) => {
           this.totalPagar += producto.total;
         });
