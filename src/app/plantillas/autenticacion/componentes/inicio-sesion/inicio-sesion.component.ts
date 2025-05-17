@@ -39,6 +39,7 @@ export class InicioSesionComponent implements OnInit {
   suscripcionSocket!: Subscription;
   botoncierresesion: boolean | undefined = false;
   campovisible: boolean = true;
+  mensajedone: string = '';
   constructor(
     private socketprodu: Socket_producto,
     private router: Router,
@@ -64,9 +65,11 @@ export class InicioSesionComponent implements OnInit {
           this.selectSedes.enable();
 
           this.campovisible = false;
+          this.mensajedone = 'Identificación verificada';
+
           console.log(datos.data);
         } else {
-          this.mensaje = 'identificacion no registrada';
+          this.mensaje = 'Identificación no registrada';
           this.inputUsuario.disable();
           this.inputpassword.disable();
           this.selectSedes.disable();

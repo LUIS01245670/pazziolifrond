@@ -10,7 +10,7 @@ const generatePDF = async (data: any) => {
   const nuevaVentana = window.open('', '_blank');
   if (!nuevaVentana) {
     alert('El navegador bloqueó la ventana emergente. Permite pop-ups.');
-    return;
+    return null;
   }
   console.log(data);
   //Se crea el contenido de la tabla, con:

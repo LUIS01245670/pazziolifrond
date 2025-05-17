@@ -57,7 +57,7 @@ interface producto {
                 <thead>
                   <tr>
                     <th>Codigo</th>
-                    <th>Descripcion</th>
+                    <th>Descripción</th>
                     <th>Cantidad</th>
                     <th>Precio</th>
                     <th>Total</th>

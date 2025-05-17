@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { CookieService } from 'ngx-cookie-service';
 
 import { Router } from '@angular/router';
-import { environment } from 'src/environments/environment.prod';
+import { environment } from 'src/environments/environment';
 interface token {
   token: string;
 }

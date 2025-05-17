@@ -85,7 +85,7 @@ interface producto {
                         <table style="width:100%;">
                           <thead>
                             <tr>
-                              <th>Identificacion</th>
+                              <th>Identificación</th>
                               <th>Nombre cliente</th>
                               <th>Fecha reserva</th>
                               <th>Hora reserva</th>

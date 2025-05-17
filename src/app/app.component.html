@@ -8,7 +8,12 @@
         <mat-icon>menu</mat-icon>
       </button> -->
       <span class="px-3">Toma pedidos pazzioli </span>
-      <button mat-icon-button class="exit-button" (click)="salir()">
+      <button
+        mat-icon-button
+        class="exit-button"
+        (click)="salir()"
+        *ngIf="data?.response"
+      >
         <mat-icon>exit_to_app</mat-icon>
       </button>
     </mat-toolbar>

@@ -3,7 +3,8 @@ import { io } from 'socket.io-client';
 import { Observable, fromEvent, Subject, observable } from 'rxjs';
 import { SocketService } from './socket.service';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment.prod';
+
+import { environment } from 'src/environments/environment';
 interface token {
   token: string;
 }

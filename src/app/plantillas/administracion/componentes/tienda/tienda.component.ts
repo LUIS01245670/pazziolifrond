@@ -52,6 +52,7 @@ export interface PRODUCTO {
   styleUrls: ['./tienda.component.scss'],
 })
 export class TiendaComponent implements OnInit {
+  id_cliente_store: string = '';
   shoping_card1: boolean = false;
   shoping_card2: boolean = false;
   ventana: any = null;
@@ -203,6 +204,7 @@ export class TiendaComponent implements OnInit {
         this.loader = true;
         console.log('procesando datos');
         //take para obtener un unico valor del observable y no mantener la suscribcion activa
+        this.iniciarprograma();
         this.socketproduct
           .obteneralmacen()
           .pipe(take(1))
@@ -212,7 +214,6 @@ export class TiendaComponent implements OnInit {
             this.configuracion = datos.config;
             this.identificacion = datos.identificacion;
             this.nombrevendedor = datos.nombre;
-            this.iniciarprograma();
           });
       } else {
         console.log('fue falso');
@@ -439,12 +440,17 @@ export class TiendaComponent implements OnInit {
 
       dialogref.afterClosed().subscribe((data) => {
         this.clienteSeleccionado = data.cliente;
-        this.productosMostrar = [...data.productos_pedido];
+        let clienteguardar = data.cliente;
+        delete clienteguardar._id;
+        this.socketServices.guardarcliente(clienteguardar);
         this.id_select = data._id;
         this.totalPagar = this.productosMostrar.reduce(
           (i, item) => (i += item.total),
           0
         );
+        this.socketServices
+          .guardarcliente(clienteguardar)
+          .subscribe((data) => {});
       });
     });
   }
@@ -457,25 +463,25 @@ export class TiendaComponent implements OnInit {
     };
     if (this.clienteSeleccionado.codigo === 0) {
       this.openDialogAlerta({
-        boton: 'ok',
-        mensaje: 'selecciona un cliente primero',
+        boton: 'Ok',
+        mensaje: 'Selecciona un cliente primero',
         tipo: 'error',
       });
     } else {
       if (this.productosMostrar.length <= 0) {
         this.openDialogAlerta({
-          boton: 'ok',
-          mensaje: 'no has agregado ningun producto',
+          boton: 'Ok',
+          mensaje: 'No has agregado ningun producto',
           tipo: 'error',
         });
       } else {
         const dialogRef = this.dialog.open(DialogoAlerta, {
           data: {
             titulo: 'CORRECTO',
-            mensaje: 'desea continuar',
-            boton: 'confirmar',
-            tipo: 'warning',
-            boton1: 'cancelar',
+            mensaje: 'Desea continuar?',
+            boton: 'Confirmar',
+            tipo: 'question',
+            boton1: 'Cancelar',
             input: false,
           },
           disableClose: true,
@@ -491,7 +497,7 @@ export class TiendaComponent implements OnInit {
                   this.openDialogAlerta({
                     mensaje: data.message,
                     tipo: 'done',
-                    boton: 'ok',
+                    boton: 'Ok',
                   });
                 });
 
@@ -503,7 +509,7 @@ export class TiendaComponent implements OnInit {
                 this.openDialogAlerta({
                   mensaje: data.message,
                   tipo: 'done',
-                  boton: 'ok',
+                  boton: 'Ok',
                 });
               });
           }
@@ -518,9 +524,9 @@ export class TiendaComponent implements OnInit {
     const dialogref = this.dialog.open(DialogoAlerta, {
       data: {
         tipo: 'warning',
-        boton: 'confirmar',
-        boton1: 'cancelar',
-        mensaje: 'seguro desea eliminar este pedido reservado',
+        boton: 'Confirmar',
+        boton1: 'Cancelar',
+        mensaje: 'Seguro desea eliminar este pedido reservado?',
       },
     });
     dialogref.afterClosed().subscribe((resultado) => {
@@ -626,6 +632,12 @@ export class TiendaComponent implements OnInit {
     };
     localStorage.removeItem('pedido');
     this.reiniciar();
+
+    this.socketServices
+      .eliminarproducto(this.id_cliente_store)
+      .subscribe((datos) => {
+        this.id_cliente_store = '';
+      });
   }
 
   async elegirPrecio(event: any) {
@@ -673,7 +685,7 @@ export class TiendaComponent implements OnInit {
             ]
           );*/
           this.cantidadproducto;
-          this.openSnackBar('este producto esta agotado');
+          this.openSnackBar('Este producto esta agotado');
         } else {
           console.log(
             'opciones filtradas',
@@ -683,14 +695,18 @@ export class TiendaComponent implements OnInit {
             this.productinico[options].cantidaddisponible <
             this.productoActual.cantidad
           ) {
-            this.openSnackBar('cantidad no disponible');
+            this.openSnackBar('Cantidad no disponible');
           } else {
-            delete this.productoActual.producto;
+            if (this.productinico[options].precio <= 0) {
+              this.openSnackBar('producto sin precio');
+            } else {
+              delete this.productoActual.producto;
 
-            let products = [...this.productosMostrar, this.productoActual];
-            this.productosMostrar = products;
-            console.log(this.productosMostrar);
-            localStorage.setItem('pedido', JSON.stringify(products));
+              let products = [...this.productosMostrar, this.productoActual];
+              this.productosMostrar = products;
+              console.log(this.productosMostrar);
+              localStorage.setItem('pedido', JSON.stringify(products));
+            }
           }
         }
       }
@@ -724,20 +740,18 @@ export class TiendaComponent implements OnInit {
         let index = this.productosMostrar.findIndex(
           (pro) => Number(pro.codigo) === this.codigoitemseled
         );
-        let options = this.opcionesFiltradas.findIndex(
+        let options = this.productos.findIndex(
           (pro) => Number(pro.codigo) === this.codigoitemseled
         );
         console.log(this.productoActual.cantidad);
-        if (
-          this.opcionesFiltradas[options]['producto'][this.cantidadproducto] <
-          this.cantidad
-        ) {
-          this.openSnackBar('cantidad no disponible');
+        if (this.productos[options].cantidaddisponible < this.cantidad) {
+          this.openSnackBar('Cantidad no disponible');
         } else {
           this.productosMostrar[index].cantidad = this.cantidad;
           this.productosMostrar[index].total =
             Number(this.cantidad) * Number(this.precio);
           document.getElementById('p_actual')?.classList.remove('active');
+          this.shoping_card2 = false;
           this.codigoitemseled = 0;
           this.totalPagar = 0;
           this.productosMostrar.forEach((producto) => {
@@ -822,6 +836,10 @@ export class TiendaComponent implements OnInit {
     this.clienteSeleccionado.ciudad = cliente.municipio;
     this.buscarCliente = '';
     this.clientes = [];
+    this.socketServices.guardarcliente(cliente).subscribe(
+      (data) => console.log(data),
+      (error) => console.log(error)
+    );
   }
   async buscarProducto(valor: String, tipo: String) {
     this.loader = true;
@@ -846,7 +864,22 @@ export class TiendaComponent implements OnInit {
 
   respuestaProductos(info: any, estado: Boolean) {
     console.log('entro a respuesta productos');
+    this.socketServices.buscarclientes().subscribe((datos) => {
+      console.log(datos.datos);
 
+      if (datos.datos && datos.datos.razonSocial) {
+        this.id_cliente_store = datos.datos._id;
+        this.clienteSeleccionado.nombre = datos.datos.razonSocial;
+        this.clienteSeleccionado.identificacion = datos.datos.identificacion;
+        this.clienteSeleccionado.email = datos.datos.email;
+        this.clienteSeleccionado.celulares = datos.datos.celulares;
+        this.clienteSeleccionado.direccion = datos.datos.direccion;
+        this.clienteSeleccionado.telefonoFijo = datos.datos.telefonoFijo;
+        this.clienteSeleccionado.codigo = datos.datos.codigo;
+        this.clienteSeleccionado.imagen = datos.datos.imagen || null;
+        this.clienteSeleccionado.ciudad = datos.datos.municipio;
+      }
+    });
     if (estado) {
       console.log(info);
       this.productos = info.mensajePeticion.map((producto: any) => {
@@ -874,6 +907,7 @@ export class TiendaComponent implements OnInit {
         ).toString()}`;
       }
       this.opcionesFiltradas = this.productos;
+
       //this.inDescripcion.openPanel();
     } else {
       const data: DatosAlerta = {
@@ -1023,7 +1057,7 @@ export class TiendaComponent implements OnInit {
         this.totalPagar,
         this.id_select
       );
-
+      console.log('este id', this.id_cliente_store);
       this.socketproduct
         .crearpedido('pedido', 'pazzioli-pos-3', {
           metodo: 'CREAR',
@@ -1143,7 +1177,7 @@ export class TiendaComponent implements OnInit {
         resolve(datos.codigo.codigo);
       });
     });
-
+    this.deleteAll();
     numerofactura = await obtenerpedido;
 
     const pdf = await generatePDF({
@@ -1182,7 +1216,6 @@ export class TiendaComponent implements OnInit {
 
                 this.respuestaProductos(info, true);
               }
-              this.deleteAll();
             });
         }
       });

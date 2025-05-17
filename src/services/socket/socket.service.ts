@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { Observable, fromEvent, Subject } from 'rxjs';
 import { DatosPeticion } from 'src/app/modelos/datos-peticion';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +15,7 @@ export class SocketService {
   public socketConexion!: Observable<any>;
   public escucha!: Observable<any>;
   private componentMethodCallSource = new Subject<any>();
-  constructor() {
+  constructor(private http: HttpClient) {
     console.log('🟡 SocketService inicializado');
   }
 
@@ -113,5 +115,26 @@ export class SocketService {
       crear: data,
     };
     this.enviarInfo(infoPeticion);
+  }
+
+  public guardarcliente(cliente: any): Observable<any> {
+    return this.http.post(`${environment.api}/guardarpedido`, cliente, {
+      withCredentials: true,
+    });
+  }
+
+  public buscarclientes(): Observable<any> {
+    return this.http.get(`${environment.api}/obtenercliente`, {
+      withCredentials: true,
+    });
+  }
+
+  public eliminarproducto(id: string): Observable<any> {
+    return this.http.delete(
+      `${environment.api}/eliminarcliente/cliente/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
   }
 }
