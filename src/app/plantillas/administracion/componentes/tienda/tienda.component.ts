@@ -700,7 +700,11 @@ export class TiendaComponent implements OnInit {
             this.openSnackBar('Cantidad no disponible');
           } else {
             if (this.productinico[options].precio <= 0) {
-              this.openSnackBar('producto sin precio');
+              this._snackBar.open('producto sin precio', {
+                duration: 3000,
+                verticalPosition: 'top', // ⬆️ aparece arriba
+                horizontalPosition: 'center', // ⬅️ puede ser 'start' | 'center' | 'end' | 'left' | 'right'
+              });
             } else {
               delete this.productoActual.producto;
 
