@@ -1177,7 +1177,7 @@ export class TiendaComponent implements OnInit {
         resolve(datos.codigo.codigo);
       });
     });
-    this.deleteAll();
+
     numerofactura = await obtenerpedido;
 
     const pdf = await generatePDF({
@@ -1215,6 +1215,7 @@ export class TiendaComponent implements OnInit {
                 let info = JSON.parse(data);
 
                 this.respuestaProductos(info, true);
+                this.deleteAll();
               }
             });
         }
