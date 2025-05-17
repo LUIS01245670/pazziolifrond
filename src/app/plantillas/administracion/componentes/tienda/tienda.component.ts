@@ -449,9 +449,20 @@ export class TiendaComponent implements OnInit {
           (i, item) => (i += item.total),
           0
         );
+
         this.socketServices
-          .guardarcliente(clienteguardar)
-          .subscribe((data) => {});
+          .guardarcliente({
+            identificacion: clienteguardar.identificacion,
+            razonSocial: clienteguardar.nombre,
+            telefonoFijo: clienteguardar.telefonoFijo,
+            email: clienteguardar.email,
+            celulares: clienteguardar.celulares,
+            direccion: clienteguardar.direccion,
+            codigo: clienteguardar.codigo,
+          })
+          .subscribe((data) => {
+            console.log('data', data);
+          });
       });
     });
   }
