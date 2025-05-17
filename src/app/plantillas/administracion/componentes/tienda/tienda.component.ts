@@ -613,6 +613,7 @@ export class TiendaComponent implements OnInit {
   }
 
   deleteAll() {
+    console.log('eliminar todo');
     this.id_select = '';
     this.productosMostrar = [];
     this.totalPagar = 0;
@@ -1211,11 +1212,11 @@ export class TiendaComponent implements OnInit {
               sede: localStorage.getItem('sede'),
             })
             .subscribe((data) => {
-              if (data.estadoPeticion === 'SUCCESS') {
-                let info = JSON.parse(data);
-
-                this.respuestaProductos(info, true);
+              let info = JSON.parse(data);
+              if (info.estadoPeticion === 'SUCCESS') {
+                console.log('infoemail', info);
                 this.deleteAll();
+                this.respuestaProductos(info, true);
               }
             });
         }
