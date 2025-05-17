@@ -52,7 +52,7 @@ interface producto {
           style="width: 100%; height:100%"
         >
           <mat-card-content style="width:100%; height:100%">
-            <mat-list style="width: 100%; height:100%">
+            <mat-list style="width:fit-content; height:100%">
               <table style="width:100%;">
                 <thead>
                   <tr>
@@ -78,14 +78,14 @@ interface producto {
                   </tr>
                 </tbody>
               </table>
+              <mat-card-footer style="text-align:end;">
+                <!--totalPagar.toLocaleString("de-DE") convierte un número a una cadena de texto con formato local, en este caso usando el formato alemán ("de-DE").-->
+                <strong>Total venta:</strong><b>$</b>
+                <span style="font-weight:bold;font-size:1rem">{{
+                  total_venta_general.toLocaleString('de-DE')
+                }}</span>
+              </mat-card-footer>
             </mat-list>
-            <mat-card-footer style="text-align:end;">
-              <!--totalPagar.toLocaleString("de-DE") convierte un número a una cadena de texto con formato local, en este caso usando el formato alemán ("de-DE").-->
-              <strong>Total venta:</strong><b>$</b>
-              <span style="font-weight:bold;font-size:1rem">{{
-                total_venta_general.toLocaleString('de-DE')
-              }}</span>
-            </mat-card-footer>
           </mat-card-content>
         </virtual-scroller>
       </mat-card>
@@ -115,7 +115,7 @@ interface producto {
       tr {
         display: flex;
         border-bottom: 1px solid #000;
-        column-gap: 10px;
+        column-gap: 2px !important;
       }
     `,
   ],

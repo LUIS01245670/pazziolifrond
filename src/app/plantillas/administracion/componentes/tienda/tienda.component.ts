@@ -441,6 +441,7 @@ export class TiendaComponent implements OnInit {
       dialogref.afterClosed().subscribe((data) => {
         this.clienteSeleccionado = data.cliente;
         let clienteguardar = data.cliente;
+        this.productosMostrar = data.productos_pedido;
         delete clienteguardar._id;
         this.socketServices.guardarcliente(clienteguardar);
         this.id_select = data._id;
