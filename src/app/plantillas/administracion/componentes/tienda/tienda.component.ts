@@ -700,7 +700,7 @@ export class TiendaComponent implements OnInit {
             this.openSnackBar('Cantidad no disponible');
           } else {
             if (this.productinico[options].precio <= 0) {
-              this._snackBar.open('producto sin precio', {
+              this._snackBar.open('producto sin precio', 'ok', {
                 duration: 3000,
                 verticalPosition: 'top', // ⬆️ aparece arriba
                 horizontalPosition: 'center', // ⬅️ puede ser 'start' | 'center' | 'end' | 'left' | 'right'
@@ -872,7 +872,7 @@ export class TiendaComponent implements OnInit {
     console.log('entro a respuesta productos');
     this.socketServices.buscarclientes().subscribe((datos) => {
       console.log(datos.datos);
-
+      console.log(datos.datos.razonSocial);
       if (datos.datos && datos.datos.razonSocial) {
         this.id_cliente_store = datos.datos._id;
         this.clienteSeleccionado.nombre = datos.datos.razonSocial;
