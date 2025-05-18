@@ -99,6 +99,9 @@ export class PedidosComponent implements OnInit {
       disableClose: true,
     });
     dialogref.afterClosed().subscribe((data) => {
+      console.log(data);
+      if (data) {
+      }
       this.productser
         .obteneritemspedido(pedido.codigo_pedido)
         .subscribe(async (datos) => {
