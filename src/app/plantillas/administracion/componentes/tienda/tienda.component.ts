@@ -188,8 +188,7 @@ export class TiendaComponent implements OnInit {
     private socketservidbs: serviciodb,
     private socketproduct: Socket_producto,
     private router: Router
-  ) {
-      }
+  ) {}
 
   ngOnInit(): void {
     this.seleccionardb();
@@ -197,21 +196,21 @@ export class TiendaComponent implements OnInit {
 
   seleccionardb() {
     this.socketservidbs.tienesedeselccionada().subscribe((datos) => {
-            if (datos.response) {
+      if (datos.response) {
         this.loader = true;
-                //take para obtener un unico valor del observable y no mantener la suscribcion activa
+        //take para obtener un unico valor del observable y no mantener la suscribcion activa
         this.iniciarprograma();
         this.socketproduct
           .obteneralmacen()
           .pipe(take(1))
           .subscribe((datos) => {
-                        this.almacen = datos.almacen;
+            this.almacen = datos.almacen;
             this.configuracion = datos.config;
             this.identificacion = datos.identificacion;
             this.nombrevendedor = datos.nombre;
           });
       } else {
-              }
+      }
     });
   }
 
@@ -224,7 +223,7 @@ export class TiendaComponent implements OnInit {
   }
 
   iniciarprograma() {
-        if (
+    if (
       !localStorage.getItem('pedido') ||
       localStorage.getItem('pedido') === null
     ) {
@@ -240,7 +239,7 @@ export class TiendaComponent implements OnInit {
       );
       //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
       this.socketServices.escucha.subscribe((info: any) => {
-                this.loader = false;
+        this.loader = false;
         this.totalPagar = 0;
         this.productosMostrar.forEach((producto) => {
           this.totalPagar += producto.total;
@@ -249,9 +248,9 @@ export class TiendaComponent implements OnInit {
         switch (info.tipoConsulta) {
           case 'PRODUCTO':
             if (info.estadoPeticion === 'SUCCESS') {
-                            this.respuestaProductos(info, true);
+              this.respuestaProductos(info, true);
             } else {
-                            this.respuestaProductos(info, false);
+              this.respuestaProductos(info, false);
             }
             break;
           case 'TERCERO':
@@ -320,10 +319,10 @@ export class TiendaComponent implements OnInit {
   seleccionaritem(_producto: PRODUCTO) {
     this.shoping_card2 = true;
     this.shoping_card1 = false;
-        const indexproduct = this.productinico.findIndex(
+    const indexproduct = this.productinico.findIndex(
       (product) => product.codigo === _producto.codigo
     );
-        this.cantidadactual = this.productinico[indexproduct]?.cantidaddisponible;
+    this.cantidadactual = this.productinico[indexproduct]?.cantidaddisponible;
     this.codigoitemseled = Number(_producto.codigo);
     this.productoActual = _producto;
     this.precio = this.productoActual.precio;
@@ -334,13 +333,13 @@ export class TiendaComponent implements OnInit {
   }
 
   buscarProductos(key: any, campo: String) {
-            if (this.productinico.length > 0) {
-            let val = '';
-            if (this.buscarDescripcion.value) {
+    if (this.productinico.length > 0) {
+      let val = '';
+      if (this.buscarDescripcion.value) {
         val = this.buscarDescripcion.value.toString().toLowerCase();
 
         this.opcionesFiltradas = [];
-                this.productos.forEach((_prod) => {
+        this.productos.forEach((_prod) => {
           if (
             _prod.nombre.toString().toLowerCase().includes(val) ||
             _prod.referencia.toString().toLowerCase().includes(val) ||
@@ -360,7 +359,7 @@ export class TiendaComponent implements OnInit {
       }
 
       if (key.keyCode == 13) {
-                this.elegirCantidad(this.buscarDescripcion.value);
+        this.elegirCantidad(this.buscarDescripcion.value);
       }
     } else {
       this.eventoEnter(key, campo);
@@ -422,6 +421,7 @@ export class TiendaComponent implements OnInit {
         let clienteguardar = data.cliente;
         this.productosMostrar = data.productos_pedido;
         localStorage.setItem('pedido', JSON.stringify(data.productos_pedido));
+        this.id_select = clienteguardar._id;
         delete clienteguardar._id;
         this.socketServices.guardarcliente(clienteguardar);
 
@@ -448,7 +448,7 @@ export class TiendaComponent implements OnInit {
   }
 
   reservarpedido() {
-        const datospedido = {
+    const datospedido = {
       cliente: this.clienteSeleccionado,
       productos_pedido: this.productosMostrar,
     };
@@ -483,7 +483,7 @@ export class TiendaComponent implements OnInit {
               this.socketproduct
                 .actulizarpedido(this.id_select, datospedido)
                 .subscribe((data) => {
-                                    this.openDialogAlerta({
+                  this.openDialogAlerta({
                     mensaje: data.message,
                     tipo: 'done',
                     boton: 'Ok',
@@ -536,24 +536,24 @@ export class TiendaComponent implements OnInit {
   elegirCantidad(_prod: any) {
     if (typeof _prod == 'object') {
       if (this.buscarDescripcion.value) {
-                this.shoping_card1 = true;
+        this.shoping_card1 = true;
         this.productoActual = { numero: null, ..._prod };
         this.precio = this.productoActual.precio;
         document.getElementById('p_actual')?.classList.add('active');
         this.cantidad = 1;
         this.codigo = this.productoActual.codigo;
         this.referencia = this.productoActual.referencia;
-                this.cantidadactual =
+        this.cantidadactual =
           this.productoActual['producto'][this.cantidadproducto];
-                        document.getElementById('cantidad')?.focus();
+        document.getElementById('cantidad')?.focus();
       } else if (this.productos.length > 0) {
-                this.productoActual = this.productos[0];
+        this.productoActual = this.productos[0];
         this.precio = this.productoActual.precio;
         document.getElementById('p_actual')?.classList.add('active');
         this.cantidad = 1;
         document.getElementById('cantidad')?.focus();
       } else {
-                this.inCodigo.nativeElement.focus();
+        this.inCodigo.nativeElement.focus();
       }
     }
   }
@@ -584,7 +584,7 @@ export class TiendaComponent implements OnInit {
       disableClose: true,
     });
     dialogRef.afterClosed().subscribe((resultado) => {
-            if (resultado == true) {
+      if (resultado == true) {
         this.deleteAll();
       }
       this.loader = false;
@@ -592,7 +592,7 @@ export class TiendaComponent implements OnInit {
   }
 
   deleteAll() {
-        this.id_select = '';
+    this.id_select = '';
     this.productosMostrar = [];
     this.totalPagar = 0;
     this.productosMostrar.forEach((producto) => {
@@ -615,7 +615,7 @@ export class TiendaComponent implements OnInit {
     this.socketServices
       .eliminarproducto(this.id_cliente_store)
       .subscribe((datos) => {
-                        this.id_cliente_store = '';
+        this.id_cliente_store = '';
       });
   }
 
@@ -635,7 +635,7 @@ export class TiendaComponent implements OnInit {
   async agregarProducto() {
     if (Number(this.cantidad) > 0) {
       this.opcionesFiltradas = [];
-            await this.calcularProductoActual();
+      await this.calcularProductoActual();
       this.productoActual.precio = Number(this.precio);
       this.productoActual.cantidad = Number(this.cantidad);
 
@@ -649,7 +649,7 @@ export class TiendaComponent implements OnInit {
         this.productosMostrar[index].cantidad = _cantidad;
         this.productosMostrar[index].precio = this.precio;
         this.productosMostrar[index].total = _precio_total;
-                localStorage.setItem('pedido', JSON.stringify(this.productosMostrar));
+        localStorage.setItem('pedido', JSON.stringify(this.productosMostrar));
       } else {
         let options = this.productinico.findIndex((option) => {
           return option.codigo === this.productoActual.codigo;
@@ -664,7 +664,7 @@ export class TiendaComponent implements OnInit {
           this.cantidadproducto;
           this.openSnackBar('Este producto esta agotado');
         } else {
-                    if (
+          if (
             this.productinico[options].cantidaddisponible <
             this.productoActual.cantidad
           ) {
@@ -681,7 +681,7 @@ export class TiendaComponent implements OnInit {
 
               let products = [...this.productosMostrar, this.productoActual];
               this.productosMostrar = products;
-                            localStorage.setItem('pedido', JSON.stringify(products));
+              localStorage.setItem('pedido', JSON.stringify(products));
             }
           }
         }
@@ -719,7 +719,7 @@ export class TiendaComponent implements OnInit {
         let options = this.productos.findIndex(
           (pro) => Number(pro.codigo) === this.codigoitemseled
         );
-                if (this.productos[options].cantidaddisponible < this.cantidad) {
+        if (this.productos[options].cantidaddisponible < this.cantidad) {
           this.openSnackBar('Cantidad no disponible');
         } else {
           this.productosMostrar[index].cantidad = this.cantidad;
@@ -739,7 +739,7 @@ export class TiendaComponent implements OnInit {
   eliminarProducto(e: any, id: string) {
     e.stopPropagation();
 
-        document.getElementById('p_' + id)?.classList.add('deleted');
+    document.getElementById('p_' + id)?.classList.add('deleted');
 
     let filteredItems = this.productosMostrar.filter(
       (item) => id !== item.codigo
@@ -749,7 +749,7 @@ export class TiendaComponent implements OnInit {
     this.productosMostrar.forEach((producto) => {
       this.totalPagar += producto.total;
     });
-        this.enumerarProductos();
+    this.enumerarProductos();
   }
 
   calcularProductoActual(): Promise<number> {
@@ -840,7 +840,7 @@ export class TiendaComponent implements OnInit {
         this.sedeSeleccionada.usuario.usuario
       );
     } catch (error) {
-          } finally {
+    } finally {
       setTimeout(() => {
         if (tipo != 'DESCRIPCION') {
           this.elegirCantidad(null);
@@ -850,7 +850,7 @@ export class TiendaComponent implements OnInit {
   }
 
   respuestaProductos(info: any, estado: Boolean) {
-        this.socketServices.buscarclientes().subscribe((datos) => {
+    this.socketServices.buscarclientes().subscribe((datos) => {
       if (datos.datos && datos.datos.razonSocial) {
         this.id_cliente_store = datos.datos._id;
         this.clienteSeleccionado.nombre = datos.datos.razonSocial;
@@ -865,7 +865,7 @@ export class TiendaComponent implements OnInit {
       }
     });
     if (estado) {
-            this.productos = info.mensajePeticion.map((producto: any) => {
+      this.productos = info.mensajePeticion.map((producto: any) => {
         return <PRODUCTO>{
           id: producto.codigo,
           nombre: producto.descripcion,
@@ -924,7 +924,7 @@ export class TiendaComponent implements OnInit {
           datoCondicion: valor,
         })
         .subscribe((dato) => {
-                              if (JSON.parse(dato).estadoPeticion === 'SUCCESS') {
+          if (JSON.parse(dato).estadoPeticion === 'SUCCESS') {
             console.log(JSON.parse(dato).mensajePeticion);
             this.clientes = JSON.parse(dato).mensajePeticion;
           }
@@ -1014,7 +1014,7 @@ export class TiendaComponent implements OnInit {
       let fechaActual = this.obtenerFechaHora();
       this.fechahora = `${fechaActual.diaActual} ${fechaActual.horaActual}`;
       let itemsPedidos = this.productosMostrar.map((producto) => {
-                this.totalPagar += producto.total;
+        this.totalPagar += producto.total;
         return {
           codigoProducto: producto.codigo,
           valor: producto.precio,
@@ -1035,7 +1035,7 @@ export class TiendaComponent implements OnInit {
         this.totalPagar,
         this.id_select
       );
-            this.socketproduct
+      this.socketproduct
         .crearpedido('pedido', 'pazzioli-pos-3', {
           metodo: 'CREAR',
           condicion: 'nombres',
@@ -1052,12 +1052,12 @@ export class TiendaComponent implements OnInit {
           sede: localStorage.getItem('sede'),
         })
         .subscribe((inf) => {
-                    if (inf.estadoPeticion === 'SUCCESS') {
+          if (inf.estadoPeticion === 'SUCCESS') {
             this.openDialogFactura();
           }
         });
     } catch (error) {
-            let elementos = document.getElementsByClassName(
+      let elementos = document.getElementsByClassName(
         'cdk-overlay-container'
       ) as HTMLCollectionOf<HTMLElement>;
       elementos[0].style.zIndex = '1000';
@@ -1125,13 +1125,13 @@ export class TiendaComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((resultado) => {
-            if (resultado != false && data.tipo == 'info') {
+      if (resultado != false && data.tipo == 'info') {
         this.clienteSeleccionado.email = resultado == true ? null : resultado;
         //this.openDialogFactura();
       }
 
       if (data.tipo == 'done') {
-                this.deleteAll();
+        this.deleteAll();
       }
       this.loader = false;
     });
@@ -1143,7 +1143,7 @@ export class TiendaComponent implements OnInit {
     this.loader = true;
     const obtenerpedido: Promise<number> = new Promise((resolve, reject) => {
       this.socketproduct.obtenernumeropedido().subscribe(async (datos) => {
-                resolve(datos.codigo.codigo);
+        resolve(datos.codigo.codigo);
       });
     });
 
@@ -1183,7 +1183,7 @@ export class TiendaComponent implements OnInit {
             .subscribe((data) => {
               let info = JSON.parse(data);
               if (info.estadoPeticion === 'SUCCESS') {
-                                this.respuestaProductos(info, true);
+                this.respuestaProductos(info, true);
               }
             });
         }
@@ -1316,7 +1316,7 @@ export class DialogFactura {
     this.total = data.total;
     this.infoEmpresa = data.infoEmpresa;
 
-        /*setTimeout(() => {
+    /*setTimeout(() => {
       let doc = new jsPDF('p', 'px', 'letter'); // A4 TAMAÑO
       if (this.infoEmpresa.logo) {
         doc.addImage(this.infoEmpresa.logo, 'PNG', 30, 30, 60, 60);
@@ -1432,7 +1432,7 @@ export class DialogFactura {
       (sum: any, datos: any) => sum + datos.cantidad,
       0
     );
-      }
+  }
 
   onNoClick(e: any): void {
     this.dialogRef.close();
