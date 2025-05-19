@@ -417,11 +417,12 @@ export class TiendaComponent implements OnInit {
       });
 
       dialogref.afterClosed().subscribe((data) => {
+        console.log(data);
         this.clienteSeleccionado = data.cliente;
         let clienteguardar = data.cliente;
         this.productosMostrar = data.productos_pedido;
         localStorage.setItem('pedido', JSON.stringify(data.productos_pedido));
-        this.id_select = clienteguardar._id;
+        this.id_select = data._id;
         delete clienteguardar._id;
         this.socketServices.guardarcliente(clienteguardar);
 
@@ -429,8 +430,8 @@ export class TiendaComponent implements OnInit {
           (i, item) => (i += item.total),
           0
         );
-        this.socketServices.buscarclientes().subscribe((data) => {
-          this.id_cliente_store = data.datos._id;
+        this.socketServices.buscarclientes().subscribe((datos) => {
+          this.id_cliente_store = datos.datos._id;
           this.socketServices
             .guardarcliente({
               identificacion: clienteguardar.identificacion,
@@ -441,7 +442,7 @@ export class TiendaComponent implements OnInit {
               direccion: clienteguardar.direccion,
               codigo: clienteguardar.codigo,
             })
-            .subscribe((data) => {});
+            .subscribe((dat) => {});
         });
       });
     });
