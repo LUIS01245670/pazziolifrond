@@ -206,7 +206,6 @@ export class Pedidoguardado {
   ) {
     this.data = this.data.sort();
     this.datatemporal = this.data;
-    console.log(data);
   }
 
   elegirpedido(id: string) {
@@ -260,21 +259,17 @@ export class Pedidoguardado {
       (data) => {
         if (data.repuesta) {
           this.serviproduct.verpedido().subscribe((data) => {
-            console.log(data.pedido);
             this.data = data.pedido;
           });
         }
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   }
 
   buscarcliente() {
     if (this.terminobusqueda == '') {
       this.data = this.datatemporal;
-      console.log(this.datatemporal);
     } else {
       this.data = this.datatemporal.filter(
         (item: any) =>

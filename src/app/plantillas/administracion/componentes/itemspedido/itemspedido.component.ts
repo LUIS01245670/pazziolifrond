@@ -30,7 +30,6 @@ export class ItemspedidoComponent implements OnInit {
     this.servipro
       .obteneritemspedido(this.route.snapshot.params['codigo'])
       .subscribe((datos) => {
-        console.log(datos);
         this.data = datos;
         this.total = datos[0].total;
       });

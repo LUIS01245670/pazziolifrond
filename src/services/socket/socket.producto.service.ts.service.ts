@@ -29,7 +29,6 @@ export class Socket_producto {
     });
     // this.socket = io("localhost:3000");
     this.socket.on('connect', () => {
-      console.log('Conectado al servidor con I:', this.socket.id);
       this.socketiniciado = true;
     });
 
@@ -46,7 +45,6 @@ export class Socket_producto {
     return new Observable((observable: any) => {
       this.socket.emit('pazzioli-pos-3', { metodo: 'traeralmacen' });
       this.socket.on('obteneralmacen', (datos: any) => {
-        console.log('socketactivado');
         this.almacen = datos.almacen;
         this.config = datos.config;
         observable.next(datos);
@@ -64,7 +62,6 @@ export class Socket_producto {
         this.socket.emit(canal, flujo);
         this.socket.on(socket, (dato: any) => {
           if (!dato) {
-            console.log('entro al subcribe error');
             observer.next(JSON.stringify({ Error: 'Datos vacíos o nulos' }));
           } else {
             observer.next(dato);
@@ -81,7 +78,6 @@ export class Socket_producto {
     canal: String,
     flujo: any
   ): Observable<any> {
-    console.log(flujo);
     return new Observable((observer: any) => {
       this.obtenerInfo(socket, canal, flujo).subscribe((data) =>
         observer.next(data)
@@ -89,10 +85,16 @@ export class Socket_producto {
     });
   }
 
-  public obtenerpedidos_realizados(): Observable<any> {
-    return this.http.get(`${environment.api}/obtenerpedidos`, {
-      withCredentials: true,
-    });
+  public obtenerpedidos_realizados(
+    paginas: number,
+    busqueda: string = ''
+  ): Observable<any> {
+    return this.http.get(
+      `${environment.api}/obtenerpedidos?pagina=${paginas}&busqueda=${busqueda}`,
+      {
+        withCredentials: true,
+      }
+    );
   }
 
   public obteneritemspedido(codigo: number): Observable<any> {
@@ -140,9 +142,14 @@ export class Socket_producto {
     });
   }
 
+  obtenernregistros(): Observable<any> {
+    return this.http.get(`${environment.api}/obtenernregistros`, {
+      withCredentials: true,
+    });
+  }
+
   public enviaremail(data: any): Observable<any> {
     return new Observable((obser: any) => {
-      console.log(this.socket);
       this.socket.emit('pazzioli-pos-3', { metodo: 'EMAIL', data });
       this.socket.on('estadocorreo', (datos: any) => {
         obser.next(datos);

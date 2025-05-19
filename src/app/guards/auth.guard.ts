@@ -66,7 +66,6 @@ export class Publicguards implements CanActivate {
     return this.serviauth.verificarvendedor().pipe(
       map((respon) => {
         if (!respon?.response) {
-          console.log('no hay toquen');
           return true; // Redirige si la verificación falla
         } else {
           this.socketproduct.conectar();

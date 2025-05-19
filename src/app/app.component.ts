@@ -36,10 +36,8 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.serviciodb.tienesedeselccionada().subscribe((data) => {
       this.data = data;
-
-      console.log('datos navegacion', data);
     });
-    console.log('datos inicio configuracion');
+
     document.addEventListener('visibilitychange', this.visibilityHandler);
   }
   ngOnDestroy(): void {
@@ -54,15 +52,12 @@ export class AppComponent implements OnInit, OnDestroy {
       } else {
         this.serviciodb.tienesedeselccionada().subscribe((data) => {
           this.data = data;
-
-          console.log('datos navegacion', data);
         });
       }
     });
   }
   salir() {
     this.serviauth.salir().subscribe((res) => {
-      console.log(res);
       this.data = null;
       this.router.navigate(['auth/login']);
     });

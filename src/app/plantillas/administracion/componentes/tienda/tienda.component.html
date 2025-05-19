@@ -228,7 +228,7 @@
                 mat-raised-button
                 class="custom-button-pedido"
                 [routerLink]="['/admin/pedido']"
-                [replaceUrl]="true"
+                [queryParams]="{ pagina: 1 }"
               >
                 <mat-icon>home</mat-icon>
                 Pedidos realizados

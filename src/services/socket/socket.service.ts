@@ -15,9 +15,7 @@ export class SocketService {
   public socketConexion!: Observable<any>;
   public escucha!: Observable<any>;
   private componentMethodCallSource = new Subject<any>();
-  constructor(private http: HttpClient) {
-    console.log('🟡 SocketService inicializado');
-  }
+  constructor(private http: HttpClient) {}
 
   componentMethodCalled$ = this.componentMethodCallSource.asObservable();
 
@@ -31,9 +29,7 @@ export class SocketService {
       auth: { token },
     });
     // this.socket = io("localhost:3000");
-    this.socket.on('connect', () => {
-      console.log('✅ Conectado al servidor con ID:', this.socket.id);
-    });
+    this.socket.on('connect', () => {});
 
     this.socket.on('connect_error', (err: any) => {
       console.error('❌ Error de conexión:', err);
@@ -45,19 +41,15 @@ export class SocketService {
     if (this.socket !== undefined) {
       this.socketConexion = new Observable((observer: any) => {
         this.socket.on(this.socketEscucha, (dato: any) => {
-          console.log('Conectado al servidor con ID:', this.socket.id);
-
           observer.next(dato);
-          console.log(dato);
         });
       });
 
-      //console.log("Conectado al servidor con ID:", this.socket.id);
+      //    }
     }
   }
 
   public enviarInfo(data: any) {
-    console.log('entro aqui 1');
     this.socket.emit('aws', data);
   }
 
@@ -66,7 +58,6 @@ export class SocketService {
       if (!this.escuchando)
         this.socket.on(socket, (dato: any) => {
           observer.next(dato);
-          console.log(dato);
           this.escuchando = true;
         });
     });

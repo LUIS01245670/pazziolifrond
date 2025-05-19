@@ -3,7 +3,6 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 //import { variable64 } from '../../assets/img';
 //Esta línea asigna las fuentes cargadas a la instancia de pdfMake, necesario para que funcione correctamente.
-console.log(pdfFonts);
 (pdfMake as any).vfs = pdfFonts;
 
 const generatePDF = async (data: any) => {
@@ -12,7 +11,6 @@ const generatePDF = async (data: any) => {
     alert('El navegador bloqueó la ventana emergente. Permite pop-ups.');
     return null;
   }
-  console.log(data);
   //Se crea el contenido de la tabla, con:
   //Una fila de encabezado (títulos).
   //Una fila por cada producto en el array recibido.

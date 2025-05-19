@@ -66,8 +66,6 @@ export class InicioSesionComponent implements OnInit {
 
           this.campovisible = false;
           this.mensajedone = 'Identificación verificada';
-
-          console.log(datos.data);
         } else {
           this.mensaje = 'Identificación no registrada';
           this.inputUsuario.disable();
@@ -97,11 +95,10 @@ export class InicioSesionComponent implements OnInit {
         this.mensaje = '';
         this.login();
       },
-      (error) => console.log(error)
+      (error) => {}
     );
   }
   login() {
-    console.log(this.inputUsuario.value);
     this.serviauth
       .login({
         user: this.inputUsuario.value,
@@ -111,8 +108,6 @@ export class InicioSesionComponent implements OnInit {
       })
       .subscribe(
         (autenticado) => {
-          console.log('si esta autenticado', autenticado.autenticado);
-
           if (autenticado.autenticado) {
             this.socketprodu.conectar();
             //console.log(!this.cookieservices.get("connect.sid"))
@@ -136,7 +131,5 @@ export class InicioSesionComponent implements OnInit {
         }
       );
   }
-  ngOnInit(): void {
-    console.log('entro al login');
-  }
+  ngOnInit(): void {}
 }

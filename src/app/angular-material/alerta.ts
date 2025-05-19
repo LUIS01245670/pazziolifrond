@@ -70,8 +70,18 @@ export interface DatosAlerta {
               [type]="type"
               id="Valor"
               [formControl]="valorInput"
+              (keyup)="autocompletar()"
+              [matAutocomplete]="auto"
             />
             <mat-icon matSuffix>{{ inputIcon }}</mat-icon>
+            <mat-autocomplete #auto="matAutocomplete">
+              <mat-option
+                *ngFor="let option of filteredEmails"
+                [value]="option"
+              >
+                {{ option }}
+              </mat-option>
+            </mat-autocomplete>
           </mat-form-field>
         </div>
       </div>
@@ -115,7 +125,9 @@ export class DialogoAlerta {
   inputIcon: string = 'credit_card';
   inputText: string = 'Total a ingresar';
   valorInput: UntypedFormControl;
+  filteredEmails: string[] = [];
 
+  private domains = ['gmail.com', 'hotmail.com', 'yahoo.com', 'outlook.com'];
   constructor(
     public dialogRef: MatDialogRef<DialogoAlerta>,
     @Inject(MAT_DIALOG_DATA) public data: DatosAlerta
@@ -182,6 +194,30 @@ export class DialogoAlerta {
     }
   }
 
+  autocompletar() {
+    this.valorInput.valueChanges.subscribe((value: string) => {
+      this.updateSuggestions(value);
+    });
+  }
+  updateSuggestions(value: string) {
+    if (!value) {
+      this.filteredEmails = [];
+      return;
+    }
+
+    const parts = value.split('@');
+    if (parts.length === 1) {
+      // aún no ha escrito @
+      this.filteredEmails = [];
+    } else if (parts.length === 2) {
+      const username = parts[0];
+      const domainFragment = parts[1].toLowerCase();
+
+      this.filteredEmails = this.domains
+        .filter((domain) => domain.startsWith(domainFragment))
+        .map((domain) => `${username}@${domain}`);
+    }
+  }
   onNoClick(): void {
     this.dialogRef.close();
     this.ocultarBoton1 = true;
