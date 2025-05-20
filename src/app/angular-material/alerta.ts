@@ -50,6 +50,9 @@ export interface DatosAlerta {
    * @description Titulo del input : default 'Total a ingresar'
    */
   inputText?: string;
+
+  boton2?: any;
+  boton3?: string;
 }
 
 @Component({
@@ -117,9 +120,12 @@ export class DialogoAlerta {
   color: string = '';
   boton1: any;
   boton: string;
+  boton2: any;
+  boton3!: string;
   icono: string = '';
   ocultarBoton1: boolean = false;
   ocultarBoton: boolean = false;
+
   input: boolean;
   type: string = 'number';
   inputIcon: string = 'credit_card';

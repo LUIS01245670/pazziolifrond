@@ -87,10 +87,11 @@ export class Socket_producto {
 
   public obtenerpedidos_realizados(
     paginas: number,
-    busqueda: string = ''
+    busqueda: string = '',
+    estado: string = ''
   ): Observable<any> {
     return this.http.get(
-      `${environment.api}/obtenerpedidos?pagina=${paginas}&busqueda=${busqueda}`,
+      `${environment.api}/obtenerpedidos?pagina=${paginas}&busqueda=${busqueda}&estado=${estado}`,
       {
         withCredentials: true,
       }
@@ -142,10 +143,17 @@ export class Socket_producto {
     });
   }
 
-  obtenernregistros(): Observable<any> {
-    return this.http.get(`${environment.api}/obtenernregistros`, {
-      withCredentials: true,
-    });
+  obtenernregistros(
+    busqueda: string = '',
+    estado: string = ''
+  ): Observable<any> {
+    console.log(estado === '');
+    return this.http.get(
+      `${environment.api}/obtenernregistros?busqueda=${busqueda}&estado=${estado}`,
+      {
+        withCredentials: true,
+      }
+    );
   }
 
   public enviaremail(data: any): Observable<any> {
@@ -155,5 +163,18 @@ export class Socket_producto {
         obser.next(datos);
       });
     });
+  }
+
+  anularpedido(
+    esta: string,
+    codigo: number,
+    codigousuario: number
+  ): Observable<any> {
+    const estado = { estado: esta };
+    return this.http.patch(
+      `${environment.api}/eliminarpedido?codigo=${codigo}&codigousuario=${codigousuario}`,
+      estado,
+      { withCredentials: true }
+    );
   }
 }

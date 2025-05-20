@@ -430,20 +430,18 @@ export class TiendaComponent implements OnInit {
           (i, item) => (i += item.total),
           0
         );
-        this.socketServices.buscarclientes().subscribe((datos) => {
-          this.id_cliente_store = datos.datos._id;
-          this.socketServices
-            .guardarcliente({
-              identificacion: clienteguardar.identificacion,
-              razonSocial: clienteguardar.nombre,
-              telefonoFijo: clienteguardar.telefonoFijo,
-              email: clienteguardar.email,
-              celulares: clienteguardar.celulares,
-              direccion: clienteguardar.direccion,
-              codigo: clienteguardar.codigo,
-            })
-            .subscribe((dat) => {});
-        });
+
+        this.socketServices
+          .guardarcliente({
+            identificacion: clienteguardar.identificacion,
+            razonSocial: clienteguardar.nombre,
+            telefonoFijo: clienteguardar.telefonoFijo,
+            email: clienteguardar.email,
+            celulares: clienteguardar.celulares,
+            direccion: clienteguardar.direccion,
+            codigo: clienteguardar.codigo,
+          })
+          .subscribe((dat) => {});
       });
     });
   }
@@ -612,12 +610,21 @@ export class TiendaComponent implements OnInit {
     };
     localStorage.removeItem('pedido');
     this.reiniciar();
-
-    this.socketServices
-      .eliminarproducto(this.id_cliente_store)
-      .subscribe((datos) => {
-        this.id_cliente_store = '';
+    this.socketServices.buscarclientes().subscribe((dat) => {
+      this.socketServices.eliminarproducto(dat.datos._id).subscribe((datos) => {
+        this.clienteSeleccionado = {
+          nombre: 'Seleccione un cliente',
+          identificacion: '',
+          email: '',
+          celulares: '',
+          direccion: '',
+          telefonoFijo: '',
+          codigo: 0,
+          imagen: null,
+          ciudad: '',
+        };
       });
+    });
   }
 
   async elegirPrecio(event: any) {
@@ -799,36 +806,18 @@ export class TiendaComponent implements OnInit {
   }
 
   seleccionarCliente(cliente: any) {
-    this.socketServices.buscarclientes().subscribe((data) => {
-      if (data.datos && data.datos._id) {
-        this.id_cliente_store = data.datos._id;
-        this.clienteSeleccionado.nombre = cliente.razonSocial;
-        this.clienteSeleccionado.identificacion = cliente.identificacion;
-        this.clienteSeleccionado.email = cliente.email;
-        this.clienteSeleccionado.celulares = cliente.celulares;
-        this.clienteSeleccionado.direccion = cliente.direccion;
-        this.clienteSeleccionado.telefonoFijo = cliente.telefonoFijo;
-        this.clienteSeleccionado.codigo = cliente.codigo;
-        this.clienteSeleccionado.imagen = cliente.imagen || null;
-        this.clienteSeleccionado.ciudad = cliente.municipio;
-        this.buscarCliente = '';
-        this.clientes = [];
-        this.socketServices.guardarcliente(cliente).subscribe();
-      } else {
-        this.clienteSeleccionado.nombre = cliente.razonSocial;
-        this.clienteSeleccionado.identificacion = cliente.identificacion;
-        this.clienteSeleccionado.email = cliente.email;
-        this.clienteSeleccionado.celulares = cliente.celulares;
-        this.clienteSeleccionado.direccion = cliente.direccion;
-        this.clienteSeleccionado.telefonoFijo = cliente.telefonoFijo;
-        this.clienteSeleccionado.codigo = cliente.codigo;
-        this.clienteSeleccionado.imagen = cliente.imagen || null;
-        this.clienteSeleccionado.ciudad = cliente.municipio;
-        this.buscarCliente = '';
-        this.clientes = [];
-        this.socketServices.guardarcliente(cliente).subscribe();
-      }
-    });
+    this.clienteSeleccionado.nombre = cliente.razonSocial;
+    this.clienteSeleccionado.identificacion = cliente.identificacion;
+    this.clienteSeleccionado.email = cliente.email;
+    this.clienteSeleccionado.celulares = cliente.celulares;
+    this.clienteSeleccionado.direccion = cliente.direccion;
+    this.clienteSeleccionado.telefonoFijo = cliente.telefonoFijo;
+    this.clienteSeleccionado.codigo = cliente.codigo;
+    this.clienteSeleccionado.imagen = cliente.imagen || null;
+    this.clienteSeleccionado.ciudad = cliente.municipio;
+    this.buscarCliente = '';
+    this.clientes = [];
+    this.socketServices.guardarcliente(cliente).subscribe();
   }
   async buscarProducto(valor: String, tipo: String) {
     this.loader = true;
@@ -1173,7 +1162,6 @@ export class TiendaComponent implements OnInit {
       })
       .subscribe((datos) => {
         if (datos.estadoPeticion === 'Done') {
-          this.deleteAll();
           this.socketproduct
             .obtenerInfo('aws', 'pazzioli-pos-3', {
               metodo: 'CONSULTAR',
@@ -1184,6 +1172,7 @@ export class TiendaComponent implements OnInit {
             .subscribe((data) => {
               let info = JSON.parse(data);
               if (info.estadoPeticion === 'SUCCESS') {
+                this.deleteAll();
                 this.respuestaProductos(info, true);
               }
             });
