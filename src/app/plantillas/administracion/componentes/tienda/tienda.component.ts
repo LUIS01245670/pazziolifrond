@@ -752,7 +752,7 @@ export class TiendaComponent implements OnInit {
       data: {
         boton: 'Si',
         boton1: 'No',
-        mensaje: 'Quisieras eliminar este item',
+        mensaje: 'Desea eliminar este item?',
         tipo: 'question',
       },
     });
