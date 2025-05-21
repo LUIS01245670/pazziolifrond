@@ -72,6 +72,7 @@ export class InicioSesionComponent implements OnInit {
           this.inputpassword.disable();
           this.selectSedes.disable();
           this.campovisible = true;
+          this.mensajedone = '';
           setTimeout(() => {
             this.mensaje = '';
           }, 4000);
