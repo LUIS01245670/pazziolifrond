@@ -748,18 +748,29 @@ export class TiendaComponent implements OnInit {
   }
   eliminarProducto(e: any, id: string) {
     e.stopPropagation();
-
-    document.getElementById('p_' + id)?.classList.add('deleted');
-
-    let filteredItems = this.productosMostrar.filter(
-      (item) => id !== item.codigo
-    );
-    this.productosMostrar = [...filteredItems];
-    this.totalPagar = 0;
-    this.productosMostrar.forEach((producto) => {
-      this.totalPagar += producto.total;
+    const dialigref = this.dialog.open(DialogoAlerta, {
+      data: {
+        boton: 'Si',
+        boton1: 'No',
+        mensaje: 'Quisieras eliminar este item',
+        tipo: 'question',
+      },
     });
-    this.enumerarProductos();
+    dialigref.afterClosed().subscribe((data) => {
+      if (data) {
+        document.getElementById('p_' + id)?.classList.add('deleted');
+
+        let filteredItems = this.productosMostrar.filter(
+          (item) => id !== item.codigo
+        );
+        this.productosMostrar = [...filteredItems];
+        this.totalPagar = 0;
+        this.productosMostrar.forEach((producto) => {
+          this.totalPagar += producto.total;
+        });
+        this.enumerarProductos();
+      }
+    });
   }
 
   calcularProductoActual(): Promise<number> {
@@ -1238,6 +1249,7 @@ import generatePDF from './pdf/pdfpedido';
 import { Horaforma } from 'src/app/utils/formatearhora';
 import generatePDFtirilla from './pdf/pdftirilla';
 import { generatePDFemail } from './pdf/pdf';
+import { Dialog } from '@angular/cdk/dialog';
 
 @Component({
   selector: 'dialog-factura',
