@@ -134,8 +134,13 @@
 
         <mat-card-subtitle class="client-info" style="margin: 0 !important">
           <div class="row-pro">
+            <div>
+              <div class="p-0" style="display: flex">
+                <b>Codigocontable: </b>{{ productoActual.codigoContable }}
+              </div>
+            </div>
             <div class="col-6 p-0" style="display: flex">
-              <b>Disponible: </b>{{ cantidadactual }}
+              <b>Cantidaddisponible: </b>{{ cantidadactual }}
             </div>
             <div class="col-6 p-0" style="display: flex">
               <b>Cantidad: </b>{{ cantidad }}
@@ -313,7 +318,12 @@
               >
                 <div>
                   <div class="p-0" style="display: flex">
-                    <b>Disponible: </b>{{ cantidadactual }}
+                    <b>Codigocontable: </b>{{ productoActual.codigoContable }}
+                  </div>
+                </div>
+                <div>
+                  <div class="p-0" style="display: flex">
+                    <b>disponible: </b>{{ cantidadactual }}
                   </div>
                   <div class="p-0"><b>Cantidad: </b>{{ cantidad }}</div>
                 </div>

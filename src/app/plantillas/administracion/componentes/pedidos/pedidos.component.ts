@@ -67,6 +67,13 @@ export class PedidosComponent implements OnInit {
       if (this.pagina <= 0) {
         this.pagina = 1;
       }
+      if (this.pagina > this.total_registros) {
+        if (this.total_registros === 0) {
+          this.pagina = 1;
+        } else {
+          this.pagina = this.total_registros;
+        }
+      }
 
       this.cargarPedidos(); // función que obtiene los datos según la página
     });

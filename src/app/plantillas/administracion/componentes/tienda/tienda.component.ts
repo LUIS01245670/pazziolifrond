@@ -343,7 +343,9 @@ export class TiendaComponent implements OnInit {
           if (
             _prod.nombre.toString().toLowerCase().includes(val) ||
             _prod.referencia.toString().toLowerCase().includes(val) ||
-            _prod.codigobarra.toString().toLowerCase().includes(val)
+            _prod.codigobarra.toString().toLowerCase().includes(val) ||
+            _prod.codigoContable.toString().toLowerCase().includes(val) ||
+            _prod.codigo.toString().toLowerCase().includes(val)
           ) {
             this.opcionesFiltradas.push(_prod);
           }
@@ -860,7 +862,7 @@ export class TiendaComponent implements OnInit {
           id: producto.codigo,
           nombre: producto.descripcion,
           codigo: producto.codigo,
-          codigoContable: producto.codigoContable,
+          codigoContable: producto.codigocontable,
           referencia: producto.referencia,
           precio: producto.precio1,
           codigobarra: producto.codigoBarra,
