@@ -97,6 +97,9 @@ export class Socket_producto {
       }
     );
   }
+  public obtenerrespuesta(): Observable<any> {
+    return this.http.get('http://localhost:4001/saluda');
+  }
 
   public obteneritemspedido(codigo: number): Observable<any> {
     return this.http.get(
