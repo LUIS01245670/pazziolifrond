@@ -29,6 +29,7 @@
     "@ionic/angular": "^6.3.8",
     "@types/pdfmake": "^0.2.9",
     "@types/socket.io-client": "^1.4.34",
+    "@zxing/ngx-scanner": "^3.6.2",
     "base-64": "^1.0.0",
     "cordova-plugin-bluetooth-serial": "^0.4.7",
     "cordova-plugin-btprinter": "^1.0.9",

@@ -91,7 +91,6 @@ export class PedidosComponent implements OnInit {
       this.productser
         .obtenerpedidos_realizados(this.pagina, this.descripcio, this.estado2)
         .subscribe((data) => {
-          console.log(data.pedidos);
           this.pedido = data.pedidos;
           this.obtenerregistros(this.descripcio, this.estado2);
         });
@@ -227,7 +226,6 @@ export class PedidosComponent implements OnInit {
 
       dialogref.afterClosed().subscribe((dato) => {
         if (dato) {
-          console.log(element);
           this.productser
             .anularpedido(
               'ANULADO',

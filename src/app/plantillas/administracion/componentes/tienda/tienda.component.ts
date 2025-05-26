@@ -21,6 +21,7 @@ import { DatosPedido } from 'src/app/modelos/datos-peticion copy';
 import { Socket_producto } from 'src/services/socket/socket.producto.service.ts.service';
 import { io } from 'socket.io-client';
 import { debounceTime, filter, take } from 'rxjs/operators';
+import { BarcodeFormat } from '@zxing/library';
 
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
@@ -56,11 +57,27 @@ export class TiendaComponent implements OnInit {
   shoping_card1: boolean = false;
   shoping_card2: boolean = false;
   ventana: any = null;
+  videoConstraints = {
+    width: { ideal: 1280 },
+    height: { ideal: 720 },
+    facingMode: 'environment', // para cámara trasera
+  };
   cantidadproducto: string = '';
   nombrevendedor: String = '';
   identificacion: String = '';
   numeropedido: number = 0;
   id_select: string = '';
+  formatsEnabled = [
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.UPC_A,
+    BarcodeFormat.CODABAR,
+    BarcodeFormat.CODE_39,
+    BarcodeFormat.CODE_93,
+    BarcodeFormat.ITF,
+    BarcodeFormat.UPC_A,
+    BarcodeFormat.RSS_14,
+  ];
   sedeSeleccionada: any;
   terceroConsultado: any = null;
   codigoitemseled: number = 0;
@@ -70,6 +87,7 @@ export class TiendaComponent implements OnInit {
   fechahora: string = '';
   @ViewChild('inCantidad') inCantidad!: ElementRef;
   @ViewChild('inPrecio') inPrecio!: ElementRef;
+  @ViewChild('descripcion') descripcion!: ElementRef;
 
   clientes: any[] = [];
   clientesIniciales: any[] = [];
@@ -179,7 +197,8 @@ export class TiendaComponent implements OnInit {
   almacen: string = '';
   basedatosactual: string = '';
   configuracion!: any;
-
+  devices!: MediaDeviceInfo[];
+  selectedDevice!: MediaDeviceInfo;
   constructor(
     private _snackBar: MatSnackBar,
     private socketServices: SocketService,
@@ -191,7 +210,30 @@ export class TiendaComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.seleccionardb();
+    if (
+      typeof navigator !== 'undefined' &&
+      navigator.mediaDevices &&
+      typeof navigator.mediaDevices.enumerateDevices === 'function'
+    ) {
+      navigator.mediaDevices
+        .enumerateDevices()
+        .then((devices) => {
+          this.devices = devices.filter(
+            (device) => device.kind === 'videoinput'
+          );
+          this.selectedDevice = this.devices[0]; // Selecciona la primera cámara
+          this.seleccionardb();
+        })
+        .catch((err) => {
+          console.error('Error enumerando dispositivos de video:', err);
+          this.seleccionardb();
+        });
+    } else {
+      console.error(
+        'navigator.mediaDevices no está disponible en este entorno.'
+      );
+      this.seleccionardb();
+    }
   }
 
   seleccionardb() {
@@ -227,145 +269,55 @@ export class TiendaComponent implements OnInit {
       !localStorage.getItem('pedido') ||
       localStorage.getItem('pedido') === null
     ) {
-      this.socketServices.escucha = this.socketproduct.obtenerInfo(
-        'aws',
-        'pazzioli-pos-3',
-        {
-          metodo: 'CONSULTAR',
-          condicion: '',
-          consulta: 'productos',
-          sede: localStorage.getItem('sede'),
-        }
-      );
-      //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
-      this.socketServices.escucha.subscribe((info: any) => {
-        this.loader = false;
-        this.totalPagar = 0;
-        this.productosMostrar.forEach((producto) => {
-          this.totalPagar += producto.total;
-        });
-        info = JSON.parse(info);
-        switch (info.tipoConsulta) {
-          case 'PRODUCTO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaProductos(info, true);
-            } else {
-              this.respuestaProductos(info, false);
-            }
-            break;
-          case 'TERCERO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaTerceros(info);
-            }
-            break;
-          case 'PEDIDO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaPedidos(info);
-            }
-            break;
-          default:
-            break;
-        }
-      });
+      this.loader = false;
+      this.respuestacliente();
     } else {
+      this.loader = false;
       this.productosMostrar = JSON.parse(
         localStorage.getItem('pedido') || '{nombre:""}'
       );
 
-      this.socketServices.escucha = this.socketproduct.obtenerInfo(
-        'aws',
-        'pazzioli-pos-3',
-        {
-          metodo: 'CONSULTAR',
-          condicion: '',
-          consulta: 'productos',
-          sede: localStorage.getItem('sede'),
-        }
-      );
-
-      //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
-      this.socketServices.escucha.subscribe((info: any) => {
-        this.totalPagar = 0;
-
-        this.productosMostrar.forEach((producto) => {
-          this.totalPagar += producto.total;
-        });
-        info = JSON.parse(info);
-        switch (info.tipoConsulta) {
-          case 'PRODUCTO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaProductos(info, true);
-            } else {
-              this.respuestaProductos(info, false);
-            }
-            break;
-          case 'TERCERO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaTerceros(info);
-            }
-            break;
-          case 'PEDIDO':
-            if (info.estadoPeticion === 'SUCCESS') {
-              this.respuestaPedidos(info);
-            }
-            break;
-          default:
-            break;
-        }
+      let itemsPedidos = this.productosMostrar.map((producto) => {
+        this.totalPagar += producto.total;
       });
+      this.respuestacliente();
     }
   }
+  async onCodeResult(codigo: string) {
+    console.log('Código escaneado:', codigo);
 
-  seleccionaritem(_producto: PRODUCTO) {
+    await this.repuestaproductos('DESCRIPCION', codigo, false);
+    // this.descripcion.nativeElement.value = codigo;
+    this.buscarDescripcion.setValue(codigo);
+    console.log(this.productinico[0]);
+    this.elegirCantidad(this.productinico[0]);
+    // Puedes hacer algo con el valor, como buscar en tu base de datos
+  }
+
+  async seleccionaritem(_producto: PRODUCTO) {
     this.shoping_card2 = true;
     this.shoping_card1 = false;
+    this.codigoitemseled = Number(_producto.codigo);
+    document.getElementById('p_actual')?.classList.add('active');
+    await this.repuestaproductos('ID', _producto.codigo, false);
     const indexproduct = this.productinico.findIndex(
       (product) => product.codigo === _producto.codigo
     );
     this.cantidadactual = this.productinico[indexproduct]?.cantidaddisponible;
-    this.codigoitemseled = Number(_producto.codigo);
+
     this.productoActual = _producto;
     this.precio = this.productoActual.precio;
     this.cantidad = _producto.cantidad;
 
     this.productoActual.id = '_vacio';
-    document.getElementById('p_actual')?.classList.add('active');
   }
 
-  buscarProductos(key: any, campo: String) {
-    if (this.productinico.length > 0) {
-      let val = '';
-      if (this.buscarDescripcion.value) {
-        val = this.buscarDescripcion.value.toString().toLowerCase();
-
-        this.opcionesFiltradas = [];
-        this.productos.forEach((_prod) => {
-          if (
-            _prod.nombre.toString().toLowerCase().includes(val) ||
-            _prod.referencia.toString().toLowerCase().includes(val) ||
-            _prod.codigobarra.toString().toLowerCase().includes(val) ||
-            _prod.codigoContable.toString().toLowerCase().includes(val) ||
-            _prod.codigo.toString().toLowerCase().includes(val)
-          ) {
-            this.opcionesFiltradas.push(_prod);
-          }
-        });
-      } else {
-        val = this.referencia.toString().toLowerCase();
-        this.opcionesFiltradas = [];
-        this.productos.forEach((_prod) => {
-          if (_prod.referencia.toString().toLowerCase().includes(val)) {
-            this.opcionesFiltradas.push(_prod);
-          }
-        });
-      }
-
-      if (key.keyCode == 13) {
-        this.elegirCantidad(this.buscarDescripcion.value);
-      }
-    } else {
-      this.eventoEnter(key, campo);
-    }
+  async buscarProductos(key: any, campo: string) {
+    await this.repuestaproductos(
+      'DESCRIPCION',
+      this.buscarDescripcion.value,
+      true
+    );
   }
 
   displayFn(_prod: PRODUCTO): string {
@@ -374,6 +326,7 @@ export class TiendaComponent implements OnInit {
 
   reiniciar() {
     document.getElementById('p_actual')?.classList.remove('active');
+
     this.shoping_card1 = false;
     this.shoping_card2 = false;
     this.productoActual = {
@@ -399,6 +352,7 @@ export class TiendaComponent implements OnInit {
     this.buscarDescripcion.patchValue('');
 
     //document.getElementById('descripcion')?.focus();
+    this.opcionesFiltradas = [];
     document.getElementById('p_actual')?.classList.remove('active');
     this.codigoitemseled = 0;
     this.enumerarProductos();
@@ -419,7 +373,6 @@ export class TiendaComponent implements OnInit {
       });
 
       dialogref.afterClosed().subscribe((data) => {
-        console.log(data);
         this.clienteSeleccionado = data.cliente;
         let clienteguardar = data.cliente;
         this.productosMostrar = data.productos_pedido;
@@ -612,20 +565,25 @@ export class TiendaComponent implements OnInit {
     };
     localStorage.removeItem('pedido');
     this.reiniciar();
+    this.loader = false;
     this.socketServices.buscarclientes().subscribe((dat) => {
-      this.socketServices.eliminarproducto(dat.datos._id).subscribe((datos) => {
-        this.clienteSeleccionado = {
-          nombre: 'Seleccione un cliente',
-          identificacion: '',
-          email: '',
-          celulares: '',
-          direccion: '',
-          telefonoFijo: '',
-          codigo: 0,
-          imagen: null,
-          ciudad: '',
-        };
-      });
+      if (dat.datos._id) {
+        this.socketServices
+          .eliminarproducto(dat.datos._id)
+          .subscribe((datos) => {
+            this.clienteSeleccionado = {
+              nombre: 'Seleccione un cliente',
+              identificacion: '',
+              email: '',
+              celulares: '',
+              direccion: '',
+              telefonoFijo: '',
+              codigo: 0,
+              imagen: null,
+              ciudad: '',
+            };
+          });
+      }
     });
   }
 
@@ -718,11 +676,13 @@ export class TiendaComponent implements OnInit {
       }
     }
   }
-  actulizaritems(e: any, product: PRODUCTO) {
+  async actulizaritems(e: any, product: PRODUCTO) {
     e.stopPropagation();
 
     if (this.codigoitemseled > 0) {
       if (this.codigoitemseled === Number(product.codigo)) {
+        await this.repuestaproductos('CODIGO', Number(product.codigo), true);
+
         let index = this.productosMostrar.findIndex(
           (pro) => Number(pro.codigo) === this.codigoitemseled
         );
@@ -731,12 +691,13 @@ export class TiendaComponent implements OnInit {
         );
         if (this.productos[options].cantidaddisponible < this.cantidad) {
           this.openSnackBar('Cantidad no disponible');
+          this.reiniciar();
+          this.codigoitemseled = 0;
         } else {
           this.productosMostrar[index].cantidad = this.cantidad;
           this.productosMostrar[index].total =
             Number(this.cantidad) * Number(this.precio);
-          document.getElementById('p_actual')?.classList.remove('active');
-          this.shoping_card2 = false;
+          this.reiniciar();
           this.codigoitemseled = 0;
           this.totalPagar = 0;
           this.productosMostrar.forEach((producto) => {
@@ -852,7 +813,7 @@ export class TiendaComponent implements OnInit {
     }
   }
 
-  respuestaProductos(info: any, estado: Boolean) {
+  respuestacliente() {
     this.socketServices.buscarclientes().subscribe((datos) => {
       if (datos.datos && datos.datos.razonSocial) {
         this.id_cliente_store = datos.datos._id;
@@ -866,7 +827,61 @@ export class TiendaComponent implements OnInit {
         this.clienteSeleccionado.imagen = datos.datos.imagen || null;
         this.clienteSeleccionado.ciudad = datos.datos.municipio;
       }
+      this.loader = false;
     });
+  }
+  async repuestaproductos(
+    condicion: string = '',
+    datoCondicion: string | undefined | number,
+    buscartodo: boolean = false
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.socketServices.escucha = this.socketproduct.obtenerInfo(
+        'aws',
+        'pazzioli-pos-3',
+        {
+          metodo: 'CONSULTAR',
+          condicion,
+          consulta: 'productos',
+          datoCondicion,
+          sede: localStorage.getItem('sede'),
+        }
+      );
+      //this.socketServices.consultarTercero(this.sedeSeleccionada.po.canalsocket, '', '', this.sedeSeleccionada.usuario.usuario);
+      this.socketServices.escucha
+        .pipe(take(1))
+        .subscribe(async (info: any): Promise<any> => {
+          this.loader = false;
+          this.totalPagar = 0;
+          this.productosMostrar.forEach((producto) => {
+            this.totalPagar += producto.total;
+          });
+          info = JSON.parse(info);
+
+          switch (info.tipoConsulta) {
+            case 'PRODUCTO':
+              if (info.estadoPeticion === 'SUCCESS') {
+                this.procesarproductos(info, true, buscartodo);
+                resolve();
+              } else {
+              }
+              break;
+            case 'TERCERO':
+              if (info.estadoPeticion === 'SUCCESS') {
+              }
+              break;
+            case 'PEDIDO':
+              if (info.estadoPeticion === 'SUCCESS') {
+              }
+              break;
+            default:
+              break;
+          }
+        });
+    });
+  }
+
+  procesarproductos(info: any, estado: boolean, buscartodo: boolean) {
     if (estado) {
       this.productos = info.mensajePeticion.map((producto: any) => {
         return <PRODUCTO>{
@@ -894,7 +909,9 @@ export class TiendaComponent implements OnInit {
       }
       this.opcionesFiltradas = this.productos;
 
-      //this.inDescripcion.openPanel();
+      if (buscartodo === true) {
+        this.abrirpanel();
+      }
     } else {
       const data: DatosAlerta = {
         titulo: 'ERROR',
@@ -908,7 +925,6 @@ export class TiendaComponent implements OnInit {
     }
     this.loader = false;
   }
-
   openSnackBar(message: string) {
     this._snackBar.open(message, 'OK', {
       duration: 2000,
@@ -1009,73 +1025,105 @@ export class TiendaComponent implements OnInit {
       });
     }
   }
-
+  //si queremos que el resultado de una suscripcion ejecute una anterior esta logica deberia
+  //ser separada ya que se puede dar el caso de que una suscripcion se repita dos veces o incluso mas
   enviarPedido() {
-    try {
-      this.loader = true;
-      this.totalPagar = 0;
-      let fechaActual = this.obtenerFechaHora();
-      this.fechahora = `${fechaActual.diaActual} ${fechaActual.horaActual}`;
-      let itemsPedidos = this.productosMostrar.map((producto) => {
-        this.totalPagar += producto.total;
-        return {
-          codigoProducto: producto.codigo,
-          valor: producto.precio,
-          cantidad: producto.cantidad,
-          nombre: producto.nombre,
-          precio: producto.precio,
-          total: producto.total,
-          tasaiva: producto.tasaiva,
-          referencia: producto.referencia,
-          codigoUsuario: this.clienteSeleccionado.codigo,
-        };
+    this.dialog
+      .open(DialogoAlertaob, {
+        data: {
+          boton: 'Continuar',
+          mensaje: 'Escribe información más detallada sobre el pedido',
+          tipo: 'question',
+          input: true,
+          type: 'text',
+          inputText: 'Ingresa observación',
+        },
+        disableClose: false,
+      })
+      .afterClosed()
+      .pipe(take(1))
+      .subscribe((data) => {
+        if (!data) return; // Evita continuar si el usuario cerró el diálogo sin escribir
+
+        this.enviarPedidoConObservacion(data);
       });
-      let pedido = new DatosPedido(
-        this.clienteSeleccionado.codigo,
-        fechaActual.diaActual,
-        fechaActual.horaActual,
-        this.clienteSeleccionado.codigo,
-        this.totalPagar,
-        this.id_select
-      );
-      this.socketproduct
-        .crearpedido('pedido', 'pazzioli-pos-3', {
-          metodo: 'CREAR',
-          condicion: 'nombres',
-          consulta: 'PEDIDO',
-          canalserver: 'pedido',
-          datos: {
-            pedido: pedido.datos,
-            itemsPedido: itemsPedidos,
-            cliente: this.clienteSeleccionado,
-            pdf: this.pdf,
-            modificaInventario: this.clienteSeleccionado.email,
-            //aqui iria la variable de modificacion de inventario
-          },
-          sede: localStorage.getItem('sede'),
-        })
-        .subscribe((inf) => {
-          if (inf.estadoPeticion === 'SUCCESS') {
-            this.openDialogFactura();
-          }
-        });
-    } catch (error) {
-      let elementos = document.getElementsByClassName(
-        'cdk-overlay-container'
-      ) as HTMLCollectionOf<HTMLElement>;
-      elementos[0].style.zIndex = '1000';
-      const data: DatosAlerta = {
-        titulo: 'ERROR',
-        mensaje: 'Error al intentar crear pedido',
-        boton: 'OK',
-        boton1: 'CANCELAR',
-        tipo: 'error',
-        input: false,
-      };
-      this.openDialogAlerta(data);
-    }
   }
 
+  enviarPedidoConObservacion(observacion: string) {
+    this.loader = true;
+    this.totalPagar = 0;
+
+    let fechaActual = this.obtenerFechaHora();
+    this.fechahora = `${fechaActual.diaActual} ${fechaActual.horaActual}`;
+
+    let itemsPedidos = this.productosMostrar.map((producto) => {
+      this.totalPagar += producto.total;
+      return {
+        codigoProducto: producto.codigo,
+        valor: producto.precio,
+        cantidad: producto.cantidad,
+        nombre: producto.nombre,
+        precio: producto.precio,
+        total: producto.total,
+        tasaiva: producto.tasaiva,
+        referencia: producto.referencia,
+        codigoUsuario: this.clienteSeleccionado.codigo,
+      };
+    });
+
+    let pedido = new DatosPedido(
+      this.clienteSeleccionado.codigo,
+      fechaActual.diaActual,
+      fechaActual.horaActual,
+      this.clienteSeleccionado.codigo,
+      this.totalPagar,
+      this.id_select,
+      observacion
+    );
+
+    this.socketproduct
+      .crearpedido('pedido', 'pazzioli-pos-3', {
+        metodo: 'CREAR',
+        condicion: 'nombres',
+        consulta: 'PEDIDO',
+        canalserver: 'pedido',
+        datos: {
+          pedido: pedido.datos,
+          itemsPedido: itemsPedidos,
+          cliente: this.clienteSeleccionado,
+          pdf: this.pdf,
+          modificaInventario: this.clienteSeleccionado.email,
+        },
+        sede: localStorage.getItem('sede'),
+      })
+      .pipe(take(1))
+      .subscribe((inf) => {
+        try {
+          if (inf.estadoPeticion === 'SUCCESS') {
+            this.openDialogFactura();
+          } else if (JSON.parse(inf).estadoPeticion === 'ERROR') {
+            const sqlMsg = JSON.parse(inf).mensajePeticion.original.sqlMessage;
+            if (sqlMsg.includes('Data too long for column')) {
+              this.dialog
+                .open(DialogoAlerta, {
+                  data: {
+                    boton: 'OK',
+                    mensaje: 'Haz una observación más corta',
+                    tipo: 'error',
+                  },
+                })
+                .afterClosed()
+                .pipe(take(1))
+                .subscribe(() => {
+                  this.enviarPedido(); // Aquí se vuelve a abrir el diálogo inicial
+                });
+            }
+          }
+        } catch (e) {
+          console.error('Error al procesar la respuesta:', e);
+        }
+      });
+  }
   respuestaPedidos(info: any) {
     let elementos = document.getElementsByClassName(
       'cdk-overlay-container'
@@ -1175,20 +1223,7 @@ export class TiendaComponent implements OnInit {
       })
       .subscribe((datos) => {
         if (datos.estadoPeticion === 'Done') {
-          this.socketproduct
-            .obtenerInfo('aws', 'pazzioli-pos-3', {
-              metodo: 'CONSULTAR',
-              condicion: '',
-              consulta: 'productos',
-              sede: localStorage.getItem('sede'),
-            })
-            .subscribe((data) => {
-              let info = JSON.parse(data);
-              if (info.estadoPeticion === 'SUCCESS') {
-                this.deleteAll();
-                this.respuestaProductos(info, true);
-              }
-            });
+          this.deleteAll();
         }
       });
     /*const dialogRef = this.dialog.open(DialogFactura, {
@@ -1250,6 +1285,7 @@ import { Horaforma } from 'src/app/utils/formatearhora';
 import generatePDFtirilla from './pdf/pdftirilla';
 import { generatePDFemail } from './pdf/pdf';
 import { Dialog } from '@angular/cdk/dialog';
+import { DialogoAlertaob } from 'src/app/angular-material/alertaob';
 
 @Component({
   selector: 'dialog-factura',

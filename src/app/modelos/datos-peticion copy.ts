@@ -13,7 +13,7 @@ export class DatosPedido {
     descuento: 0,
     totalPedido: Number,
     tipoFactura: 'POS',
-    observacion: 'PRUEBA',
+    observacion: '',
     id: '',
   };
 
@@ -23,7 +23,8 @@ export class DatosPedido {
     horaCreacion: String,
     codigoUsuario: Number,
     totalPedido: Number,
-    id_pedido: String
+    id_pedido: String,
+    observacion: string
   ) {
     this.datos.codigoTercero = codigoTercero;
     this.datos.fechaCreacion = fechaCreacion;
@@ -31,5 +32,6 @@ export class DatosPedido {
     this.datos.codigoUsuario = codigoUsuario;
     this.datos.totalPedido = totalPedido;
     this.datos.id = id_pedido;
+    this.datos.observacion = observacion;
   }
 }

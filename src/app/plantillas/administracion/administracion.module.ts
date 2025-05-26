@@ -12,8 +12,7 @@ import { MatTableModule } from '@angular/material/table';
 import { CdkTableModule } from '@angular/cdk/table';
 import { MatIconModule } from '@angular/material/icon';
 import { IonicModule } from '@ionic/angular';
-
-import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
+import { ZXingScannerModule } from '@zxing/ngx-scanner';
 
 @NgModule({
   declarations: [
@@ -31,7 +30,8 @@ import { BluetoothSerial } from '@awesome-cordova-plugins/bluetooth-serial/ngx';
     CdkTableModule,
     MatIconModule,
     IonicModule.forRoot(),
+    ZXingScannerModule,
   ],
-  providers: [BluetoothSerial],
+  providers: [],
 })
 export class AdministracionModule {}

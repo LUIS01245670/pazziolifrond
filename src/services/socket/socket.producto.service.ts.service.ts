@@ -97,9 +97,6 @@ export class Socket_producto {
       }
     );
   }
-  public obtenerrespuesta(): Observable<any> {
-    return this.http.get('http://localhost:4001/saluda');
-  }
 
   public obteneritemspedido(codigo: number): Observable<any> {
     return this.http.get(
@@ -150,7 +147,6 @@ export class Socket_producto {
     busqueda: string = '',
     estado: string = ''
   ): Observable<any> {
-    console.log(estado === '');
     return this.http.get(
       `${environment.api}/obtenernregistros?busqueda=${busqueda}&estado=${estado}`,
       {

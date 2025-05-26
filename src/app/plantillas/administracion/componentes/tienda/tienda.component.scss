@@ -271,6 +271,11 @@ button[pedido] {
     }
   }
 }
+::ng-deep zxing-scanner video {
+ 
+ max-height:70px;
+
+}
 @media(max-width:700px){
   .botonotions{
     margin-top:10px;
@@ -378,3 +383,4 @@ max-width:100px;
 .prod_card{
   height: 120px !important;
 }
+

@@ -32,9 +32,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private crypt: CryptService,
     private socketproduct: Socket_producto,
     private serviciodb: serviciodb
-  ) {
-    this.socketproduct.obtenerrespuesta().subscribe((data) => {});
-  }
+  ) {}
   ngOnInit(): void {
     this.serviciodb.tienesedeselccionada().subscribe((data) => {
       this.data = data;

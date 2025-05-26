@@ -16,6 +16,8 @@ import { MatTableModule } from '@angular/material/table';
 import { Pedidoguardado } from './angular-material/pedidoguardos';
 import { Detallespedido } from './angular-material/detallespedido';
 import { NotFoundComponentComponent } from './not-found-component/not-found-component.component';
+import { DialogoAlertaob } from './angular-material/alertaob';
+import { TextFieldModule } from '@angular/cdk/text-field';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,7 @@ import { NotFoundComponentComponent } from './not-found-component/not-found-comp
     Dialogdetalles,
     Pedidoguardado,
     Detallespedido,
+    DialogoAlertaob,
     NotFoundComponentComponent,
   ],
   exports: [MatAutocompleteModule, HttpClientModule],
@@ -39,6 +42,7 @@ import { NotFoundComponentComponent } from './not-found-component/not-found-comp
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
+    TextFieldModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
